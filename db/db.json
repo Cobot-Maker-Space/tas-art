@@ -1,0 +1,22 @@
+{
+  "admin": {
+    "email": "admin@example.com",
+    "pwd_hash": "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg="
+  },
+  "drivers": {
+    "driver@example.com": "tN74IXytribU2mM/0qTljjJsu11XCv3DmJSE2gevNXk="
+  },
+  "active_invites": [],
+  "robots": {
+    "7b2fd702-7d2c-49b5-9767-aed39a458ab7": {
+      "name": "Fizz",
+      "location": "Nottingham, UK"
+    }
+  },
+  "smart_actions": {
+    "1d1f3369-fb62-453f-9380-b6a716967075": {
+      "name": "Cobot Lightbulb",
+      "webhook": "https://maker.ifttt.com/trigger/light_switch/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
+    }
+  }
+}
