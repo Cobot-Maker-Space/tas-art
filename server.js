@@ -13,6 +13,7 @@ import fs from 'fs'
 
 // routing and data abstractions
 import express from 'express'
+import favicon from 'serve-favicon'
 import expressFileupload from 'express-fileupload'
 import greenlock from 'greenlock-express'
 import bodyParser from 'body-parser'
@@ -30,11 +31,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 // server instantiation
 const app = express()
 const server = createServer(app)
-//const io = new Server(server)
 
 // server configuration
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
+app.use(favicon(join(__dirname, 'public', 'favicon.ico')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressFileupload())
 app.use(cookieParser())
@@ -122,6 +123,10 @@ function socketWorker(glx) {
 // volatile record of logged in users
 const adminAuthTokens = {}
 const driverAuthTokens = {}
+
+//app.use('/favicon.ico', (req, res, next) => {
+//    res.sendStatus(200)
+//});
 
 // route precedent to collect cookie(s) from browser for auth
 app.use((req, res, next) => {
@@ -335,6 +340,7 @@ app.get('/select', (req, res) => {
 // robot-side interface and controller
 // will crash if requested on alternative hardware
 app.get('/robot/:uuid', (req, res) => {
+    db.read()
     res.render('robot', {
         robotId: req.params.uuid,
         robotName: db.data.robots[req.params.uuid].name
@@ -355,4 +361,3 @@ app.get('/:uuid', (req, res) => {
         res.redirect('/')
     }
 })
-

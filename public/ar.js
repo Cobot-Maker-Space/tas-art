@@ -61,7 +61,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
         // defines some parameters for how markers are detected
         arToolkitContext = new THREEx.ArToolkitContext({
-            cameraParametersUrl: 'camera_para.dat',
+            cameraParametersUrl: '/camera_para.dat',
             detectionMode: 'mono',
             canvasWidth: 1920,
             canvasHeight: 1080
@@ -86,7 +86,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     renderFunctions.push(function () {
         // wait for async functions
         if (!arToolkitContext || !arToolkitSource || !arToolkitSource.ready) {
-            return;
+            return
         }
 
         // updates THREEx context
@@ -142,7 +142,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         })()
 
     renderFunctions.push(function () {
-        renderer.render(scene, camera);
+        renderer.render(scene, camera)
     })
 
     // render loop
