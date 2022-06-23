@@ -65,8 +65,8 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         arToolkitContext = new THREEx.ArToolkitContext({
             cameraParametersUrl: '/camera_para.dat',
             detectionMode: 'mono',
-            canvasWidth: 1920,
-            canvasHeight: 1080
+            canvasWidth: foreignStreamDisplay.clientWidth,
+            canvasHeight: foreignStreamDisplay.clientHeight
         })
 
         // handles matrices between THREE and THREEx
@@ -84,6 +84,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         })
     }
 
+    // cursor setup
     var geometry = new THREE.PlaneGeometry(0.2, 0.2)
 
     var cursorMaterial = new THREE.MeshBasicMaterial({
@@ -94,6 +95,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     })
     var cursorPlane = new THREE.Mesh(geometry, cursorMaterial)
 
+    // cursor rendering
     renderFunctions.push(function () {
         var cursorActive = false
 
@@ -194,6 +196,13 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         requestAnimationFrame(animate)
     })
 
+    document.getElementById('toolbar').addEventListener('mouseover', function (event) {
+        document.body.style.cursor = 'default'
+    })
+
+    renderer.domElement.addEventListener('mouseover', function (event) {
+        document.body.style.cursor = 'none'
+    }, false)
 
     renderer.domElement.addEventListener('mousemove', function (event) {
         mouse.x = (event.offsetX / renderer.domElement.clientWidth) * 2 - 1
