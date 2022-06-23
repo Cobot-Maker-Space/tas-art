@@ -3,6 +3,8 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
+    var mouse = new THREE.Vector2()
+
     // webGL renderer instantiation
     var renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -82,6 +84,46 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         })
     }
 
+    var geometry = new THREE.PlaneGeometry(0.2, 0.2)
+
+    var cursorMaterial = new THREE.MeshBasicMaterial({
+        map: THREE.ImageUtils.loadTexture('/assets/cursor.jpg'),
+        transparent: true,
+        opacity: 1,
+        side: THREE.DoubleSide
+    })
+    var cursorPlane = new THREE.Mesh(geometry, cursorMaterial)
+
+    renderFunctions.push(function () {
+        var cursorActive = false
+
+        var raycaster = new THREE.Raycaster()
+        raycaster.setFromCamera(mouse, camera)
+        var intersects = {}
+        Object.keys(smartActions).forEach(function (uuid) {
+            intersects[uuid] = raycaster.intersectObjects(markerRoots[uuid].children)
+
+            if (intersects[uuid].length > 0) {
+                cursorActive = true
+            }
+        })
+
+        if (cursorActive) {
+            cursorPlane.scale.set(0.5, 0.5)
+        } else {
+            cursorPlane.scale.set(1, 1)
+        }
+
+        var cursorPos = new THREE.Vector3(mouse.x, mouse.y, 0)
+
+        cursorPos.unproject(camera)
+        cursorPos.sub(camera.position).normalize()
+        var distance = (-3 - camera.position.z) / cursorPos.z
+
+        cursorPlane.position.copy(camera.position).add(cursorPos.multiplyScalar(distance))
+        scene.add(cursorPlane)
+    })
+
     // all functions in renderFunctions will run once per frame
     renderFunctions.push(function () {
         // wait for async functions
@@ -94,15 +136,14 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     })
         ; (function () {
 
+            // geometry - single double-sided plane
+            var geometry = new THREE.PlaneGeometry(1, 1)
+
             // defines the AR models which are shown when fiducial markers are 
             // detected. again, unique for each smart action package, as per db contents
             var materials = {}
             var materialsConfirm = {}
             var planes = {}
-
-            // geometry - single double-sided plane
-            // same for all smart actions
-            var geometry = new THREE.PlaneGeometry(1, 1)
 
             Object.keys(smartActions).forEach(function (uuid) {
                 // materials for specific smart action
@@ -153,15 +194,19 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         requestAnimationFrame(animate)
     })
 
-    // onclick handling for renderer (canvas), both for raytracing 
-    // and sending to robot for click-to-drive functionality
-    renderer.domElement.addEventListener("click", onClick)
-    var raycaster = new THREE.Raycaster()
-    var mouse = new THREE.Vector2()
 
-    function onClick(event) {
+    renderer.domElement.addEventListener('mousemove', function (event) {
         mouse.x = (event.offsetX / renderer.domElement.clientWidth) * 2 - 1
         mouse.y = - (event.offsetY / renderer.domElement.clientHeight) * 2 + 1
+    }, false)
+
+    // onclick handling for renderer (canvas), both for raytracing 
+    // and sending to robot for click-to-drive functionality
+    var raycaster = new THREE.Raycaster()
+
+    renderer.domElement.addEventListener('click', function (event) {
+        //mouse.x = (event.offsetX / renderer.domElement.clientWidth) * 2 - 1
+        //mouse.y = - (event.offsetY / renderer.domElement.clientHeight) * 2 + 1
 
         // click-to-drive functionality
         var mouseNormX = (mouse.x - -1) / (1 - -1)
@@ -179,5 +224,5 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 intersects[uuid][0].object.callback()
             }
         })
-    }
+    }, false)
 }
