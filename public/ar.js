@@ -10,6 +10,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         antialias: true,
         alpha: true
     })
+
     renderer.setSize(foreignStreamDisplay.clientWidth, foreignStreamDisplay.clientHeight)
     // renderer will create canvas element in html for AR graphics
     foreignStreamDisplay.appendChild(renderer.domElement)
@@ -71,7 +72,8 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
         // handles matrices between THREE and THREEx
         arToolkitContext.init(function onCompleted() {
-            camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix())
+            arToolkitContext.setProj
+            //camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix())
             window.arToolkitContext = arToolkitContext
         })
 
@@ -88,7 +90,13 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     var geometry = new THREE.PlaneGeometry(0.2, 0.2)
 
     var cursorMaterial = new THREE.MeshBasicMaterial({
-        map: THREE.ImageUtils.loadTexture('/assets/cursor.jpg'),
+        map: THREE.ImageUtils.loadTexture('/assets/cursor.png'),
+        transparent: true,
+        opacity: 1,
+        side: THREE.DoubleSide
+    })
+    var cursorSelectMaterial = new THREE.MeshBasicMaterial({
+        map: THREE.ImageUtils.loadTexture('/assets/cursor_select.png'),
         transparent: true,
         opacity: 1,
         side: THREE.DoubleSide
@@ -111,8 +119,10 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         })
 
         if (cursorActive) {
-            cursorPlane.scale.set(0.5, 0.5)
+            cursorPlane.material = cursorSelectMaterial
+            cursorPlane.scale.set(0.7, 0.7)
         } else {
+            cursorPlane.material = cursorMaterial
             cursorPlane.scale.set(1, 1)
         }
 
@@ -123,7 +133,12 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         var distance = (-3 - camera.position.z) / cursorPos.z
 
         cursorPlane.position.copy(camera.position).add(cursorPos.multiplyScalar(distance))
-        scene.add(cursorPlane)
+
+        if (document.body.style.cursor == 'none') {
+            scene.add(cursorPlane)
+        } else {
+            scene.remove(cursorPlane)
+        }
     })
 
     // all functions in renderFunctions will run once per frame
@@ -165,8 +180,8 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 // instance of geometry, with smart action specific parameters (i.e., materials)
                 planes[uuid] = new THREE.Mesh(geometry, materials[uuid])
                 planes[uuid].rotateX(-1.5708)
-                planes[uuid].position.y = geometry.parameters.height / 2
-                planes[uuid].position.x = geometry.parameters.width / 4
+                //planes[uuid].position.y = geometry.parameters.height / 2
+                //planes[uuid].position.x = geometry.parameters.width / 4
                 markerRoots[uuid].add(planes[uuid])
 
                 // callback for instance of geometry when raytraced (clicked)
@@ -197,6 +212,9 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     })
 
     document.getElementById('toolbar').addEventListener('mouseover', function (event) {
+        document.body.style.cursor = 'default'
+    })
+    document.getElementById('local-view').addEventListener('mouseover', function (event) {
         document.body.style.cursor = 'default'
     })
 

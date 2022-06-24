@@ -77,7 +77,7 @@ navigator.mediaDevices.getUserMedia({
 socket.on('user-disconnected', theirID => {
     localStreamDisplay.srcObject = null
     foreignStreamDisplay.srcObject = null
-    DRDoubleSDK.sendCommand('base.kickstand.deploy')
+    //DRDoubleSDK.sendCommand('base.kickstand.deploy')
     DRDoubleSDK.sendCommand('base.pole.sit')
     document.getElementById('reassurance').style.visibility = 'visible'
 })
@@ -130,7 +130,7 @@ socket.on('control-msg', message => {
                 foreignStreamDisplay.muted = false
                 break
             case 'unpark':
-                DRDoubleSDK.sendCommand('base.kickstand.retract')
+                //DRDoubleSDK.sendCommand('base.kickstand.retract')
                 break
             case 'park':
                 DRDoubleSDK.sendCommand('base.kickstand.deploy')
