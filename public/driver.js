@@ -4,6 +4,7 @@ import { initAR } from './ar.js'
 const localStreamDisplay = document.getElementById('local-view')
 const foreignStreamDisplay = document.getElementById('foreign-view')
 const foreignAudioPlayer = document.getElementById('foreign-audio')
+const statusDisplay = document.getElementById('status')
 
 // webRTC TURN/STUN config 
 const socket = io('/')
@@ -41,8 +42,10 @@ navigator.mediaDevices.getUserMedia({
 }).then(localStream => {
     addVideoStream(localStreamDisplay, localStream)
     socket.emit('join-robot', ROBOT_ID, me.id)
+    statusDisplay.textContent = '📞 Connecting to ' + ROBOT_NAME
     me.on('call', call => {
         call.answer(localStream)
+        statusDisplay.textContent = '✨ Starting augmented reality'
         call.on('stream', foreignStream => {
             if (!answered) {
                 //socket.emit('control-msg', 'unpark', ROBOT_ID)
