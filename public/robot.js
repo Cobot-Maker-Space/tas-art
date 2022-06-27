@@ -1,10 +1,10 @@
 // initial double commands and lifecycle callback
 window.onload = () => {
-    DRDoubleSDK.sendCommand('base.requestStatus')
     DRDoubleSDK.sendCommand('events.subscribe', {
         events: [
             'DRBase.status',
-            'DRCamera.hitResult'
+            'DRCamera.hitResult',
+            'DRMotor.position'
         ]
     })
     DRDoubleSDK.sendCommand('navigate.enable')
@@ -12,6 +12,8 @@ window.onload = () => {
         'percent': 1.0,
         'fadeMs': 100
     })
+    DRDoubleSDK.sendCommand('tilt.minLimit.disable')
+    DRDoubleSDK.sendCommand('tilt.maxLimit.disable')
     //DRDoubleSDK.sendCommand('camera.output', {
     //    'width': 1920,
     //    'height': 1080,
@@ -68,6 +70,10 @@ navigator.mediaDevices.getUserMedia({
             addVideoStream(foreignStreamDisplay, foreignStream)
             document.getElementById('reassurance').style.visibility = 'hidden'
             DRDoubleSDK.sendCommand('screensaver.nudge')
+            DRDoubleSDK.sendCommand('base.requestStatus')
+            DRDoubleSDK.sendCommand('tilt.target', {
+                'percent': 0.5
+            })
             //DRDoubleSDK.sendCommand('navigate.target', {
             //    'action': 'exitDock'
             //})
@@ -78,7 +84,7 @@ socket.on('user-disconnected', theirID => {
     localStreamDisplay.srcObject = null
     foreignStreamDisplay.srcObject = null
     //DRDoubleSDK.sendCommand('base.kickstand.deploy')
-    DRDoubleSDK.sendCommand('base.pole.sit')
+    //DRDoubleSDK.sendCommand('base.pole.sit')
     document.getElementById('reassurance').style.visibility = 'visible'
 })
 me.on('open', myID => {
@@ -100,7 +106,10 @@ DRDoubleSDK.on('event', (message) => {
     switch (message.class + '.' + message.key) {
         case 'DRBase.status':
             socket.emit('health-msg', 'battery', message.data.battery, ROBOT_ID)
+            socket.emit('health-msg', 'charging', message.data.charging, ROBOT_ID)
             socket.emit('health-msg', 'kickstand', message.data.kickstand, ROBOT_ID)
+            socket.emit('health-msg', 'pole', message.data.pole, ROBOT_ID)
+
             document.getElementById('battery').textContent = "🔋 " + message.data.battery + '%'
             if (message.data.battery > 60) {
                 document.getElementById('battery').className = 'mt-5 p-5 text-success'
@@ -116,6 +125,9 @@ DRDoubleSDK.on('event', (message) => {
                 DRDoubleSDK.sendCommand('navigate.hitResult', message.data)
                 attemptClickToDrive = false
             }
+            break
+        case 'DRMotor.position':
+            socket.emit('health-msg', 'tilt-position', message.data.percent, ROBOT_ID)
             break
     }
 })
@@ -136,21 +148,18 @@ socket.on('control-msg', message => {
                 foreignStreamDisplay.muted = false
                 break
             case 'unpark':
-                //DRDoubleSDK.sendCommand('base.kickstand.retract')
+                DRDoubleSDK.sendCommand('base.kickstand.retract')
                 break
             case 'park':
                 DRDoubleSDK.sendCommand('base.kickstand.deploy')
                 break
             case 'short':
                 DRDoubleSDK.sendCommand('base.pole.sit')
-                console.log('sit')
                 break
             case 'tall':
                 DRDoubleSDK.sendCommand('base.pole.stand')
-                console.log('stand')
                 break
             case 'forward':
-                console.log('forward')
                 velocity = 1.0
                 move = true
                 break

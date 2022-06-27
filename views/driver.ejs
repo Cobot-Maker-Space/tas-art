@@ -38,13 +38,13 @@
                 <h6 class="my-auto">🤖<b class="text-primary">
                         <%= robotName %>
                     </b> — <%= robotLocation %><br>
-                        🔋Battery — <b id="battery" class="text-secondary">⌛</b></h6>
+                        <b id="charging">⌛</b>Battery — <b id="battery" class="text-secondary">⌛</b></h6>
             </div>
 
             <div class="d-flex justify-content-end me-3">
                 <label for="tilt" class="form-label my-auto me-3"><h6 class="my-auto">Tilt</h6></label>
                 <label for="tilt" class="form-label text-secondary my-auto me-2">⬇️</label>
-                <input type="range" class="form-range my-auto" min="0" max="100" id="tilt">
+                <input type="range" class="form-range my-auto" min="0" max="100" id="tilt" disabled>
                 <label for="tilt" class="form-label text-secondary my-auto ms-2 me-2">⬆️</label>
             </div>
             <div class="d-flex justify-content-end me-3">
@@ -54,10 +54,10 @@
                 <h6 class="my-auto">Height</h6>
             </div>
             <div class="btn-group me-4" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="height" id="short" autocomplete="off" checked>
+                <input type="radio" class="btn-check" name="height" id="short" autocomplete="off" checked disabled>
                 <label class="btn btn-outline-primary" for="short">Short</label>
 
-                <input type="radio" class="btn-check" name="height" id="tall" autocomplete="off">
+                <input type="radio" class="btn-check" name="height" id="tall" autocomplete="off" disabled>
                 <label class="btn btn-outline-primary px-3" for="tall">Tall</label>
             </div>
 

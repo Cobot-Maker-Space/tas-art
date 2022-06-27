@@ -45,8 +45,8 @@ navigator.mediaDevices.getUserMedia({
         call.answer(localStream)
         call.on('stream', foreignStream => {
             if (!answered) {
-                socket.emit('control-msg', 'unpark', ROBOT_ID)
-                socket.emit('control-msg', 'short', ROBOT_ID)
+                //socket.emit('control-msg', 'unpark', ROBOT_ID)
+                //socket.emit('control-msg', 'short', ROBOT_ID)
                 addVideoStream(foreignAudioPlayer, foreignStream)
                 initAR(socket, foreignStream, foreignStreamDisplay)
                 initControls()
@@ -64,6 +64,16 @@ function addVideoStream(display, stream) {
     })
 }
 
+// vars for robot state and input handling
+var muted = false
+var parked = false
+
+var forward = false
+var back = false
+var left = false
+var right = false
+var hardStop = false
+
 // health responses, triggered when the robot state changes in some monitored way
 socket.on('health-msg', message => {
     if (message.target == ROBOT_ID) {
@@ -78,27 +88,44 @@ socket.on('health-msg', message => {
                     document.getElementById('battery').className = 'text-danger'
                 }
                 break
+            case ('charging'):
+                if (message.status) {
+                    document.getElementById('charging').textContent = "🔌"
+                } else {
+                    document.getElementById('charging').textContent = "🔋"
+                }
             case ('kickstand'):
                 if (message.status == 1 || message.status == 2) {
                     document.getElementById('parked').disabled = false
+                } else {
+                    document.getElementById('parked').disabled = true
                 }
                 if (message.status == 2) {
                     document.getElementById('parked').checked = false
+                    parked = false
+                } else if (message.status == 1) {
+                    document.getElementById('parked').checked = true
+                    parked = true
                 }
+                break
+            case ('pole'):
+                document.getElementById('short').disabled = false
+                document.getElementById('tall').disabled = false
+                if (message.status == 0) {
+                    document.getElementById('short').checked = true
+                    document.getElementById('tall').checked = false
+                } else if (message.status == 100) {
+                    document.getElementById('short').checked = false
+                    document.getElementById('tall').checked = true
+                }
+                break
+            case ('tilt-position'):
+                document.getElementById('tilt').disabled = false
+                document.getElementById('tilt').value = (1 - message.status) * 100
                 break
         }
     }
 })
-
-// vars for robot state and input handling
-var muted = false 
-var parked = false
-
-var forward = false
-var back = false
-var left = false
-var right = false
-var hardStop = false
 
 // input handling for buttons and arrow keys
 function initControls() {
@@ -116,13 +143,11 @@ function initControls() {
     document.getElementById('parked').onclick = function () {
         if (parked) {
             socket.emit('control-msg', 'unpark', ROBOT_ID)
-            document.getElementById('parked').disabled = true
 
         } else {
             socket.emit('control-msg', 'park', ROBOT_ID)
-            document.getElementById('parked').disabled = true
+
         }
-        parked = !parked
     }
     document.getElementById('short').onclick = function () {
         socket.emit('control-msg', 'short', ROBOT_ID)
