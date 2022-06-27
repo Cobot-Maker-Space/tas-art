@@ -4,6 +4,8 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     var mouse = new THREE.Vector2()
+    var mouseNorm = new THREE.Vector2()
+    var cursorActive = false
 
     // webGL renderer instantiation
     var renderer = new THREE.WebGLRenderer({
@@ -105,7 +107,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     // cursor rendering
     renderFunctions.push(function () {
-        var cursorActive = false
 
         var raycaster = new THREE.Raycaster()
         raycaster.setFromCamera(mouse, camera)
@@ -223,6 +224,9 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     renderer.domElement.addEventListener('mousemove', function (event) {
         mouse.x = (event.offsetX / renderer.domElement.clientWidth) * 2 - 1
         mouse.y = - (event.offsetY / renderer.domElement.clientHeight) * 2 + 1
+        mouseNorm.x = (mouse.x - -1) / (1 - -1)
+        mouseNorm.y = (mouse.y - -1) / (1 - -1)
+        socket.emit('click-to-drive', mouseNorm.x, 1 - mouseNorm.y, false, ROBOT_ID)
     }, false)
 
     // onclick handling for renderer (canvas), both for raytracing 
@@ -230,13 +234,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     var raycaster = new THREE.Raycaster()
 
     renderer.domElement.addEventListener('click', function (event) {
-        //mouse.x = (event.offsetX / renderer.domElement.clientWidth) * 2 - 1
-        //mouse.y = - (event.offsetY / renderer.domElement.clientHeight) * 2 + 1
-
-        // click-to-drive functionality
-        var mouseNormX = (mouse.x - -1) / (1 - -1)
-        var mouseNormY = (mouse.y - -1) / (1 - -1)
-        socket.emit('click-to-drive', mouseNormX, 1 - mouseNormY, ROBOT_ID)
+        socket.emit('click-to-drive', mouseNorm.x, 1 - mouseNorm.y, true, ROBOT_ID)
 
         raycaster.setFromCamera(mouse, camera)
 
@@ -250,4 +248,18 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
             }
         })
     }, false)
+
+    socket.on('health-msg', message => {
+        if (message.target == ROBOT_ID) {
+            switch (message.type) {
+                case ('highlight-cursor'):
+                    if (message.status) {
+                        cursorActive = true
+                    } else {
+                        cursorActive = false
+                    }
+            }
+        }
+    })
 }
+

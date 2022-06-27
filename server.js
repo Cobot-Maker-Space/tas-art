@@ -96,9 +96,10 @@ function socketWorker(glx) {
             io.emit('control-msg', message)
         })
         // driver -> robot click-to-drive message
-        socket.on('click-to-drive', (x, y, robotId) => {
+        socket.on('click-to-drive', (x, y, att, robotId) => {
             var message = {
                 target: robotId,
+                attempt: att,
                 xCoord: x,
                 yCoord: y
             }

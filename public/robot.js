@@ -93,6 +93,8 @@ function addVideoStream(display, stream) {
     })
 }
 
+var attemptClickToDrive = false
+
 // health broadcasting 
 DRDoubleSDK.on('event', (message) => {
     switch (message.class + '.' + message.key) {
@@ -107,10 +109,14 @@ DRDoubleSDK.on('event', (message) => {
             } else {
                 document.getElementById('battery').className = 'mt-5 p-5 text-danger'
             }
-            break;
+            break
         case 'DRCamera.hitResult':
-            DRDoubleSDK.sendCommand('navigate.hitResult', message.data)
-            break;
+            socket.emit('health-msg', 'highlight-cursor', message.data.hit, ROBOT_ID)
+            if (attemptClickToDrive) {
+                DRDoubleSDK.sendCommand('navigate.hitResult', message.data)
+                attemptClickToDrive = false
+            }
+            break
     }
 })
 
@@ -181,11 +187,14 @@ socket.on('control-msg', message => {
     }
 })
 
-// click-to-drive response through DRDoubleSDK comms
 socket.on('click-to-drive', message => {
     if (message.target == ROBOT_ID) {
         DRDoubleSDK.sendCommand('camera.hitTest', {
             'x': message.xCoord, 'y': message.yCoord, 'highlight': true
         })
+        if (message.attempt) {
+            attemptClickToDrive = true
+        }
     }
 })
+
