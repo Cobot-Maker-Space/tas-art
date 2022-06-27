@@ -113,17 +113,17 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         Object.keys(smartActions).forEach(function (uuid) {
             intersects[uuid] = raycaster.intersectObjects(markerRoots[uuid].children)
 
-            if (intersects[uuid].length > 0) {
+            if (intersects[uuid].length > 0 && markerRoots[uuid].position.x + markerRoots[uuid].position.y != 0) {
                 cursorActive = true
             }
         })
 
         if (cursorActive) {
             cursorPlane.material = cursorSelectMaterial
-            cursorPlane.scale.set(0.7, 0.7)
+            cursorPlane.scale.set(0.466, 0.7)
         } else {
             cursorPlane.material = cursorMaterial
-            cursorPlane.scale.set(1, 1)
+            cursorPlane.scale.set(0.667, 1)
         }
 
         var cursorPos = new THREE.Vector3(mouse.x, mouse.y, 0)
@@ -180,8 +180,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 // instance of geometry, with smart action specific parameters (i.e., materials)
                 planes[uuid] = new THREE.Mesh(geometry, materials[uuid])
                 planes[uuid].rotateX(-1.5708)
-                //planes[uuid].position.y = geometry.parameters.height / 2
-                //planes[uuid].position.x = geometry.parameters.width / 4
                 markerRoots[uuid].add(planes[uuid])
 
                 // callback for instance of geometry when raytraced (clicked)
@@ -247,7 +245,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         Object.keys(smartActions).forEach(function (uuid) {
             intersects[uuid] = raycaster.intersectObjects(markerRoots[uuid].children)
 
-            if (intersects[uuid].length > 0) {
+            if (intersects[uuid].length > 0 && markerRoots[uuid].position.x + markerRoots[uuid].position.y != 0) {
                 intersects[uuid][0].object.callback()
             }
         })
