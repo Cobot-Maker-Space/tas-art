@@ -188,9 +188,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                     (async () => {
                         planes[uuid].material = materialsConfirm[uuid]
                         // actual location ifttt is triggered via a webhook
-                        var requ = new XMLHttpRequest()
-                        requ.open('GET', smartActions[uuid].webhook, true)
-                        requ.send(null)
+                        socket.emit('ifttt-event', smartActions[uuid].webhook)
                         await delay(2000)
                         planes[uuid].material = materials[uuid]
                     })()

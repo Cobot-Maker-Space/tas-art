@@ -45,7 +45,7 @@ navigator.mediaDevices.getUserMedia({
     statusDisplay.textContent = '📞 Connecting to ' + ROBOT_NAME
     me.on('call', call => {
         call.answer(localStream)
-        statusDisplay.textContent = '✨ Starting augmented reality'
+        statusDisplay.textContent = '✨ Loading augmented reality'
         call.on('stream', foreignStream => {
             if (!answered) {
                 //socket.emit('control-msg', 'unpark', ROBOT_ID)
@@ -160,6 +160,7 @@ function initControls() {
     }
 
     document.addEventListener('keydown', function (event) {
+        event.preventDefault()
         switch (event.key) {
             case "ArrowUp":
                 parked = false

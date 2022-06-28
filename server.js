@@ -19,7 +19,7 @@ import greenlock from 'greenlock-express'
 import bodyParser from 'body-parser'
 
 // server utilities
-import { createServer } from 'http'
+import { createServer, get } from 'https'
 import { Server } from 'socket.io'
 import { fileURLToPath } from 'url'
 
@@ -39,7 +39,7 @@ app.use(favicon(join(__dirname, 'public', 'favicon.ico')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressFileupload())
 app.use(cookieParser())
-app.use(cors())
+app.use(cors({origin: '*'}))
 
 // database configuration
 const file = join(__dirname, 'db/db.json')
@@ -113,6 +113,10 @@ function socketWorker(glx) {
                 status: filling,
             }
             io.emit('health-msg', message)
+        })
+
+        socket.on('ifttt-event', (url) => {
+            get(url)
         })
     })
 
