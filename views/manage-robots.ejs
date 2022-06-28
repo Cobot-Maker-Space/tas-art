@@ -41,7 +41,7 @@
         <% Object.keys(activeRobots).forEach(function(uuid) { %>
         <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded">
             <div class="d-flex me-auto">
-                <h6 class="my-auto"><%= activeRobots[uuid].name %> — <%= activeRobots[uuid].location %><br><b><%= uuid %></b></h6>
+                <h6 class="my-auto"><%= activeRobots[uuid].name %> — <%= activeRobots[uuid].location %><br><b><%= activeRobots[uuid].private %></b></h6>
             </div>
             <form method="POST" action="/delete-robot/<%= uuid %>">
                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>

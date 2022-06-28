@@ -269,7 +269,8 @@ app.post('/delete-robot/:uuid', (req, res) => {
 })
 app.post('/add-robot', (req, res) => {
     const { name, location } = req.body
-    db.data.robots[uuidv4()] = { "name": name, "location": location }
+    var uuid = uuidv4()
+    db.data.robots[hashedPwd(uuid)] = { "private": uuid, "name": name, "location": location }
     db.write()
     res.redirect('/manage-robots')
 })
@@ -328,7 +329,6 @@ app.post('/new-smart-action', (req, res) => {
     res.redirect('/smart-actions')
 })
 
-
 // robot selection for drivers
 app.get('/select', (req, res) => {
     if (req.driverEmail) {
@@ -343,13 +343,16 @@ app.get('/select', (req, res) => {
 })
 
 // robot-side interface and controller
-// will crash if requested on alternative hardware
 app.get('/robot/:uuid', (req, res) => {
     db.read()
-    res.render('robot', {
-        robotId: req.params.uuid,
-        robotName: db.data.robots[req.params.uuid].name
-    })
+    if (db.data.robots[hashedPwd(req.params.uuid)] != null) {
+        res.render('robot', {
+            robotId: hashedPwd(req.params.uuid),
+            robotName: db.data.robots[hashedPwd(req.params.uuid)].name
+        })
+    } else {
+        res.redirect('/')
+    }
 })
 
 // driver interface and controller
