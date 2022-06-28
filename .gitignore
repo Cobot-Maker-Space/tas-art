@@ -41,6 +41,9 @@ build/Release
 node_modules/
 jspm_packages/
 
+# SSH trash directory
+.Trash-1001/
+
 # TypeScript v1 declaration files
 typings/
 
