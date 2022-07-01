@@ -7,6 +7,8 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     var mouseNorm = new THREE.Vector2()
     var cursorActive = false
 
+    var lastTime = 0
+
     // webGL renderer instantiation
     var renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -61,7 +63,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         }
     }
 
-    
+
     // unique THREEx instantiations for AR.js functionality
     function triggerARContext() {
 
@@ -225,7 +227,12 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         mouse.y = - (event.offsetY / renderer.domElement.clientHeight) * 2 + 1
         mouseNorm.x = (mouse.x - -1) / (1 - -1)
         mouseNorm.y = (mouse.y - -1) / (1 - -1)
-        socket.emit('click-to-drive', mouseNorm.x, 1 - mouseNorm.y, false, ROBOT_ID)
+
+        if (lastTime < Date.now() - 200) {
+            lastTime = Date.now()
+            socket.emit('click-to-drive', mouseNorm.x, 1 - mouseNorm.y, false, ROBOT_ID)
+        }
+        
     }, false)
 
     // onclick handling for renderer (canvas), both for raytracing 
