@@ -12,16 +12,16 @@ window.onload = () => {
         'percent': 1.0,
         'fadeMs': 100
     })
+    DRDoubleSDK.sendCommand('camera.enable', {
+        'height': 1080,
+        'template': 'v4l2'
+    })
     DRDoubleSDK.sendCommand('tilt.minLimit.disable')
     DRDoubleSDK.sendCommand('tilt.maxLimit.disable')
-    //DRDoubleSDK.sendCommand('camera.output', {
-    //    'width': 1920,
-    //    'height': 1080,
-    //    'template': 'v4l2'
-    //})
-    //DRDoubleSDK.sendCommand('system.setPerformanceModel', {
-    //    'name': 'highest'
-    //})
+
+    DRDoubleSDK.sendCommand('system.setPerformanceModel', {
+        'name': 'highest'
+    })
     window.setInterval(() => {
         DRDoubleSDK.resetWatchdog()
     }, 2000)

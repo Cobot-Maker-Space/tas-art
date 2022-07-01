@@ -61,13 +61,14 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         }
     }
 
+    
     // unique THREEx instantiations for AR.js functionality
     function triggerARContext() {
 
         // defines some parameters for how markers are detected
         arToolkitContext = new THREEx.ArToolkitContext({
             cameraParametersUrl: '/camera_para.dat',
-            detectionMode: 'mono',
+            detectionMode: 'mono_and_matrix',
             canvasWidth: foreignStreamDisplay.clientWidth,
             canvasHeight: foreignStreamDisplay.clientHeight
         })
