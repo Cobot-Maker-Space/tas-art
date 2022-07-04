@@ -132,7 +132,6 @@ DRDoubleSDK.on('event', (message) => {
     }
 })
 
-
 // responses to control messages, i.e., comms with DRDoubleSDK
 var velocity = 0.0
 var rotation = 0.0
@@ -146,6 +145,11 @@ socket.on('control-msg', message => {
                 break
             case 'unmute':
                 foreignStreamDisplay.muted = false
+                break
+            case 'undock':
+                DRDoubleSDK.sendCommand('navigate.target', {
+                    "action": "exitDock"
+                })
                 break
             case 'unpark':
                 DRDoubleSDK.sendCommand('base.kickstand.retract')

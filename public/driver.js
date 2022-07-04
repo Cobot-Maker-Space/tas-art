@@ -94,9 +94,12 @@ socket.on('health-msg', message => {
             case ('charging'):
                 if (message.status) {
                     document.getElementById('charging').textContent = "🔌"
+                    document.getElementById('prompt').style.visibility = 'visible'
                 } else {
                     document.getElementById('charging').textContent = "🔋"
+                    document.getElementById('prompt').style.visibility = 'hidden'
                 }
+                break
             case ('kickstand'):
                 if (message.status == 1 || message.status == 2) {
                     document.getElementById('parked').disabled = false
@@ -134,6 +137,9 @@ socket.on('health-msg', message => {
 function initControls() {
     document.getElementById('tilt').oninput = function () {
         socket.emit('control-msg', document.getElementById('tilt').value, ROBOT_ID)
+    }
+    document.getElementById('undock').onclick = function () {
+        socket.emit('control-msg', 'undock', ROBOT_ID)
     }
     document.getElementById('muted').onclick = function () {
         if (muted) {

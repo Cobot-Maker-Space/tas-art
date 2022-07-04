@@ -232,7 +232,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
             lastTime = Date.now()
             socket.emit('click-to-drive', mouseNorm.x, 1 - mouseNorm.y, false, ROBOT_ID)
         }
-        
+
     }, false)
 
     // onclick handling for renderer (canvas), both for raytracing 
