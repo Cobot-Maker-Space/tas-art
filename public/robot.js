@@ -22,6 +22,8 @@ window.onload = () => {
     DRDoubleSDK.sendCommand('system.setPerformanceModel', {
         'name': 'highest'
     })
+    DRDoubleSDK.sendCommand('speaker.enable')
+    DRDoubleSDK.sendCommand('speaker.setVolume', { 'percent': 0.5 })
     window.setInterval(() => {
         DRDoubleSDK.resetWatchdog()
     }, 2000)
@@ -74,17 +76,12 @@ navigator.mediaDevices.getUserMedia({
             DRDoubleSDK.sendCommand('tilt.target', {
                 'percent': 0.5
             })
-            //DRDoubleSDK.sendCommand('navigate.target', {
-            //    'action': 'exitDock'
-            //})
         })
     })
 })
 socket.on('user-disconnected', theirID => {
     localStreamDisplay.srcObject = null
     foreignStreamDisplay.srcObject = null
-    //DRDoubleSDK.sendCommand('base.kickstand.deploy')
-    //DRDoubleSDK.sendCommand('base.pole.sit')
     document.getElementById('reassurance').style.visibility = 'visible'
 })
 me.on('open', myID => {
@@ -211,3 +208,27 @@ socket.on('click-to-drive', message => {
     }
 })
 
+var relativeX = 0
+
+foreignStreamDisplay.addEventListener("touchstart", function (event) {
+    event.preventDefault()
+    document.getElementById('volume-parent').style.visibility = 'visible'
+
+    var touch = event.touches[0]
+    relativeX = (touch.clientX / foreignStreamDisplay.clientWidth)
+    document.getElementById('volume').value = relativeX * 100
+})
+
+foreignStreamDisplay.addEventListener("touchend", function (event) {
+    event.preventDefault()
+    document.getElementById('volume-parent').style.visibility = 'hidden'
+    DRDoubleSDK.sendCommand('speaker.setVolume', { 'percent': relativeX })
+})
+
+foreignStreamDisplay.addEventListener("touchmove", function (event) {
+    event.preventDefault()
+
+    var touch = event.touches[0]
+    relativeX = (touch.clientX / foreignStreamDisplay.clientWidth)
+    document.getElementById('volume').value = relativeX * 100
+})

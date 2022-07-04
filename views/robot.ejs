@@ -19,13 +19,19 @@
 
     <div id="reassurance">
         <div class="text-center">
-            <h1 class="display-1 text-white mb-5">🤖 <%= robotName %></h1>
+            <h1 class="display-1 text-white mb-5">🤖 <%= robotName %>
+            </h1>
             <h3 class="text-white">Ready to receive calls<br></h3>
             <div class="spinner-grow text-white mt-4" role="status">
                 <span class="visually-hidden">Waiting...</span>
             </div>
             <h4 id="battery" class="text-secondary mt-5 p-5">🔋 ⌛</h4>
         </div>
+    </div>
+
+    <div id="volume-parent">
+        <h6 class="text-center text-white mt-4">🔊 Volume</h6>
+        <progress id="volume" max="100" value="50"></progress>
     </div>
 
     <video id="foreign-view" playsinline autoplay></video>

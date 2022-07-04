@@ -48,8 +48,6 @@ navigator.mediaDevices.getUserMedia({
         statusDisplay.textContent = '✨ Loading augmented reality'
         call.on('stream', foreignStream => {
             if (!answered) {
-                //socket.emit('control-msg', 'unpark', ROBOT_ID)
-                //socket.emit('control-msg', 'short', ROBOT_ID)
                 addVideoStream(foreignAudioPlayer, foreignStream)
                 initAR(socket, foreignStream, foreignStreamDisplay)
                 initControls()

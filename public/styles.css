@@ -20,6 +20,18 @@
     transform: translate(-50%, -50%);
 }
 
+#volume {
+    position: absolute;
+    height: 40px;
+    left: 10%;
+    width: 80%;
+    top: 5%;
+}
+
+#volume-parent {
+    visibility: hidden;
+}
+
 #foreign-view {
     width: 100%;
     height: 100%;
