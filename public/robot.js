@@ -79,6 +79,7 @@ socket.on('user-disconnected', theirID => {
     driverConnected = false;
 });
 me.on('open', myID => {
+    socket.emit('robot-alive', ROBOT_ID);
     socket.emit('join-robot', ROBOT_ID, myID);
 });
 

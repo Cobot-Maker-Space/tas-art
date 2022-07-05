@@ -25,6 +25,9 @@ import { fileURLToPath } from 'url';
 
 // CONSTANTS 
 
+// constant for async delays
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // absolute path to dir
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -72,13 +75,17 @@ greenlock.init({
     cluster: false
 }).ready(socketWorker);
 
+var aliveRobots = {};
+
 function socketWorker(glx) {
     var server = glx.httpsServer();
     const io = new Server(server);
 
     // SOCKET COMMUNICATION (including webRTC)
-
     io.on('connection', socket => {
+        socket.on('robot-alive', robotId => {
+            aliveRobots[socket.id] = robotId;
+        });
         // webRTC establishment
         socket.on('join-robot', (robotId, userId) => {
             socket.join(robotId);
@@ -114,9 +121,13 @@ function socketWorker(glx) {
             };
             io.emit('health-msg', message);
         });
-
+        // ifttt event trigger
         socket.on('ifttt-event', (url) => {
             get(url);
+        });
+        // disconnect
+        socket.on('disconnect', reason => {
+            delete aliveRobots[socket.id];
         });
     });
 
@@ -334,7 +345,8 @@ app.get('/select', (req, res) => {
         db.read();
         res.render('select', {
             email: req.driverEmail,
-            activeRobots: db.data.robots
+            robots: db.data.robots,
+            activeRobots: Object.values(aliveRobots)
         });
     } else {
         res.redirect('/');
