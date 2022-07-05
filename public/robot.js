@@ -1,3 +1,6 @@
+// constant for async delays
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 // initial double commands and lifecycle callback
 window.onload = () => {
     DRDoubleSDK.sendCommand('events.subscribe', {
@@ -27,6 +30,8 @@ window.onload = () => {
     window.setInterval(() => {
         DRDoubleSDK.resetWatchdog()
     }, 2000)
+
+    DRDoubleSDK.sendCommand('base.requestStatus')
 }
 
 // containers for video streams
@@ -60,6 +65,8 @@ const me = new Peer({
     }
 })
 
+var driverConnected = false
+
 // webRTC connection handling
 navigator.mediaDevices.getUserMedia({
     video: true,
@@ -70,19 +77,19 @@ navigator.mediaDevices.getUserMedia({
         call.on('stream', foreignStream => {
             addVideoStream(localStreamDisplay, localStream)
             addVideoStream(foreignStreamDisplay, foreignStream)
-            document.getElementById('reassurance').style.visibility = 'hidden'
             DRDoubleSDK.sendCommand('screensaver.nudge')
             DRDoubleSDK.sendCommand('base.requestStatus')
             DRDoubleSDK.sendCommand('tilt.target', {
                 'percent': 0.5
             })
+            driverConnected = true
         })
     })
 })
 socket.on('user-disconnected', theirID => {
     localStreamDisplay.srcObject = null
     foreignStreamDisplay.srcObject = null
-    document.getElementById('reassurance').style.visibility = 'visible'
+    driverConnected = false
 })
 me.on('open', myID => {
     socket.emit('join-robot', ROBOT_ID, myID)
@@ -208,10 +215,15 @@ socket.on('click-to-drive', message => {
     }
 })
 
+// on-screen volume control
 var relativeX = 0
+var touchActive = false 
 
 foreignStreamDisplay.addEventListener("touchstart", function (event) {
     event.preventDefault()
+    if (!driverConnected) return
+
+    touchActive = true
     document.getElementById('volume-parent').style.visibility = 'visible'
 
     var touch = event.touches[0]
@@ -220,13 +232,22 @@ foreignStreamDisplay.addEventListener("touchstart", function (event) {
 })
 
 foreignStreamDisplay.addEventListener("touchend", function (event) {
-    event.preventDefault()
-    document.getElementById('volume-parent').style.visibility = 'hidden'
-    DRDoubleSDK.sendCommand('speaker.setVolume', { 'percent': relativeX })
+    (async () => {
+        event.preventDefault()
+        if (!driverConnected) return
+
+        touchActive = false
+        DRDoubleSDK.sendCommand('speaker.setVolume', { 'percent': relativeX })
+        await delay(1000)
+        if (!touchActive) {
+            document.getElementById('volume-parent').style.visibility = 'hidden'
+        }
+    })()
 })
 
 foreignStreamDisplay.addEventListener("touchmove", function (event) {
     event.preventDefault()
+    if (!driverConnected) return
 
     var touch = event.touches[0]
     relativeX = (touch.clientX / foreignStreamDisplay.clientWidth)
