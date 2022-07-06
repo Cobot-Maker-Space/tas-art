@@ -19,6 +19,7 @@ navigator.mediaDevices.getUserMedia({
     audio: true
 }).then(localStream => {
     addVideoStream(localStreamDisplay, localStream);
+
     socket.emit('join-robot', ROBOT_ID, me.id);
     statusDisplay.textContent = '📞 Connecting to ' + ROBOT_NAME;
     me.on('call', call => {
@@ -33,6 +34,10 @@ navigator.mediaDevices.getUserMedia({
             answered = true;
         });
     });
+});
+
+socket.on('robot-disconnected', robotId => {
+    location.href = '/select/robot-disconnected';
 });
 
 // utility function for displaying video/audio

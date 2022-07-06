@@ -127,6 +127,7 @@ function socketWorker(glx) {
         });
         // disconnect
         socket.on('disconnect', reason => {
+            io.emit('robot-disconnected', aliveRobots[socket.id]);
             delete aliveRobots[socket.id];
         });
     });
@@ -339,19 +340,25 @@ app.post('/new-smart-action', (req, res) => {
     res.redirect('/smart-actions');
 });
 
-// robot selection for drivers
-app.get('/select', (req, res) => {
+// robot selection
+app.get('/select/:err?', (req, res) => {
     if (req.driverEmail) {
+        var errMsg = 'none';
+        if (req.params.err == 'robot-disconnected') {
+            errMsg = 'Robot disconnected from the server. Please try another!';
+        }
         db.read();
         res.render('select', {
             email: req.driverEmail,
             robots: db.data.robots,
-            activeRobots: Object.values(aliveRobots)
+            activeRobots: Object.values(aliveRobots),
+            err: errMsg
         });
     } else {
         res.redirect('/');
     };
 });
+
 
 // robot-side interface and controller
 app.get('/robot/:uuid', (req, res) => {
