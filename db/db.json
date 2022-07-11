@@ -6,7 +6,9 @@
   "drivers": {
     "driver@example.com": "tN74IXytribU2mM/0qTljjJsu11XCv3DmJSE2gevNXk="
   },
-  "active_invites": [],
+  "active_invites": [
+    "36f03ef8-a4cc-4c25-a491-b5f357fc5fd6"
+  ],
   "robots": {
     "T0SbrYF+yAKwlvykeEx+jpWP6kvfjR74RSg8nTSjk5c=": {
       "private": "a31e1e24-5449-4097-a015-52dea9d5a769",
