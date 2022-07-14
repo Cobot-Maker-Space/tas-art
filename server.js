@@ -13,6 +13,7 @@ import fs from 'fs';
 
 // routing and data abstractions
 import express from 'express';
+import fetch from 'node-fetch';
 import favicon from 'serve-favicon';
 import expressFileupload from 'express-fileupload';
 import greenlock from 'greenlock-express';
@@ -359,6 +360,41 @@ app.get('/select/:err?', (req, res) => {
     };
 });
 
+app.get('/ms-login', (req, res) => {
+    if (req.driverEmail) {
+        // need to implement state :/ 
+        res.redirect("https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?" +
+            "client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3" +
+            "&response_type=code" +
+            "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
+            "&response_mode=query" +
+            "&scope=user.readbasic.all%20presence.read.all" +
+            "&state=12345");
+    } else {
+        res.redirect('/');
+    }
+});
+
+app.get('/ms-socket', (req, res) => {
+    fetch('https://login.microsoftonline.com/organizations/oauth2/v2.0/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3' +
+        '&scope=user.readbasic.all%20presence.read.all' +
+            '&code=' + req.query.code +
+            '&grant_type=authorization_code' +
+            '&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket' +
+            '&client_secret=Vwm8Q~BQylr9~apjFDMVFhhsv0Za0ZYdePB7dabY'
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        });
+
+    res.redirect('/');
+});
 
 // robot-side interface and controller
 app.get('/robot/:uuid', (req, res) => {

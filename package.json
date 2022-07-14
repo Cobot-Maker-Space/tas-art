@@ -27,6 +27,7 @@
     "greenlock-express": "^4.0.3",
     "isomorphic-fetch": "^3.0.0",
     "lowdb": "^3.0.0",
+    "node-fetch": "^3.2.8",
     "peer": "^0.6.1",
     "readline-sync": "^1.4.10",
     "serve-favicon": "^2.5.0",
