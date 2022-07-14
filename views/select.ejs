@@ -38,31 +38,35 @@
 
     <div class="container mw-540 p-3">
 
-        <% if (err != 'none') { %>
+        <% if (err !='none' ) { %>
             <div class="alert alert-danger" role="alert">
                 <%= err %>
             </div>
             <% } %>
 
-        <h6 class="mx-3">Connect to a robot</h6>
+                <h6 class="mx-3">Connect to a robot</h6>
 
-        <% Object.keys(robots).forEach(function(uuid) { %>
-            <div class="d-flex bg-light text-black mx-2 mt-3 mb-2 px-4 py-3 rounded">
-                <div class="d-flex me-auto">
-                    <h6 class="my-auto">🤖<b class="text-primary">
-                            <%= robots[uuid].name %>
-                        </b> — <%= robots[uuid].location %>
-                    </h6>
-                </div>
-                <form method="GET" action="/<%= uuid %> %>">
-                    <% if (activeRobots.includes(uuid)) { %>
-                        <button type="submit" class="btn btn-success">🔌Connect</button>
-                        <% } else { %>
-                            <button type="submit" class="btn btn-danger" disabled>❌Offline</button>
-                            <% } %>
-                </form>
-            </div>
-            <% }) %>
+                <% Object.keys(robots).forEach(function(uuid) { %>
+                    <div class="d-flex bg-light text-black mx-2 mt-3 mb-2 px-4 py-3 rounded">
+                        <div class="d-flex me-auto">
+                            <h6 class="my-auto">🤖<b class="text-primary">
+                                    <%= robots[uuid].name %>
+                                </b> — <%= robots[uuid].location %>
+                            </h6>
+                        </div>
+                        <form method="GET" action="/<%= uuid %> %>">
+                            <% if (activeRobots.includes(uuid)) { %>
+                                <button type="submit" class="btn btn-success">🔌Connect</button>
+                                <% } else { %>
+                                    <button type="submit" class="btn btn-danger" disabled>❌Offline</button>
+                                    <% } %>
+                        </form>
+                    </div>
+                    <% }) %>
+
+                        <form method="GET" action="/ms-auth">
+                            <button type="submit" class="btn btn-secondary btn-sm mx-3">MS Auth</button>
+                        </form>
     </div>
 
 
