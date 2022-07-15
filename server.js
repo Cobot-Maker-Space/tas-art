@@ -382,7 +382,7 @@ app.get('/ms-socket', (req, res) => {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: 'client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3' +
-        '&scope=user.readbasic.all%20presence.read.all' +
+            '&scope=user.readbasic.all%20presence.read.all' +
             '&code=' + req.query.code +
             '&grant_type=authorization_code' +
             '&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket' +
@@ -390,7 +390,19 @@ app.get('/ms-socket', (req, res) => {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+
+            fetch('https://graph.microsoft.com/v1.0/me/presence', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + data.access_token,
+                    'Host': 'graph.microsoft.com'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                });
+
         });
 
     res.redirect('/');

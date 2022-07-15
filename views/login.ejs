@@ -14,27 +14,14 @@
 </head>
 
 <body>
-    <div class="container mw-540 p-3">
+    <div class="container mw-540 p-3 text-center">
         <h3 class="mt-4 mb-5">🤖 Telepresence Robot Portal</h3>
-        <h6 class="py-2">Driver & admin login</h6>
+        <h6 class="mb-3">Work or school</h6>
 
-        <% if (error) { %>
-            <h6 class="text-danger">Incorrect username or password</h6>
-            <% } %>
-
-                <form method="POST" action="/login">
-                    <div class="form-floating mb-3">
-                        <input name="email" type="email" class="form-control" id="email" placeholder="name@example.com"
-                            required>
-                        <label for="email">Email</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input name="password" type="password" class="form-control" id="password" placeholder="Password"
-                            required>
-                        <label for="password">Password</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary px-4">🔑 Login</button>
-                </form>
+        <form method="GET" action="/ms-login" class="mb-5">
+            <button type="submit" class="btn btn-dark px-4 py-2"><img class="me-2" src="ms-logo.svg">Sign in
+                with Microsoft</button>
+        </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

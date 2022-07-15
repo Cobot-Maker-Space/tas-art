@@ -69,7 +69,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
         // defines some parameters for how markers are detected
         arToolkitContext = new THREEx.ArToolkitContext({
-            cameraParametersUrl: '/camera_para.dat',
+            cameraParametersUrl: '/camera-para.dat',
             detectionMode: 'mono',
             canvasWidth: foreignStreamDisplay.clientWidth,
             canvasHeight: foreignStreamDisplay.clientHeight
@@ -96,6 +96,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     var cursorMaterial = new THREE.MeshBasicMaterial({
         map: THREE.ImageUtils.loadTexture('/assets/cursor.png'),
+        depthTest: false,
         transparent: true,
         opacity: 1,
         side: THREE.DoubleSide
@@ -145,6 +146,54 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         };
     });
 
+    // microsoft profile rendering
+
+    const panel = new ThreeMeshUI.Block({
+        width: 1.0,
+        height: 1.0,
+        padding: 0.2,
+        fontFamily: 'Roboto-msdf.json',
+        fontTexture: 'Roboto-msdf.png',
+        contentDirection: 'row',
+        justifyContent: 'center'
+    });
+
+    const photo = new ThreeMeshUI.Block({
+        width: 0.3,
+        height: 0.3
+    });
+
+    panel.add(photo);
+
+    const name = new ThreeMeshUI.Block({
+        width: 0.7,
+        height: 0.3,
+        backgroundOpacity: 0
+    });
+
+    panel.add(name);
+
+    const nameText = new ThreeMeshUI.Text({
+        content: "Isaac Phypers",
+        fontSize: 0.1
+    });
+
+    name.add(nameText);
+
+    new THREE.TextureLoader().load('https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png', (texture) => {
+        photo.set({
+          backgroundTexture: texture,
+        });
+      });
+
+    //scene.add(panel);
+
+    panel.rotateX(-1.5708);
+
+    renderFunctions.push(function () {
+        ThreeMeshUI.update();
+    });
+
     // all functions in renderFunctions will run once per frame
     renderFunctions.push(function () {
         // wait for async functions
@@ -184,7 +233,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 // instance of geometry, with smart action specific parameters (i.e., materials)
                 planes[uuid] = new THREE.Mesh(geometry, materials[uuid]);
                 planes[uuid].rotateX(-1.5708);
-                markerRoots[uuid].add(planes[uuid]);
+                markerRoots[uuid].add(panel); //planes[uuid]);
 
                 // callback for instance of geometry when raytraced (clicked)
                 planes[uuid].callback = function () {
