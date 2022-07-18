@@ -24,6 +24,9 @@ import { createServer, get } from 'https';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
 
+// microsoft utility
+import * as Queries from './ms-queries.js';
+
 // CONSTANTS 
 
 // constant for async delays
@@ -76,7 +79,7 @@ greenlock.init({
     cluster: false
 }).ready(socketWorker);
 
-var aliveRobots = {};
+var activeRobots = {};
 
 function socketWorker(glx) {
     var server = glx.httpsServer();
@@ -85,7 +88,7 @@ function socketWorker(glx) {
     // SOCKET COMMUNICATION (including webRTC)
     io.on('connection', socket => {
         socket.on('robot-alive', robotId => {
-            aliveRobots[socket.id] = robotId;
+            activeRobots[socket.id] = robotId;
         });
         // webRTC establishment
         socket.on('join-robot', (robotId, userId) => {
@@ -128,8 +131,8 @@ function socketWorker(glx) {
         });
         // disconnect
         socket.on('disconnect', reason => {
-            io.emit('robot-disconnected', aliveRobots[socket.id]);
-            delete aliveRobots[socket.id];
+            io.emit('robot-disconnected', activeRobots[socket.id]);
+            delete activeRobots[socket.id];
         });
     });
 
@@ -142,88 +145,97 @@ function socketWorker(glx) {
 const adminAuthTokens = {};
 const driverAuthTokens = {};
 
+// volatile data of logged in users
+const activeUsers = {};
+
 // route precedent to collect cookie(s) from browser for auth
 app.use((req, res, next) => {
     const authToken = req.cookies['AuthToken'];
-    if (adminAuthTokens[authToken]) {
-        req.adminEmail = adminAuthTokens[authToken];
-    } else if (driverAuthTokens[authToken]) {
-        req.driverEmail = driverAuthTokens[authToken];
+    if (driverAuthTokens[authToken]) {
+        req.driverId = driverAuthTokens[authToken];
+        if (adminAuthTokens[authToken]) {
+            req.adminId = adminAuthTokens[authToken];
+        }
     };
     next();
 });
 
-// login and logout handling
 app.get('/', (req, res) => {
+    if (req.driverId) {
+        res.redirect('/select');
+    };
     res.render('login', {
-        error: false
+        error: req.query.error
     });
 });
-app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    const pwdHash = hashedPwd(password);
-    db.read();
-    if (email == db.data.admin.email && pwdHash == db.data.admin.pwd_hash) {
-        const authToken = newAuthToken();
-        adminAuthTokens[authToken] = email;
-        res.cookie('AuthToken', authToken);
-        res.redirect('/admin-dashboard');
-    } else if (pwdHash == db.data.drivers[email]) {
-        const authToken = newAuthToken();
-        driverAuthTokens[authToken] = email;
-        res.cookie('AuthToken', authToken);
-        res.redirect('/select');
-    } else {
-        res.render('login', {
-            error: true
-        });
-    };
-});
-app.post('/logout', (req, res) => {
-    delete adminAuthTokens[req.cookies['AuthToken']];
-    delete driverAuthTokens[req.cookies['AuthToken']];
-    res.redirect('/');
+
+
+// ms login and logout handling
+app.get('/ms-login', (req, res) => {
+    res.redirect(Queries.login);
 });
 
-// registration handling
-app.get('/register/:invite/:err?', (req, res) => {
-    db.read();
-    if (db.data.active_invites.includes(req.params.invite)) {
-        if (req.params.err) {
-            res.render('register', {
-                error: true,
-                invite: req.params.invite
-            });
-        } else {
-            res.render('register', {
-                error: false,
-                invite: req.params.invite
-            });
-        };
+app.get('/ms-logout', (req, res) => {
+    delete adminAuthTokens[req.cookies['AuthToken']];
+    delete driverAuthTokens[req.cookies['AuthToken']];
+    delete activeUsers[req.cookies['AuthToken']];
+    res.redirect(Queries.logout);
+});
+
+app.get('/ms-socket', (req, res) => {
+    fetch(Queries.requestTokenURL, Queries.requestTokenBody(req.query.code))
+        .then(response => response.json())
+        .then(loginData => {
+            if (loginData.error != undefined) {
+                res.redirect('/?error=user');
+            } else {
+                fetch(Queries.getUserDataURL, Queries.getDataBody(loginData.access_token))
+                    .then(response => response.json())
+                    .then(userData => {
+                        db.read();
+                        var authToken = newAuthToken();
+                        if (db.data.drivers.includes(userData.id)) {
+                            activeUsers[userData.id] = {
+                                access_token: loginData.access_token,
+                                refresh_token: loginData.refresh_token,
+                                name: userData.displayName,
+                                email: userData.mail
+                            }
+                            driverAuthTokens[authToken] = userData.id;
+                            if (db.data.admins.includes(userData.id)) {
+                                adminAuthTokens[authToken] = userData.id;
+                            }
+                        } else {
+                            res.redirect('/?error=user');
+                        }
+                        res.cookie('AuthToken', authToken);
+                        res.redirect('/select');
+                    });
+            };
+        });
+});
+
+// robot selection
+app.get('/select', (req, res) => {
+    if (req.driverId) {
+        db.read();
+        res.render('select', {
+            name: activeUsers[req.driverId].name,
+            admin: req.adminId ? "true" : "false",
+            robots: db.data.robots,
+            activeRobots: Object.values(activeRobots),
+            error: req.query.error
+        });
     } else {
         res.redirect('/');
-    };
-});
-app.post('/submit-register/:invite', (req, res) => {
-    const { email, password, passwordConfirm } = req.body;
-    db.read();
-    if (db.data.active_invites.includes(req.params.invite)) {
-        if (password == passwordConfirm) {
-            db.data.drivers[email] = hashedPwd(password);
-            db.data.active_invites = deleteElement(db.data.active_invites, req.params.invite);
-            db.write();
-            res.redirect('/');
-        } else {
-            res.redirect('/register/' + req.params.invite + '/err');
-        };
     };
 });
 
 // admin landing page
 app.get('/admin-dashboard', (req, res) => {
-    if (req.adminEmail) {
+    if (req.adminId) {
         res.render('admin-dashboard', {
-            email: req.adminEmail
+            name: activeUsers[req.adminId].name
         });
     } else {
         res.redirect('/');
@@ -232,10 +244,10 @@ app.get('/admin-dashboard', (req, res) => {
 
 // admin manage drivers
 app.get('/manage-drivers', (req, res) => {
-    if (req.adminEmail) {
+    if (req.adminId) {
         db.read();
         res.render('manage-drivers', {
-            email: req.adminEmail,
+            name: activeUsers[req.adminId].name,
             activeInvites: db.data.active_invites,
             activeDrivers: db.data.drivers
         });
@@ -261,10 +273,10 @@ app.post('/delete-driver/:email', (req, res) => {
 
 // admin manage robots
 app.get('/manage-robots', (req, res) => {
-    if (req.adminEmail) {
+    if (req.adminId) {
         db.read();
         res.render('manage-robots', {
-            email: req.adminEmail,
+            name: activeUsers[req.adminId].name,
             activeRobots: db.data.robots
         });
     } else {
@@ -290,10 +302,10 @@ app.post('/add-robot', (req, res) => {
 
 // admin manage smart actions
 app.get('/smart-actions', (req, res) => {
-    if (req.adminEmail) {
+    if (req.adminId) {
         db.read();
         res.render('smart-actions', {
-            email: req.adminEmail,
+            name: activeUsers[req.adminId].name,
             smartActions: db.data.smart_actions
         });
     } else {
@@ -312,9 +324,9 @@ app.post('/delete-smart-action/:uuid', (req, res) => {
     res.redirect('/smart-actions');
 });
 app.get('/smart-action', (req, res) => {
-    if (req.adminEmail) {
+    if (req.adminId) {
         res.render('smart-action', {
-            email: req.adminEmail
+            name: activeUsers[req.adminId].name
         });
     } else {
         res.redirect('/');
@@ -339,73 +351,6 @@ app.post('/new-smart-action', (req, res) => {
     db.write();
 
     res.redirect('/smart-actions');
-});
-
-// robot selection
-app.get('/select/:err?', (req, res) => {
-    if (req.driverEmail) {
-        var errMsg = 'none';
-        if (req.params.err == 'robot-disconnected') {
-            errMsg = 'Robot disconnected from the server. Please try another!';
-        }
-        db.read();
-        res.render('select', {
-            email: req.driverEmail,
-            robots: db.data.robots,
-            activeRobots: Object.values(aliveRobots),
-            err: errMsg
-        });
-    } else {
-        res.redirect('/');
-    };
-});
-
-app.get('/ms-login', (req, res) => {
-    if (req.driverEmail) {
-        // need to implement state :/ 
-        res.redirect("https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?" +
-            "client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3" +
-            "&response_type=code" +
-            "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
-            "&response_mode=query" +
-            "&scope=user.readbasic.all%20presence.read.all" +
-            "&state=12345");
-    } else {
-        res.redirect('/');
-    }
-});
-
-app.get('/ms-socket', (req, res) => {
-    fetch('https://login.microsoftonline.com/organizations/oauth2/v2.0/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3' +
-            '&scope=user.readbasic.all%20presence.read.all' +
-            '&code=' + req.query.code +
-            '&grant_type=authorization_code' +
-            '&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket' +
-            '&client_secret=Vwm8Q~BQylr9~apjFDMVFhhsv0Za0ZYdePB7dabY'
-    })
-        .then(response => response.json())
-        .then(data => {
-
-            fetch('https://graph.microsoft.com/v1.0/me/presence', {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + data.access_token,
-                    'Host': 'graph.microsoft.com'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                });
-
-        });
-
-    res.redirect('/');
 });
 
 // robot-side interface and controller

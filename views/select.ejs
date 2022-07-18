@@ -23,13 +23,18 @@
         <div class="container mw-540 px-3 py-2">
             <div class=" d-flex">
                 <div class="d-flex py-2 me-auto">
-                    <h6 class="my-auto text-white">Welcome,<br><b>
-                            <%= email %>!
-                        </b></h6>
+                    <h6 class="my-auto text-white"><b><%= name %></b><br>🏛️ The University of Nottingham</h6>
                 </div>
                 <div class="d-flex py-2">
-                    <form method="POST" action="/logout">
-                        <button type="submit" class="btn btn-light">🏃🏼 Logout</button>
+                    <% if (admin == "true") { %>
+                    <form method="GET" action="/admin-dashboard">
+                        <button type="submit" class="btn btn-light me-2 my-auto">⚙️</button>
+                    </form>
+                    <% } %>
+
+                    <form method="GET" action="/ms-logout">
+                        <button type="submit" class="btn btn-light my-auto"><img class="me-2" src="ms-logo.svg"> Sign
+                            out</button>
                     </form>
                 </div>
             </div>
@@ -38,35 +43,31 @@
 
     <div class="container mw-540 p-3">
 
-        <% if (err !='none' ) { %>
-            <div class="alert alert-danger" role="alert">
-                <%= err %>
+        <% if (error == "disconnect" ) { %>
+        <div class="alert alert-danger" role="alert">
+            Robot disconnected from server. Please try another!
+        </div>
+        <% } %>
+
+        <h6 class="mx-3">Connect to a robot</h6>
+
+        <% Object.keys(robots).forEach(function(uuid) { %>
+        <div class="d-flex bg-light text-black mx-2 mt-3 mb-2 px-4 py-3 rounded">
+            <div class="d-flex me-auto">
+                <h6 class="my-auto">🤖<b class="text-primary">
+                        <%= robots[uuid].name %>
+                    </b> — <%= robots[uuid].location %>
+                </h6>
             </div>
-            <% } %>
-
-                <h6 class="mx-3">Connect to a robot</h6>
-
-                <% Object.keys(robots).forEach(function(uuid) { %>
-                    <div class="d-flex bg-light text-black mx-2 mt-3 mb-2 px-4 py-3 rounded">
-                        <div class="d-flex me-auto">
-                            <h6 class="my-auto">🤖<b class="text-primary">
-                                    <%= robots[uuid].name %>
-                                </b> — <%= robots[uuid].location %>
-                            </h6>
-                        </div>
-                        <form method="GET" action="/<%= uuid %> %>">
-                            <% if (activeRobots.includes(uuid)) { %>
-                                <button type="submit" class="btn btn-success">🔌Connect</button>
-                                <% } else { %>
-                                    <button type="submit" class="btn btn-danger" disabled>❌Offline</button>
-                                    <% } %>
-                        </form>
-                    </div>
-                    <% }) %>
-
-                        <form method="GET" action="/ms-login">
-                            <button type="submit" class="btn btn-secondary btn-sm mx-3">MS Auth</button>
-                        </form>
+            <form method="GET" action="/<%= uuid %> %>">
+                <% if (activeRobots.includes(uuid)) { %>
+                <button type="submit" class="btn btn-success">🔌Connect</button>
+                <% } else { %>
+                <button type="submit" class="btn btn-danger" disabled>❌Offline</button>
+                <% } %>
+            </form>
+        </div>
+        <% }) %>
     </div>
 
 

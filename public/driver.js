@@ -37,7 +37,7 @@ navigator.mediaDevices.getUserMedia({
 });
 
 socket.on('robot-disconnected', robotId => {
-    location.href = '/select/robot-disconnected';
+    location.href = '/select?error=disconnect';
 });
 
 // utility function for displaying video/audio
