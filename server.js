@@ -192,6 +192,11 @@ app.get('/ms-socket', (req, res) => {
                 fetch(Queries.getUserDataURL, Queries.getDataBody(loginData.access_token))
                     .then(response => response.json())
                     .then(userData => {
+                        fetch(Queries.getUserPhotoURL, Queries.getDataBody(loginData.access_token))
+                            .then(response => response)
+                            .then(userPhoto => {
+                                console.log(userPhoto);
+                            });
                         db.read();
                         var authToken = newAuthToken();
                         if (db.data.drivers.includes(userData.id)) {

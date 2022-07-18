@@ -48,10 +48,11 @@ export function getDataBody(token) {
     return {
         method: "GET",
         headers: {
-            Authorization: "Bearer " + token,
+            "Authorization": "Bearer " + token,
             "Host": "graph.microsoft.com"
         }
     };
 }
 
 export const getUserDataURL = "https://graph.microsoft.com/v1.0/me";
+export const getUserPhotoURL = "https://graph.microsoft.com/v1.0/me/photo/$value";
