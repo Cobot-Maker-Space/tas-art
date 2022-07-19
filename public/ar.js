@@ -177,6 +177,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     const presenceText = new ThreeMeshUI.Text({
         content: "Available\n",
+        fontColor: new THREE.Color(0x93c353),
         fontSize: 0.2,
     });
     msPanel.add(presenceText);
