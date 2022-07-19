@@ -36,6 +36,11 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         scene.add(markerRoots[uuid]);
     });
 
+    // DEMO ONLY
+    markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"] = new THREE.Group;
+    markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].name = "ce03d2c4-e85f-430b-a16c-dc5b189a5b4c";
+    scene.add(markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"]);
+
     // source instantiation, i.e., the webRTC stream coming from the robot
     var arToolkitSource = new THREEx.ArToolkitSource({
         sourceType: 'video',
@@ -88,6 +93,12 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 type: 'pattern',
                 patternUrl: 'assets/fiducial/' + uuid + '.patt',
             });
+        });
+
+        // DEMO ONLY
+        markerControls = new THREEx.ArMarkerControls(arToolkitContext, markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"], {
+            type: 'pattern',
+            patternUrl: 'assets/fiducial/ce03d2c4-e85f-430b-a16c-dc5b189a5b4c.patt',
         });
     };
 
@@ -148,47 +159,29 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     // microsoft profile rendering
 
-    const panel = new ThreeMeshUI.Block({
-        width: 1.0,
-        height: 1.0,
+    const msPanel = new ThreeMeshUI.Block({
+        width: 2,
+        height: 1.5,
         padding: 0.2,
         fontFamily: 'Roboto-msdf.json',
         fontTexture: 'Roboto-msdf.png',
-        contentDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        textAlign: 'left',
     });
-
-    const photo = new ThreeMeshUI.Block({
-        width: 0.3,
-        height: 0.3
-    });
-
-    panel.add(photo);
-
-    const name = new ThreeMeshUI.Block({
-        width: 0.7,
-        height: 0.3,
-        backgroundOpacity: 0
-    });
-
-    panel.add(name);
 
     const nameText = new ThreeMeshUI.Text({
-        content: "Isaac Phypers",
-        fontSize: 0.1
+        content: "Joel Fischer\n",
+        fontSize: 0.25,
     });
+    msPanel.add(nameText);
 
-    name.add(nameText);
+    const presenceText = new ThreeMeshUI.Text({
+        content: "Available\n",
+        fontSize: 0.2,
+    });
+    msPanel.add(presenceText);
 
-    new THREE.TextureLoader().load('https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png', (texture) => {
-        photo.set({
-          backgroundTexture: texture,
-        });
-      });
-
-    //scene.add(panel);
-
-    panel.rotateX(-1.5708);
+    msPanel.rotateX(-1.5708);
 
     renderFunctions.push(function () {
         ThreeMeshUI.update();
@@ -233,7 +226,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 // instance of geometry, with smart action specific parameters (i.e., materials)
                 planes[uuid] = new THREE.Mesh(geometry, materials[uuid]);
                 planes[uuid].rotateX(-1.5708);
-                markerRoots[uuid].add(panel); //planes[uuid]);
+                markerRoots[uuid].add(planes[uuid]);
 
                 // callback for instance of geometry when raytraced (clicked)
                 planes[uuid].callback = function () {
@@ -246,6 +239,9 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                     })();
                 };
             });
+
+            // DEMO ONLY
+            markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].add(msPanel);
         })();
 
     renderFunctions.push(function () {

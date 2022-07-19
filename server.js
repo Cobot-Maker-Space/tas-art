@@ -192,11 +192,14 @@ app.get('/ms-socket', (req, res) => {
                 fetch(Queries.getUserDataURL, Queries.getDataBody(loginData.access_token))
                     .then(response => response.json())
                     .then(userData => {
+                        /*
                         fetch(Queries.getUserPhotoURL, Queries.getDataBody(loginData.access_token))
-                            .then(response => response)
-                            .then(userPhoto => {
-                                console.log(userPhoto);
+                            .then(response => response.blob())
+                            .then(userPhotoData => {
+                                var imageUrl = URL.createObjectURL(userPhotoData);
                             });
+                        */
+
                         db.read();
                         var authToken = newAuthToken();
                         if (db.data.drivers.includes(userData.id)) {
@@ -373,7 +376,7 @@ app.get('/robot/:uuid', (req, res) => {
 
 // driver interface and controller
 app.get('/:uuid', (req, res) => {
-    if (req.driverEmail) {
+    if (req.driverId) {
         db.read();
         res.render('driver', {
             robotId: req.params.uuid,

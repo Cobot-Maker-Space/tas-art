@@ -1,6 +1,9 @@
 import { initAR } from './ar.js';
 import { configWebRTC } from './webrtc_config.js';
 
+// constant for async delays
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // containers for video streams
 const localStreamDisplay = document.getElementById('local-view');
 const foreignStreamDisplay = document.getElementById('foreign-view');
@@ -116,11 +119,25 @@ socket.on('health-msg', message => {
 
 // input handling for buttons and arrow keys
 function initControls() {
+
+    async function resetHand() {
+        await delay(10000);
+        document.getElementById('hand').checked = false;
+        document.getElementById('hand').disabled = false;
+    }
+
     document.getElementById('tilt').oninput = function () {
         socket.emit('control-msg', document.getElementById('tilt').value, ROBOT_ID);
     };
     document.getElementById('undock').onclick = function () {
         socket.emit('control-msg', 'undock', ROBOT_ID);
+    };
+    document.getElementById('hand').onclick = function () {
+        if (document.getElementById('hand').disabled == false) {
+            socket.emit('ifttt-event', "https://maker.ifttt.com/trigger/doorbell/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X");
+            document.getElementById('hand').disabled = true;
+            resetHand();
+        }
     };
     document.getElementById('muted').onclick = function () {
         if (muted) {
