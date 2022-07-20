@@ -163,29 +163,53 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         width: 2,
         height: 1.5,
         padding: 0.2,
+        borderRadius: 0.15,
+        borderWidth: 0.05,
+        borderColor: new THREE.Color(0xFFFFFF),
+        borderOpacity: 0.5,
         fontFamily: 'Roboto-msdf.json',
         fontTexture: 'Roboto-msdf.png',
         justifyContent: 'center',
         textAlign: 'left',
     });
 
-    const nameText = new ThreeMeshUI.Text({
-        content: "Joel Fischer\n",
-        fontSize: 0.25,
-    });
-    msPanel.add(nameText);
-
-    const presenceText = new ThreeMeshUI.Text({
-        content: "Available\n",
-        fontColor: new THREE.Color(0x93c353),
-        fontSize: 0.2,
-    });
-    msPanel.add(presenceText);
-
     msPanel.rotateX(-1.5708);
 
     renderFunctions.push(function () {
         ThreeMeshUI.update();
+    });
+
+    const loader = new THREE.TextureLoader();
+    loader.load('/ms-available.png', (texture) => {
+        
+        const nameText = new ThreeMeshUI.Text({
+            content: "Joel Fischer\n",
+            fontSize: 0.25,
+        });
+        msPanel.add(nameText);
+
+        const iconBlock = new ThreeMeshUI.InlineBlock({
+            borderRadius: 0,
+            borderWidth: 0,
+            height: 0.15,
+            width: 0.15,
+            backgroundTexture: texture
+        });
+        msPanel.add(iconBlock);
+
+        const presenceText = new ThreeMeshUI.Text({
+            content: " Available\n",
+            fontColor: new THREE.Color(0x93c353),
+            fontSize: 0.2,
+        });
+        msPanel.add(presenceText);
+
+        const buttonText = new ThreeMeshUI.Text({
+            content: "\nClick to knock",
+            fontColor: new THREE.Color(0x87C1FF),
+            fontSize: 0.15,
+        });
+        msPanel.add(buttonText);
     });
 
     // all functions in renderFunctions will run once per frame
