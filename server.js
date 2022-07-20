@@ -70,6 +70,15 @@ function deleteElement(array, value) {
     });
 };
 
+var activeRobots = {};
+
+// volatile record of logged in users
+const adminAuthTokens = {};
+const driverAuthTokens = {};
+
+// volatile data of logged in users
+const activeUsers = {};
+
 // HTTPS
 
 greenlock.init({
@@ -78,8 +87,6 @@ greenlock.init({
     maintainerEmail: "psyip1@nottingham.ac.uk",
     cluster: false
 }).ready(socketWorker);
-
-var activeRobots = {};
 
 function socketWorker(glx) {
     var server = glx.httpsServer();
@@ -129,6 +136,10 @@ function socketWorker(glx) {
         socket.on('ifttt-event', (url) => {
             get(url);
         });
+        socket.on('chat-msg', (chat, msg) => {
+            // Oh my god fix
+            //fetch(Queries.sendChatURL(chat), Queries.sendChatBody(Object.values(activeUsers)[0].access_token, msg))
+        })
         // disconnect
         socket.on('disconnect', reason => {
             io.emit('robot-disconnected', activeRobots[socket.id]);
@@ -140,13 +151,6 @@ function socketWorker(glx) {
 };
 
 // ROUTING
-
-// volatile record of logged in users
-const adminAuthTokens = {};
-const driverAuthTokens = {};
-
-// volatile data of logged in users
-const activeUsers = {};
 
 // route precedent to collect cookie(s) from browser for auth
 app.use((req, res, next) => {

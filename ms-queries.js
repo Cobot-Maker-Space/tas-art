@@ -1,12 +1,14 @@
 // need to implement login state verification for security
 
+const permissions = "&scope=user.readbasic.all%20presence.read.all%20chat.read%20chat.readbasic%20chat.readwrite";
+
 export const login =
     "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?" +
     "client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3" +
     "&response_type=code" +
     "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
     "&response_mode=query" +
-    "&scope=user.readbasic.all%20presence.read.all" +
+    permissions +
     "&state=12345";
 export const logout =
     "https://login.microsoftonline.com/organizations/oauth2/v2.0/logout?" +
@@ -21,7 +23,7 @@ export function requestTokenBody(code) {
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: "client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3" +
-            "&scope=user.readbasic.all%20presence.read.all" +
+            permissions +
             "&code=" + code +
             "&grant_type=authorization_code" +
             "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
@@ -36,7 +38,7 @@ export function refreshTokenBody(refresh_token) {
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: "client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3" +
-            "&scope=user.readbasic.all%20presence.read.all" +
+            permissions +
             "&refresh_token=" + refresh_token +
             "&grant_type=refresh_token" +
             "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
@@ -44,6 +46,8 @@ export function refreshTokenBody(refresh_token) {
     };
 };
 
+export const getUserDataURL = "https://graph.microsoft.com/v1.0/me";
+export const getUserPhotoURL = "https://graph.microsoft.com/v1.0/me/photo/$value";
 export function getDataBody(token) {
     return {
         method: "GET",
@@ -54,5 +58,18 @@ export function getDataBody(token) {
     };
 }
 
-export const getUserDataURL = "https://graph.microsoft.com/v1.0/me";
-export const getUserPhotoURL = "https://graph.microsoft.com/v1.0/me/photo/$value";
+export function sendChatURL(chat_id) {
+    return "https://graph.microsoft.com/v1.0/me/chats/" + chat_id + "/messages";
+}
+export function sendChatBody(token, msg) {
+    console.log(JSON.stringify({ "content": "Test" }));
+    return {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Host": "graph.microsoft.com",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ "content": "Test" })
+    }
+}

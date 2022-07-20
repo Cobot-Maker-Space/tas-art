@@ -114,6 +114,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     });
     var cursorSelectMaterial = new THREE.MeshBasicMaterial({
         map: THREE.ImageUtils.loadTexture('/assets/cursor_select.png'),
+        depthTest: false,
         transparent: true,
         opacity: 1,
         side: THREE.DoubleSide
@@ -133,6 +134,12 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 cursorActive = true;
             };
         });
+
+        // DEMO ONLY
+        var demoTouch = raycaster.intersectObject(markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"], true);
+        if (demoTouch.length > 0 && markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].position.x + markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].position.y != 0) {
+            cursorActive = true;
+        }
 
         if (cursorActive) {
             cursorPlane.material = cursorSelectMaterial;
@@ -181,7 +188,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     const loader = new THREE.TextureLoader();
     loader.load('/ms-available.png', (texture) => {
-        
+
         const nameText = new ThreeMeshUI.Text({
             content: "Joel Fischer\n",
             fontSize: 0.25,
@@ -263,10 +270,15 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                         planes[uuid].material = materials[uuid];
                     })();
                 };
-            });
 
-            // DEMO ONLY
-            markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].add(msPanel);
+                // DEMO ONLY
+                msPanel.callback = function () {
+                    socket.emit('chat-msg', "19:21f64eef-d9b7-46be-80c5-82778703420b_3bc626ec-147f-4ed7-b225-d9a317288f88@unq.gbl.spaces", "Hi, I'm outside your office using a telepresence robot. Could we have a chat?");
+                };
+
+                // DEMO ONLY
+                markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].add(msPanel);
+            });
         })();
 
     renderFunctions.push(function () {
@@ -323,6 +335,12 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 intersects[uuid][0].object.callback();
             };
         });
+
+        // DEMO ONLY
+        var demoClick = raycaster.intersectObject(markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"], true);
+        if (demoClick.length > 0 && markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].position.x + markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].position.y != 0) {
+            msPanel.callback();
+        };
     }, false);
 
     socket.on('health-msg', message => {
