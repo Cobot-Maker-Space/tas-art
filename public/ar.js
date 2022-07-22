@@ -1,3 +1,5 @@
+import * as Queries from '../ms-queries.js';
+
 // constant for async delays
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -186,37 +188,74 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         ThreeMeshUI.update();
     });
 
-    const loader = new THREE.TextureLoader();
-    loader.load('/ms-available.png', (texture) => {
+    socket.emit("get-presence", "c9bafe25-459f-4b6f-a6e8-41d05b645bbb");
 
-        const nameText = new ThreeMeshUI.Text({
-            content: "Joel Fischer\n",
-            fontSize: 0.25,
-        });
-        msPanel.add(nameText);
+    socket.on('user-presence', presence => {
 
-        const iconBlock = new ThreeMeshUI.InlineBlock({
-            borderRadius: 0,
-            borderWidth: 0,
-            height: 0.15,
-            width: 0.15,
-            backgroundTexture: texture
-        });
-        msPanel.add(iconBlock);
+        var text;
+        var colour;
+        var icon;
 
-        const presenceText = new ThreeMeshUI.Text({
-            content: " Available\n",
-            fontColor: new THREE.Color(0x93c353),
-            fontSize: 0.2,
-        });
-        msPanel.add(presenceText);
+        switch (presence.toLowerCase()) {
+            case ("available" || "availableidle"):
+                text = "Available"
+                colour = new THREE.Color(0x93c353);
+                icon = "ms-available.png";
+                break;
+            case ("away" || "berightback"):
+                text = "Away"
+                colour = new THREE.Color(0xfcd116);
+                icon = "ms-away.png";
+                break;
+            case ("busy" || "busyidle"):
+                text = "Busy"
+                colour = new THREE.Color(0xc4314b);
+                icon = "ms-busy.png";
+                break;
+            case ("donotdisturb"):
+                text = "Do not disturb"
+                colour = new THREE.Color(0xc4314b);
+                icon = "ms-dnd.png";
+                break;
+            case ("offline" || "presenceunknown"):
+                text = "Offline"
+                colour = new THREE.Color(0x9c9c9c);
+                icon = "ms-offline.png";
+                break;
+        }
 
-        const buttonText = new ThreeMeshUI.Text({
-            content: "\nClick to knock",
-            fontColor: new THREE.Color(0x87C1FF),
-            fontSize: 0.15,
+        const loader = new THREE.TextureLoader();
+        loader.load(icon, (texture) => {
+
+            const nameText = new ThreeMeshUI.Text({
+                content: "Joel Fischer\n",
+                fontSize: 0.25,
+            });
+            msPanel.add(nameText);
+
+            const iconBlock = new ThreeMeshUI.InlineBlock({
+                borderRadius: 0,
+                borderWidth: 0,
+                height: 0.15,
+                width: 0.15,
+                backgroundTexture: texture
+            });
+            msPanel.add(iconBlock);
+
+            const presenceText = new ThreeMeshUI.Text({
+                content: " " + text + "\n",
+                fontColor: colour,
+                fontSize: 0.2,
+            });
+            msPanel.add(presenceText);
+
+            const buttonText = new ThreeMeshUI.Text({
+                content: "\nClick to knock",
+                fontColor: new THREE.Color(0x87C1FF),
+                fontSize: 0.15,
+            });
+            msPanel.add(buttonText);
         });
-        msPanel.add(buttonText);
     });
 
     // all functions in renderFunctions will run once per frame

@@ -10,17 +10,13 @@
     "T0SbrYF+yAKwlvykeEx+jpWP6kvfjR74RSg8nTSjk5c=": {
       "private": "a31e1e24-5449-4097-a015-52dea9d5a769",
       "name": "Fizz",
-      "location": "Cambridge, UK"
+      "location": "Nottingham, UK"
     }
   },
   "smart_actions": {
     "1d1f3369-fb62-453f-9380-b6a716967075": {
-      "name": "MSR Lightbulb",
+      "name": "CMS Lightbulb",
       "webhook": "https://maker.ifttt.com/trigger/light_switch/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
-    },
-    "8949ab62-bcb8-4870-994f-217ae834ed8e": {
-      "name": "MSR Doorbell",
-      "webhook": "https://maker.ifttt.com/trigger/doorbell/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
     }
   },
   "ms_presence": {

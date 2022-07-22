@@ -58,18 +58,21 @@ export function getDataBody(token) {
     };
 }
 
+export function getUserPresenceURL(user_id) {
+    return "https://graph.microsoft.com/v1.0/users/" + user_id + "/presence";
+}
+
 export function sendChatURL(chat_id) {
     return "https://graph.microsoft.com/v1.0/me/chats/" + chat_id + "/messages";
 }
 export function sendChatBody(token, msg) {
-    console.log(JSON.stringify({ "content": "Test" }));
     return {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + token,
             "Host": "graph.microsoft.com",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         },
-        body: JSON.stringify({ "content": "Test" })
+        body: JSON.stringify({ 'content': 'Test' })
     }
 }
