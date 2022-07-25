@@ -37,11 +37,11 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         markerRoots[uuid].name = uuid;
         scene.add(markerRoots[uuid]);
     });
-
-    // DEMO ONLY
-    markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"] = new THREE.Group;
-    markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].name = "ce03d2c4-e85f-430b-a16c-dc5b189a5b4c";
-    scene.add(markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"]);
+    Object.keys(officeCards).forEach(function (uuid) {
+        markerRoots[uuid] = new THREE.Group;
+        markerRoots[uuid].name = uuid;
+        scene.add(markerRoots[uuid]);
+    });
 
     // source instantiation, i.e., the webRTC stream coming from the robot
     var arToolkitSource = new THREEx.ArToolkitSource({
@@ -70,7 +70,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         };
     };
 
-
     // unique THREEx instantiations for AR.js functionality
     function triggerARContext() {
 
@@ -96,11 +95,11 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 patternUrl: 'assets/fiducial/' + uuid + '.patt',
             });
         });
-
-        // DEMO ONLY
-        markerControls = new THREEx.ArMarkerControls(arToolkitContext, markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"], {
-            type: 'pattern',
-            patternUrl: 'assets/fiducial/ce03d2c4-e85f-430b-a16c-dc5b189a5b4c.patt',
+        Object.keys(officeCards).forEach(function (uuid) {
+            markerControls = new THREEx.ArMarkerControls(arToolkitContext, markerRoots[uuid], {
+                type: 'pattern',
+                patternUrl: 'assets/fiducial/' + uuid + '.patt',
+            });
         });
     };
 
@@ -131,17 +130,16 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         var intersects = {};
         Object.keys(smartActions).forEach(function (uuid) {
             intersects[uuid] = raycaster.intersectObjects(markerRoots[uuid].children);
-
             if (intersects[uuid].length > 0 && markerRoots[uuid].position.x + markerRoots[uuid].position.y != 0) {
                 cursorActive = true;
             };
         });
-
-        // DEMO ONLY
-        var demoTouch = raycaster.intersectObject(markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"], true);
-        if (demoTouch.length > 0 && markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].position.x + markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].position.y != 0) {
-            cursorActive = true;
-        }
+        Object.keys(officeCards).forEach(function (uuid) {
+            intersects[uuid] = raycaster.intersectObject(markerRoots[uuid], true);
+            if (intersects[uuid].length > 0 && markerRoots[uuid].position.x + markerRoots[uuid].position.y != 0) {
+                cursorActive = true;
+            };
+        });
 
         if (cursorActive) {
             cursorPlane.material = cursorSelectMaterial;
@@ -164,98 +162,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         } else {
             scene.remove(cursorPlane);
         };
-    });
-
-    // microsoft profile rendering
-
-    const msPanel = new ThreeMeshUI.Block({
-        width: 2,
-        height: 1.5,
-        padding: 0.2,
-        borderRadius: 0.15,
-        borderWidth: 0.05,
-        borderColor: new THREE.Color(0xFFFFFF),
-        borderOpacity: 0.5,
-        fontFamily: 'Roboto-msdf.json',
-        fontTexture: 'Roboto-msdf.png',
-        justifyContent: 'center',
-        textAlign: 'left',
-    });
-
-    msPanel.rotateX(-1.5708);
-
-    renderFunctions.push(function () {
-        ThreeMeshUI.update();
-    });
-
-    socket.emit("get-presence", "c9bafe25-459f-4b6f-a6e8-41d05b645bbb");
-
-    socket.on('user-presence', presence => {
-
-        var text;
-        var colour;
-        var icon;
-
-        switch (presence.toLowerCase()) {
-            case ("available" || "availableidle"):
-                text = "Available"
-                colour = new THREE.Color(0x93c353);
-                icon = "ms-available.png";
-                break;
-            case ("away" || "berightback"):
-                text = "Away"
-                colour = new THREE.Color(0xfcd116);
-                icon = "ms-away.png";
-                break;
-            case ("busy" || "busyidle"):
-                text = "Busy"
-                colour = new THREE.Color(0xc4314b);
-                icon = "ms-busy.png";
-                break;
-            case ("donotdisturb"):
-                text = "Do not disturb"
-                colour = new THREE.Color(0xc4314b);
-                icon = "ms-dnd.png";
-                break;
-            case ("offline" || "presenceunknown"):
-                text = "Offline"
-                colour = new THREE.Color(0x9c9c9c);
-                icon = "ms-offline.png";
-                break;
-        }
-
-        const loader = new THREE.TextureLoader();
-        loader.load(icon, (texture) => {
-
-            const nameText = new ThreeMeshUI.Text({
-                content: "Joel Fischer\n",
-                fontSize: 0.25,
-            });
-            msPanel.add(nameText);
-
-            const iconBlock = new ThreeMeshUI.InlineBlock({
-                borderRadius: 0,
-                borderWidth: 0,
-                height: 0.15,
-                width: 0.15,
-                backgroundTexture: texture
-            });
-            msPanel.add(iconBlock);
-
-            const presenceText = new ThreeMeshUI.Text({
-                content: " " + text + "\n",
-                fontColor: colour,
-                fontSize: 0.2,
-            });
-            msPanel.add(presenceText);
-
-            const buttonText = new ThreeMeshUI.Text({
-                content: "\nClick to knock",
-                fontColor: new THREE.Color(0x87C1FF),
-                fontSize: 0.15,
-            });
-            msPanel.add(buttonText);
-        });
     });
 
     // all functions in renderFunctions will run once per frame
@@ -310,13 +216,106 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                     })();
                 };
 
-                // DEMO ONLY
-                msPanel.callback = function () {
-                    socket.emit('chat-msg', "19:21f64eef-d9b7-46be-80c5-82778703420b_3bc626ec-147f-4ed7-b225-d9a317288f88@unq.gbl.spaces", "Hi, I'm outside your office using a telepresence robot. Could we have a chat?");
-                };
 
-                // DEMO ONLY
-                markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].add(msPanel);
+            });
+
+            Object.keys(officeCards).forEach(function (uuid) {
+
+                // microsoft profile rendering
+
+                const msPanel = new ThreeMeshUI.Block({
+                    width: 2,
+                    height: 1.5,
+                    padding: 0.2,
+                    borderRadius: 0.15,
+                    borderWidth: 0.05,
+                    borderColor: new THREE.Color(0xFFFFFF),
+                    borderOpacity: 0.5,
+                    fontFamily: 'Roboto-msdf.json',
+                    fontTexture: 'Roboto-msdf.png',
+                    justifyContent: 'center',
+                    textAlign: 'left',
+                });
+
+                msPanel.rotateX(-1.5708);
+
+                renderFunctions.push(function () {
+                    ThreeMeshUI.update();
+                });
+
+                socket.emit("get-office-card", uuid);
+
+                socket.on('office-card', info => {
+
+                    var text;
+                    var colour;
+                    var icon;
+
+                    switch (info.presence.toLowerCase()) {
+                        case ("available" || "availableidle"):
+                            text = "Available"
+                            colour = new THREE.Color(0x93c353);
+                            icon = "ms-available.png";
+                            break;
+                        case ("away" || "berightback"):
+                            text = "Away"
+                            colour = new THREE.Color(0xfcd116);
+                            icon = "ms-away.png";
+                            break;
+                        case ("busy" || "busyidle"):
+                            text = "Busy"
+                            colour = new THREE.Color(0xc4314b);
+                            icon = "ms-busy.png";
+                            break;
+                        case ("donotdisturb"):
+                            text = "Do not disturb"
+                            colour = new THREE.Color(0xc4314b);
+                            icon = "ms-dnd.png";
+                            break;
+                        case ("offline" || "presenceunknown"):
+                            text = "Offline"
+                            colour = new THREE.Color(0x9c9c9c);
+                            icon = "ms-offline.png";
+                            break;
+                    }
+
+                    const loader = new THREE.TextureLoader();
+                    loader.load(icon, (texture) => {
+
+                        const nameText = new ThreeMeshUI.Text({
+                            content: info.displayName + "\n",
+                            fontSize: 0.25,
+                        });
+                        msPanel.add(nameText);
+
+                        const iconBlock = new ThreeMeshUI.InlineBlock({
+                            borderRadius: 0,
+                            borderWidth: 0,
+                            height: 0.15,
+                            width: 0.15,
+                            backgroundTexture: texture
+                        });
+                        msPanel.add(iconBlock);
+
+                        const presenceText = new ThreeMeshUI.Text({
+                            content: " " + text + "\n",
+                            fontColor: colour,
+                            fontSize: 0.2,
+                        });
+                        msPanel.add(presenceText);
+
+                        const buttonText = new ThreeMeshUI.Text({
+                            content: "\nClick to knock",
+                            fontColor: new THREE.Color(0x87C1FF),
+                            fontSize: 0.15,
+                        });
+                        msPanel.add(buttonText);
+                    });
+                });
+
+                markerRoots[uuid].callback = function () {
+                    socket.emit("chat-msg", officeCards[uuid].chat_id, "Hi, I'm outside your office using a telepresence robot. Could we have a chat?");
+                };
             });
         })();
 
@@ -374,12 +373,15 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 intersects[uuid][0].object.callback();
             };
         });
+        
+        Object.keys(officeCards).forEach(function (uuid) {
+            intersects[uuid] = raycaster.intersectObject(markerRoots[uuid], true);
+            
+            if (intersects[uuid].length > 0 && markerRoots[uuid].position.x + markerRoots[uuid].position.y != 0) {
+                intersects[uuid].object.callback();
+            };
+        });
 
-        // DEMO ONLY
-        var demoClick = raycaster.intersectObject(markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"], true);
-        if (demoClick.length > 0 && markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].position.x + markerRoots["ce03d2c4-e85f-430b-a16c-dc5b189a5b4c"].position.y != 0) {
-            msPanel.callback();
-        };
     }, false);
 
     socket.on('health-msg', message => {
@@ -388,4 +390,3 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         };
     });
 };
-

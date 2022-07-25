@@ -1,6 +1,6 @@
 // need to implement login state verification for security
 
-const permissions = "&scope=user.readbasic.all%20presence.read.all%20chat.read%20chat.readbasic%20chat.readwrite";
+const permissions = "&scope=user.readbasic.all%20presence.read.all%20chat.read%20chat.readbasic%20chat.readwrite%20chatmessage.send";
 
 export const login =
     "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?" +
@@ -47,6 +47,10 @@ export function refreshTokenBody(refresh_token) {
 };
 
 export const getUserDataURL = "https://graph.microsoft.com/v1.0/me";
+export function getOtherUserDataURL(id) {
+    return "https://graph.microsoft.com/v1.0/users/" + id;
+}
+
 export const getUserPhotoURL = "https://graph.microsoft.com/v1.0/me/photo/$value";
 export function getDataBody(token) {
     return {
@@ -63,7 +67,7 @@ export function getUserPresenceURL(user_id) {
 }
 
 export function sendChatURL(chat_id) {
-    return "https://graph.microsoft.com/v1.0/me/chats/" + chat_id + "/messages";
+    return "https://graph.microsoft.com/v1.0/chats/" + chat_id + "/messages";
 }
 export function sendChatBody(token, msg) {
     return {
@@ -71,8 +75,8 @@ export function sendChatBody(token, msg) {
         headers: {
             "Authorization": "Bearer " + token,
             "Host": "graph.microsoft.com",
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
         },
-        body: JSON.stringify({ 'content': 'Test' })
+        body: JSON.stringify({"body": { "content": msg }})
     }
 }

@@ -3,8 +3,7 @@
     "3bc626ec-147f-4ed7-b225-d9a317288f88"
   ],
   "drivers": [
-    "3bc626ec-147f-4ed7-b225-d9a317288f88",
-    "8e7c430b-01af-4ce0-841b-b786ba456b56"
+    "3bc626ec-147f-4ed7-b225-d9a317288f88"
   ],
   "robots": {
     "T0SbrYF+yAKwlvykeEx+jpWP6kvfjR74RSg8nTSjk5c=": {
@@ -19,9 +18,10 @@
       "webhook": "https://maker.ifttt.com/trigger/light_switch/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
     }
   },
-  "ms_presence": {
+  "ms_office_cards": {
     "ce03d2c4-e85f-430b-a16c-dc5b189a5b4c": {
-      "id": "c9bafe25-459f-4b6f-a6e8-41d05b645bbb"
+      "id": "c9bafe25-459f-4b6f-a6e8-41d05b645bbb",
+      "chat_id": "19:21f64eef-d9b7-46be-80c5-82778703420b_3bc626ec-147f-4ed7-b225-d9a317288f88@unq.gbl.spaces"
     }
   }
 }

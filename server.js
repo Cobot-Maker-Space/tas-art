@@ -138,20 +138,22 @@ function socketWorker(glx) {
         });
         socket.on('chat-msg', (chat, msg) => {
             // Oh my god fix
-            
             fetch(Queries.sendChatURL(chat), Queries.sendChatBody(Object.values(activeUsers)[0].access_token, msg))
                 .then(response => response.json())
                 .then(test => {
                     console.log(test);
                 })
-                
         });
-        socket.on('get-presence', user_id => {
-            fetch(Queries.getUserPresenceURL(user_id), Queries.getDataBody(Object.values(activeUsers)[0].access_token))
-            .then(response => response.json())
-            .then(presence => {
-                io.emit('user-presence', presence.availability);
-            });
+        socket.on('get-office-card', user_id => {
+            fetch(Queries.getOtherUserDataURL(user_id), Queries.getDataBody(Object.values(activeUsers)[0].access_token))
+                .then(response => response.json())
+                .then(info => {
+                    fetch(Queries.getUserPresenceURL(user_id), Queries.getDataBody(Object.values(activeUsers)[0].access_token))
+                        .then(response => response.json())
+                        .then(presence => {
+                            io.emit('office-card', { name: info.displayName, presence: presence.availability });
+                        });
+                });
         });
         // disconnect
         socket.on('disconnect', reason => {
@@ -399,7 +401,8 @@ app.get('/:uuid', (req, res) => {
             robotId: req.params.uuid,
             robotName: db.data.robots[req.params.uuid].name,
             robotLocation: db.data.robots[req.params.uuid].location,
-            smartActionsData: JSON.stringify(db.data.smart_actions)
+            smartActionsData: JSON.stringify(db.data.smart_actions),
+            officeCardsData: JSON.stringify(db.data.ms_office_cards)
         });
     } else {
         res.redirect('/');
