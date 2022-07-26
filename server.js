@@ -138,11 +138,7 @@ function socketWorker(glx) {
         });
         socket.on('chat-msg', (chat, msg) => {
             // Oh my god fix
-            fetch(Queries.sendChatURL(chat), Queries.sendChatBody(Object.values(activeUsers)[0].access_token, msg))
-                .then(response => response.json())
-                .then(test => {
-                    console.log(test);
-                })
+            fetch(Queries.sendChatURL(chat), Queries.sendChatBody(Object.values(activeUsers)[0].access_token, msg));
         });
         socket.on('get-office-card', user_id => {
             fetch(Queries.getOtherUserDataURL(user_id), Queries.getDataBody(Object.values(activeUsers)[0].access_token))
@@ -151,7 +147,7 @@ function socketWorker(glx) {
                     fetch(Queries.getUserPresenceURL(user_id), Queries.getDataBody(Object.values(activeUsers)[0].access_token))
                         .then(response => response.json())
                         .then(presence => {
-                            io.emit('office-card', { name: info.displayName, presence: presence.availability });
+                            io.emit("office-card", { "name": info.displayName, "presence": presence.availability });
                         });
                 });
         });

@@ -1,5 +1,3 @@
-import * as Queries from '../ms-queries.js';
-
 // constant for async delays
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -11,26 +9,20 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     var lastTime = 0;
 
-    // webGL renderer instantiation
     var renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true
     });
 
     renderer.setSize(foreignStreamDisplay.clientWidth, foreignStreamDisplay.clientHeight);
-    // renderer will create canvas element in html for AR graphics
     foreignStreamDisplay.appendChild(renderer.domElement);
 
-    // scene and camera instantiation for AR matrix calculations
     var renderFunctions = [];
     var arToolkitContext, markerControls;
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera();
     scene.add(camera);
 
-    // objects for containing 'marker packages', i.e., relations
-    // between fiducial markers, the AR graphics to show, and the
-    // smart action which is triggered when raytraced (clicked)
     var markerRoots = {};
     Object.keys(smartActions).forEach(function (uuid) {
         markerRoots[uuid] = new THREE.Group;
@@ -43,7 +35,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         scene.add(markerRoots[uuid]);
     });
 
-    // source instantiation, i.e., the webRTC stream coming from the robot
     var arToolkitSource = new THREEx.ArToolkitSource({
         sourceType: 'video',
         sourceWidth: 1920,
@@ -70,10 +61,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         };
     };
 
-    // unique THREEx instantiations for AR.js functionality
     function triggerARContext() {
-
-        // defines some parameters for how markers are detected
         arToolkitContext = new THREEx.ArToolkitContext({
             cameraParametersUrl: '/camera-para.dat',
             detectionMode: 'mono',
@@ -81,14 +69,12 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
             canvasHeight: foreignStreamDisplay.clientHeight
         });
 
-        // handles matrices between THREE and THREEx
         arToolkitContext.init(function onCompleted() {
             arToolkitContext.setProj;
             //camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix())
             window.arToolkitContext = arToolkitContext;
         });
 
-        // relevant fiducial markers (.patt files) associated with each smart action package
         Object.keys(smartActions).forEach(function (uuid) {
             markerControls = new THREEx.ArMarkerControls(arToolkitContext, markerRoots[uuid], {
                 type: 'pattern',
@@ -103,7 +89,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         });
     };
 
-    // cursor setup
     var geometry = new THREE.PlaneGeometry(0.2, 0.2);
 
     var cursorMaterial = new THREE.MeshBasicMaterial({
@@ -122,7 +107,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
     });
     var cursorPlane = new THREE.Mesh(geometry, cursorMaterial);
 
-    // cursor rendering
     renderFunctions.push(function () {
 
         var raycaster = new THREE.Raycaster();
@@ -164,29 +148,22 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
         };
     });
 
-    // all functions in renderFunctions will run once per frame
     renderFunctions.push(function () {
-        // wait for async functions
         if (!arToolkitContext || !arToolkitSource || !arToolkitSource.ready) {
             return;
         };
 
-        // updates THREEx context
         arToolkitContext.update(arToolkitSource.domElement);
     })
         ; (function () {
 
-            // geometry - single double-sided plane
             var geometry = new THREE.PlaneGeometry(1, 1);
 
-            // defines the AR models which are shown when fiducial markers are 
-            // detected. again, unique for each smart action package, as per db contents
             var materials = {};
             var materialsConfirm = {};
             var planes = {};
 
             Object.keys(smartActions).forEach(function (uuid) {
-                // materials for specific smart action
                 materials[uuid] = new THREE.MeshBasicMaterial({
                     map: THREE.ImageUtils.loadTexture('/assets/ar-icon/' + uuid + '.png'),
                     transparent: true,
@@ -200,28 +177,21 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                     side: THREE.DoubleSide
                 });
 
-                // instance of geometry, with smart action specific parameters (i.e., materials)
                 planes[uuid] = new THREE.Mesh(geometry, materials[uuid]);
                 planes[uuid].rotateX(-1.5708);
                 markerRoots[uuid].add(planes[uuid]);
 
-                // callback for instance of geometry when raytraced (clicked)
                 planes[uuid].callback = function () {
                     (async () => {
                         planes[uuid].material = materialsConfirm[uuid];
-                        // actual location ifttt is triggered via a webhook
                         socket.emit('ifttt-event', smartActions[uuid].webhook);
                         await delay(2000);
                         planes[uuid].material = materials[uuid];
                     })();
                 };
-
-
             });
 
             Object.keys(officeCards).forEach(function (uuid) {
-
-                // microsoft profile rendering
 
                 const msPanel = new ThreeMeshUI.Block({
                     width: 2,
@@ -239,13 +209,11 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
                 msPanel.rotateX(-1.5708);
 
-                renderFunctions.push(function () {
-                    ThreeMeshUI.update();
-                });
+                socket.emit("get-office-card", officeCards[uuid].ms_id);
 
-                socket.emit("get-office-card", uuid);
+                socket.on("office-card", info => {
 
-                socket.on('office-card', info => {
+                    console.log(info);
 
                     var text;
                     var colour;
@@ -253,27 +221,32 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
                     switch (info.presence.toLowerCase()) {
                         case ("available" || "availableidle"):
-                            text = "Available"
+                            text = "Available";
                             colour = new THREE.Color(0x93c353);
                             icon = "ms-available.png";
                             break;
                         case ("away" || "berightback"):
-                            text = "Away"
+                            text = "Away";
                             colour = new THREE.Color(0xfcd116);
                             icon = "ms-away.png";
                             break;
                         case ("busy" || "busyidle"):
-                            text = "Busy"
+                            text = "Busy";
                             colour = new THREE.Color(0xc4314b);
                             icon = "ms-busy.png";
                             break;
                         case ("donotdisturb"):
-                            text = "Do not disturb"
+                            text = "Do not disturb";
                             colour = new THREE.Color(0xc4314b);
                             icon = "ms-dnd.png";
                             break;
                         case ("offline" || "presenceunknown"):
-                            text = "Offline"
+                            text = "Offline";
+                            colour = new THREE.Color(0x9c9c9c);
+                            icon = "ms-offline.png";
+                            break;
+                        default:
+                            text = "Error";
                             colour = new THREE.Color(0x9c9c9c);
                             icon = "ms-offline.png";
                             break;
@@ -281,9 +254,9 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
                     const loader = new THREE.TextureLoader();
                     loader.load(icon, (texture) => {
-
+                        console.log(info.displayName);
                         const nameText = new ThreeMeshUI.Text({
-                            content: info.displayName + "\n",
+                            content: info.name + "\n",
                             fontSize: 0.25,
                         });
                         msPanel.add(nameText);
@@ -311,6 +284,7 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                         });
                         msPanel.add(buttonText);
                     });
+                    markerRoots[uuid].add(msPanel);
                 });
 
                 markerRoots[uuid].callback = function () {
@@ -319,11 +293,11 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
             });
         })();
 
-    renderFunctions.push(function () {
+        renderFunctions.push(function () {
+        ThreeMeshUI.update();
         renderer.render(scene, camera);
     });
 
-    // render loop
     requestAnimationFrame(function animate() {
         renderFunctions.forEach(function (renderFunction) {
             renderFunction();
@@ -355,8 +329,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     }, false);
 
-    // onclick handling for renderer (canvas), both for raytracing 
-    // and sending to robot for click-to-drive functionality
     var raycaster = new THREE.Raycaster();
 
     renderer.domElement.addEventListener('click', function (event) {
@@ -364,7 +336,6 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
         raycaster.setFromCamera(mouse, camera);
 
-        // ray trace for each smart action package
         var intersects = {};
         Object.keys(smartActions).forEach(function (uuid) {
             intersects[uuid] = raycaster.intersectObjects(markerRoots[uuid].children);
@@ -373,12 +344,11 @@ export function initAR(socket, foreignStream, foreignStreamDisplay) {
                 intersects[uuid][0].object.callback();
             };
         });
-        
         Object.keys(officeCards).forEach(function (uuid) {
             intersects[uuid] = raycaster.intersectObject(markerRoots[uuid], true);
-            
+
             if (intersects[uuid].length > 0 && markerRoots[uuid].position.x + markerRoots[uuid].position.y != 0) {
-                intersects[uuid].object.callback();
+                markerRoots[uuid].callback();
             };
         });
 
