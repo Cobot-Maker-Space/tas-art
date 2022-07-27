@@ -42,7 +42,7 @@ const server = createServer(app);
 // server configuration
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-app.use(favicon(join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(join(__dirname, 'public', '/assets/favicon.ico')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressFileupload());
 app.use(cookieParser());
@@ -336,9 +336,9 @@ app.get('/smart-actions', (req, res) => {
     };
 });
 app.post('/delete-smart-action/:uuid', (req, res) => {
-    fs.unlinkSync('public/assets/fiducial/' + req.params.uuid + '.patt');
-    fs.unlinkSync('public/assets/ar-icon/' + req.params.uuid + '.png');
-    fs.unlinkSync('public/assets/ar-icon-confirm/' + req.params.uuid + '.png');
+    fs.unlinkSync('public/ar/assets/fiducial/' + req.params.uuid + '.patt');
+    fs.unlinkSync('public/ar/assets/ar-icon/' + req.params.uuid + '.png');
+    fs.unlinkSync('public/ar/assets/ar-icon-confirm/' + req.params.uuid + '.png');
 
     db.read();
     delete db.data.smart_actions[req.params.uuid];
@@ -362,9 +362,9 @@ app.post('/new-smart-action', (req, res) => {
     const arIconC = req.files.arIconConfirm;
 
     const uuid = uuidv4();
-    fiducial.mv('public/assets/fiducial/' + uuid + '.patt');
-    arIcon.mv('public/assets/ar-icon/' + uuid + '.png');
-    arIconC.mv('public/assets/ar-icon-confirm/' + uuid + '.png');
+    fiducial.mv('public/ar/assets/fiducial/' + uuid + '.patt');
+    arIcon.mv('public/ar/assets/ar-icon/' + uuid + '.png');
+    arIconC.mv('public/ar/assets/ar-icon-confirm/' + uuid + '.png');
 
     db.read();
     db.data.smart_actions[uuid] = {

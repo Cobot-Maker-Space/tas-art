@@ -1,4 +1,4 @@
-import { initAR } from './ar.js';
+import { initAR } from './ar/ar.js';
 import { configWebRTC } from './webrtc_config.js';
 
 // constant for async delays
