@@ -51,7 +51,10 @@ export function getOtherUserDataURL(id) {
     return "https://graph.microsoft.com/v1.0/users/" + id;
 }
 
-export const getUserPhotoURL = "https://graph.microsoft.com/v1.0/me/photo/$value";
+export const getUserPhotoURL = "https://graph.microsoft.com/v1.0/me/photos/48x48/$value";
+export function getOtherUserPhotoURL(id) {
+    return "https://graph.microsoft.com/v1.0/users/" + id + "/photos/48x48/$value"; 
+}
 export function getDataBody(token) {
     return {
         method: "GET",
