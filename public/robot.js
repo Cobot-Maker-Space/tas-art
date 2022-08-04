@@ -54,24 +54,73 @@ var me = webRTC[1];
 
 var driverConnected = false;
 
+var reverseCamId;
+
+navigator.mediaDevices.enumerateDevices()
+    .then(function (devices) {
+        for (var i in devices) {
+            if (devices[i].label.includes("HD USB Camera")) {
+                reverseCamId = devices[i].deviceId;
+                break;
+            }
+        }
+    });
+
 // webRTC connection handling
 navigator.mediaDevices.getUserMedia({
-    video: true,
+    video: {
+        width: { max: 1280 },
+        height: { max: 720 },
+    },
     audio: true
 }).then(localStream => {
-    socket.on('user-connected', theirID => {
-        const call = me.call(theirID, localStream);
-        call.on('stream', foreignStream => {
-            addVideoStream(localStreamDisplay, localStream);
-            addVideoStream(foreignStreamDisplay, foreignStream);
-            DRDoubleSDK.sendCommand('screensaver.nudge');
-            DRDoubleSDK.sendCommand('base.requestStatus');
-            DRDoubleSDK.sendCommand('tilt.target', {
-                'percent': 0.5
-            });
-            driverConnected = true;
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            deviceId: { exact: reverseCamId },
+            width: { max: 640 },
+            height: { max: 360 },
+        },
+        audio: true
+    }).then(reverseStream => {
+
+        var merger = new VideoStreamMerger({
+            width: 1280,
+            height: 720,
+            fps: 30,
+            clearRect: false
         });
-    });
+        merger.addStream(localStream, {
+            x: 0,
+            y: 0,
+            width: merger.width,
+            height: merger.height,
+            mute: false
+        });
+
+        var sizeDivisor = 4;
+        merger.addStream(reverseStream, {
+            x: (merger.width / 2) - ((merger.width / sizeDivisor) / 2),
+            y: merger.height - (merger.height / sizeDivisor) - 75,
+            width: merger.width / sizeDivisor,
+            height: merger.height / sizeDivisor,
+            mute: true
+        });
+        merger.start();
+
+        socket.on('user-connected', theirID => {
+            const call = me.call(theirID, merger.result);
+            call.on('stream', foreignStream => {
+                addVideoStream(localStreamDisplay, localStream);
+                addVideoStream(foreignStreamDisplay, foreignStream);
+                DRDoubleSDK.sendCommand('screensaver.nudge');
+                DRDoubleSDK.sendCommand('base.requestStatus');
+                DRDoubleSDK.sendCommand('tilt.target', {
+                    'percent': 0.5
+                });
+                driverConnected = true;
+            });
+        });
+    })
 });
 socket.on('user-disconnected', theirID => {
     localStreamDisplay.srcObject = null;

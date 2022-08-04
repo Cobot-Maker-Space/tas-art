@@ -326,7 +326,11 @@ app.post('/delete-robot/:uuid', (req, res) => {
 });
 app.post('/add-robot', (req, res) => {
     const { name, location } = req.body;
+    const fiducial = req.files.fiducial;
+
     var uuid = uuidv4();
+    fiducial.mv('public/ar/assets/fiducial/' + uuid + '.patt');
+    
     db.data.robots[hashedPwd(uuid)] = {
         "private": uuid,
         "name": name,
