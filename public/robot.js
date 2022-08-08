@@ -59,6 +59,8 @@ navigator.mediaDevices.enumerateDevices()
         }
     });
 
+var reverseCamEnabled = false;
+
 // webRTC connection handling
 navigator.mediaDevices.getUserMedia({
     video: {
@@ -67,54 +69,61 @@ navigator.mediaDevices.getUserMedia({
     },
     audio: true
 }).then(localStream => {
-    navigator.mediaDevices.getUserMedia({
-        video: {
-            deviceId: { exact: reverseCamId },
-            width: { max: 1280 },
-            height: { max: 720 },
-        },
-        audio: false
-    }).then(reverseStream => {
+    if (reverseCamEnabled) {
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                deviceId: { exact: reverseCamId },
+                width: { max: 1280 },
+                height: { max: 720 },
+            },
+            audio: false
+        }).then(reverseStream => {
 
-        var merger = new VideoStreamMerger({
-            width: 1920,
-            height: 1080,
-            fps: 30,
-            clearRect: false
-        });
-        merger.addStream(localStream, {
-            x: 0,
-            y: 0,
-            width: merger.width,
-            height: merger.height,
-            mute: false
-        });
-
-        // var sizeDivisor = 4;
-        // merger.addStream(reverseStream, {
-        //     x: 30,
-        //     y: merger.height - (merger.height / sizeDivisor) - 100,
-        //     width: merger.width / sizeDivisor,
-        //     height: merger.height / sizeDivisor,
-        //     mute: true
-        // });
-        merger.start();
-
-        socket.on('user-connected', theirID => {
-            const call = me.call(theirID, merger.result);
-            call.on('stream', foreignStream => {
-                addVideoStream(localStreamDisplay, localStream);
-                addVideoStream(foreignStreamDisplay, foreignStream);
-                DRDoubleSDK.sendCommand('screensaver.nudge');
-                DRDoubleSDK.sendCommand('base.requestStatus');
-                DRDoubleSDK.sendCommand('tilt.target', {
-                    'percent': 0.4
-                });
-                driverConnected = true;
+            var merger = new VideoStreamMerger({
+                width: 1920,
+                height: 1080,
+                fps: 30,
+                clearRect: false
             });
+            merger.addStream(localStream, {
+                x: 0,
+                y: 0,
+                width: merger.width,
+                height: merger.height,
+                mute: false
+            });
+
+            var sizeDivisor = 4;
+            merger.addStream(reverseStream, {
+                x: 30,
+                y: merger.height - (merger.height / sizeDivisor) - 100,
+                width: merger.width / sizeDivisor,
+                height: merger.height / sizeDivisor,
+                mute: true
+            });
+            merger.start();
+            makeConnection(merger.result, localStream);
         });
-    })
+    } else {
+        makeConnection(localStream, localStream);
+    };
 });
+function makeConnection(localSend, localShow) {
+    socket.on('user-connected', theirID => {
+        const call = me.call(theirID, localSend);
+        call.on('stream', foreignStream => {
+            addVideoStream(localStreamDisplay, localShow);
+            addVideoStream(foreignStreamDisplay, foreignStream);
+            DRDoubleSDK.sendCommand('screensaver.nudge');
+            DRDoubleSDK.sendCommand('base.requestStatus');
+            DRDoubleSDK.sendCommand('tilt.target', {
+                'percent': 0.4
+            });
+            driverConnected = true;
+        });
+    });
+};
+
 socket.on('user-disconnected', theirID => {
     localStreamDisplay.srcObject = null;
     foreignStreamDisplay.srcObject = null;

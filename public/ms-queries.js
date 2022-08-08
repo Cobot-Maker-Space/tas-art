@@ -1,21 +1,25 @@
-// need to implement login state verification for security
+const clientId = "5cb0b9bf-c370-48dc-adae-06fa18143ed3";
+const clientSecret = "Vwm8Q~BQylr9~apjFDMVFhhsv0Za0ZYdePB7dabY";
 
 const permissions = "&scope=user.readbasic.all%20presence.read.all%20chat.read%20chat.readbasic%20chat.readwrite%20chatmessage.send";
 
-export const login =
-    "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?" +
-    "client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3" +
-    "&response_type=code" +
-    "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
-    "&response_mode=query" +
-    permissions +
-    "&state=12345";
-export const logout =
-    "https://login.microsoftonline.com/organizations/oauth2/v2.0/logout?" +
-    "post_logout_redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org"
-    ;
+export function login(org) {
+    return "https://login.microsoftonline.com/" + org + "/oauth2/v2.0/authorize?" +
+        "client_id=" + clientId +
+        "&response_type=code" +
+        "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
+        "&response_mode=query" +
+        permissions +
+        "&state=12345";
+}
+export function logout(org) {
+    return "https://login.microsoftonline.com/organizations/oauth2/v2.0/logout?" +
+        "post_logout_redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org";
+}
 
-export const requestTokenURL = "https://login.microsoftonline.com/organizations/oauth2/v2.0/token";
+export function requestTokenURL(org) {
+    return "https://login.microsoftonline.com/" + org + "/oauth2/v2.0/token";
+}
 export function requestTokenBody(code) {
     return {
         method: "POST",
@@ -27,7 +31,7 @@ export function requestTokenBody(code) {
             "&code=" + code +
             "&grant_type=authorization_code" +
             "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
-            "&client_secret=Vwm8Q~BQylr9~apjFDMVFhhsv0Za0ZYdePB7dabY"
+            "&client_secret=" + clientSecret
     };
 }
 
@@ -42,7 +46,7 @@ export function refreshTokenBody(refresh_token) {
             "&refresh_token=" + refresh_token +
             "&grant_type=refresh_token" +
             "&redirect_uri=https%3A%2F%2Fopen-all-senses.cobotmakerspace.org%2Fms-socket" +
-            "&client_secret=Vwm8Q~BQylr9~apjFDMVFhhsv0Za0ZYdePB7dabY"
+            "&client_secret=" + clientSecret
     };
 };
 
@@ -53,7 +57,7 @@ export function getOtherUserDataURL(id) {
 
 export const getUserPhotoURL = "https://graph.microsoft.com/v1.0/me/photos/48x48/$value";
 export function getOtherUserPhotoURL(id) {
-    return "https://graph.microsoft.com/v1.0/users/" + id + "/photos/48x48/$value"; 
+    return "https://graph.microsoft.com/v1.0/users/" + id + "/photos/48x48/$value";
 }
 export function getDataBody(token) {
     return {
@@ -80,6 +84,6 @@ export function sendChatBody(token, msg) {
             "Host": "graph.microsoft.com",
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({"body": { "content": msg }})
+        body: JSON.stringify({ "body": { "content": msg } })
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "art",
-  "version": "0.7",
+  "version": "1.0",
   "description": "Augmented Reality Telepresence",
   "main": "server.js",
   "type": "module",

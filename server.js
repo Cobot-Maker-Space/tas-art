@@ -1,3 +1,6 @@
+// GREENLOCK SUBSCRIBER
+const greenlockSubscriberEmail = "psyip1@nottingham.ac.uk";
+
 // IMPORTS
 
 // password and uuid utilities
@@ -85,7 +88,7 @@ var connectedUsers = {};
 greenlock.init({
     packageRoot: __dirname,
     configDir: "./greenlock.d",
-    maintainerEmail: "psyip1@nottingham.ac.uk",
+    maintainerEmail: greenlockSubscriberEmail,
     cluster: false
 }).ready(socketWorker);
 
@@ -148,7 +151,7 @@ function socketWorker(glx) {
                     fetch(Queries.getOtherUserPhotoURL(msUserId), Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token))
                         .then(response => response.body)
                         .then(data => {
-                            data.pipe(fs.createWriteStream(join(__dirname, "public", "/photos/" + msUserId+ ".png")));
+                            data.pipe(fs.createWriteStream(join(__dirname, "public", "/photos/" + msUserId + ".png")));
                             fetch(Queries.getUserPresenceURL(msUserId), Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token))
                                 .then(response => response.json())
                                 .then(presence => {
@@ -194,19 +197,23 @@ app.get('/', (req, res) => {
 
 // ms login and logout handling
 app.get('/ms-login', (req, res) => {
-    res.redirect(Queries.login);
+    db.read();
+    res.redirect(Queries.login(db.data.organization.id));
 });
 
 app.get('/ms-logout', (req, res) => {
+    db.read();
+
     delete adminAuthTokens[req.cookies['AuthToken']];
     delete driverAuthTokens[req.cookies['AuthToken']];
     delete activeUsers[req.driverId];
 
-    res.redirect(Queries.logout);
+    res.redirect(Queries.logout(db.data.organization.id));
 });
 
 app.get('/ms-socket', (req, res) => {
-    fetch(Queries.requestTokenURL, Queries.requestTokenBody(req.query.code))
+    db.read();
+    fetch(Queries.requestTokenURL(db.data.organization.id), Queries.requestTokenBody(req.query.code))
         .then(response => response.json())
         .then(loginData => {
             if (loginData.error != undefined) {
@@ -330,7 +337,7 @@ app.post('/add-robot', (req, res) => {
 
     var uuid = uuidv4();
     fiducial.mv('public/ar/assets/fiducial/' + uuid + '.patt');
-    
+
     db.data.robots[hashedPwd(uuid)] = {
         "private": uuid,
         "name": name,
