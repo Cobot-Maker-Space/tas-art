@@ -1,4 +1,5 @@
 {
+  "institution": "",
   "admins": [
     "3bc626ec-147f-4ed7-b225-d9a317288f88"
   ],
@@ -21,7 +22,7 @@
   "ms_office_cards": {
     "ce03d2c4-e85f-430b-a16c-dc5b189a5b4c": {
       "ms_id": "c9bafe25-459f-4b6f-a6e8-41d05b645bbb",
-      "chat_id": "19:21f64eef-d9b7-46be-80c5-82778703420b_3bc626ec-147f-4ed7-b225-d9a317288f88@unq.gbl.spaces"
+      "chat_id": "19:3bc626ec-147f-4ed7-b225-d9a317288f88_c9bafe25-459f-4b6f-a6e8-41d05b645bbb@unq.gbl.spaces"
     }
   }
 }

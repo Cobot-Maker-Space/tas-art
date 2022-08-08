@@ -1,16 +1,9 @@
 import { configWebRTC } from './webrtc_config.js';
 
-// constant for async delays
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-DRDoubleSDK.sendCommand('camera.enable', {
-    'height': 1080,
-    'template': 'v4l2'
-});
 
 DRDoubleSDK.sendCommand('gui.watchdog.disallow');
 
-// initial double commands and lifecycle callback
 window.onload = () => {
     (async () => {
         await delay(2000);
@@ -69,23 +62,23 @@ navigator.mediaDevices.enumerateDevices()
 // webRTC connection handling
 navigator.mediaDevices.getUserMedia({
     video: {
-        width: { max: 1280 },
-        height: { max: 720 },
+        width: { max: 1920 },
+        height: { max: 1080 },
     },
     audio: true
 }).then(localStream => {
     navigator.mediaDevices.getUserMedia({
         video: {
             deviceId: { exact: reverseCamId },
-            width: { max: 640 },
-            height: { max: 360 },
+            width: { max: 1280 },
+            height: { max: 720 },
         },
-        audio: true
+        audio: false
     }).then(reverseStream => {
 
         var merger = new VideoStreamMerger({
-            width: 1280,
-            height: 720,
+            width: 1920,
+            height: 1080,
             fps: 30,
             clearRect: false
         });
@@ -97,14 +90,14 @@ navigator.mediaDevices.getUserMedia({
             mute: false
         });
 
-        var sizeDivisor = 4;
-        merger.addStream(reverseStream, {
-            x: (merger.width / 2) - ((merger.width / sizeDivisor) / 2),
-            y: merger.height - (merger.height / sizeDivisor) - 75,
-            width: merger.width / sizeDivisor,
-            height: merger.height / sizeDivisor,
-            mute: true
-        });
+        // var sizeDivisor = 4;
+        // merger.addStream(reverseStream, {
+        //     x: 30,
+        //     y: merger.height - (merger.height / sizeDivisor) - 100,
+        //     width: merger.width / sizeDivisor,
+        //     height: merger.height / sizeDivisor,
+        //     mute: true
+        // });
         merger.start();
 
         socket.on('user-connected', theirID => {
@@ -115,7 +108,7 @@ navigator.mediaDevices.getUserMedia({
                 DRDoubleSDK.sendCommand('screensaver.nudge');
                 DRDoubleSDK.sendCommand('base.requestStatus');
                 DRDoubleSDK.sendCommand('tilt.target', {
-                    'percent': 0.5
+                    'percent': 0.4
                 });
                 driverConnected = true;
             });
@@ -125,6 +118,7 @@ navigator.mediaDevices.getUserMedia({
 socket.on('user-disconnected', theirID => {
     localStreamDisplay.srcObject = null;
     foreignStreamDisplay.srcObject = null;
+    merger.destroy();
     driverConnected = false;
 });
 me.on('open', myID => {
