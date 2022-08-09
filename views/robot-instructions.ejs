@@ -36,7 +36,28 @@
     </div>
 
     <div class="container mw-540 p-3">
-        
+        <h6 class="mt-2 mb-4"><b>Activate new robot</b></h6>
+        <p><b>1. </b>Join the same WiFi network as the <i>Double 3</i>.</p>
+        <p><b>2. </b>Open the Developer Monitor by navigating to <b>[DOUBLE_IP]:8080</b> using a web browser.</p>
+        <p class="text-sm text-secondary"><i>Hint: you can find the <i>Double 3</i>'s IP address by tapping the WiFi
+                icon on the robot.</i></p>
+        <p><b>3. </b>Navigate to <b>API</b> via the toolbar, then enter and <b>Send</b> the following instruction under
+            <b>Send Command Manually</b>.</p>
+
+        <h6 class="ms-3">Command</h6>
+        <div id="code-snippet" class="ms-3 me-5">api.setConfig</div>
+
+        <h6 class="ms-3">Parameters (JSON object)</h6>
+        <div id="code-snippet" class="ms-3 me-5">
+            {<br>
+            "key": "STANDBY_URL",<br>
+            "value": "https://open-all-senses.cobotmakerspace.org/robot/a31e1e24-5449-4097-a015-52dea9d5a769"<br>
+            }
+        </div>
+
+        <p><b>4. </b>Select <b>Reboot Head</b> via the power icon dropdown in the top right.</p>
+        <p><b>5. </b>When <b class="text-primary">🤖 Fizz</b> appears on the <i>Double 3</i>'s screen, click the button
+            below to finalise the connection.</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
