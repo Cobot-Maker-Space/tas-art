@@ -141,24 +141,24 @@ function socketWorker(glx) {
             get(url);
         });
         // microsoft options
+        socket.on('get-office-card', (robotId, msUserId) => {
+            async function fetchOfficeCard() {
+                const otherUserData = await fetch(
+                    Queries.getOtherUserDataURL(msUserId),
+                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token)).then(response => response.json());
+                const otherUserPhoto = await fetch(
+                    Queries.getOtherUserPhotoURL(msUserId),
+                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token)).then(response => response.body);
+                const otherUserPresence = await fetch(
+                    Queries.getUserPresenceURL(msUserId),
+                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token)).then(response => response.json());
+                otherUserPhoto.pipe(fs.createWriteStream(join(__dirname, "public", "/photos/" + msUserId + ".png")));
+                io.emit("office-card", { "robotId": robotId, "name": otherUserData.displayName, "presence": otherUserPresence.availability });
+            }
+            fetchOfficeCard();
+        });
         socket.on('chat-msg', (robotId, chat, msg) => {
             fetch(Queries.sendChatURL(chat), Queries.sendChatBody(activeUsers[connectedUsers[robotId]].access_token, msg));
-        });
-        socket.on('get-office-card', (robotId, msUserId) => {
-            fetch(Queries.getOtherUserDataURL(msUserId), Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token))
-                .then(response => response.json())
-                .then(info => {
-                    fetch(Queries.getOtherUserPhotoURL(msUserId), Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token))
-                        .then(response => response.body)
-                        .then(data => {
-                            data.pipe(fs.createWriteStream(join(__dirname, "public", "/photos/" + msUserId + ".png")));
-                            fetch(Queries.getUserPresenceURL(msUserId), Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token))
-                                .then(response => response.json())
-                                .then(presence => {
-                                    io.emit("office-card", { "robotId": robotId, "name": info.displayName, "presence": presence.availability });
-                                });
-                        });
-                });
         });
         // disconnect
         socket.on('disconnect', reason => {
@@ -189,7 +189,9 @@ app.get('/', (req, res) => {
     if (req.driverId) {
         res.redirect('/select');
     };
+    db.read();
     res.render('login', {
+        inst: db.data.organization.displayName,
         error: req.query.error
     });
 });
@@ -213,41 +215,43 @@ app.get('/ms-logout', (req, res) => {
 
 app.get('/ms-socket', (req, res) => {
     db.read();
-    fetch(Queries.requestTokenURL(db.data.organization.id), Queries.requestTokenBody(req.query.code))
-        .then(response => response.json())
-        .then(loginData => {
-            if (loginData.error != undefined) {
-                res.redirect('/?error=user');
-            } else {
-                fetch(Queries.getUserDataURL, Queries.getDataBody(loginData.access_token))
-                    .then(response => response.json())
-                    .then(userData => {
-                        fetch(Queries.getUserPhotoURL, Queries.getDataBody(loginData.access_token))
-                            .then(response => response.body)
-                            .then(data => {
-                                data.pipe(fs.createWriteStream(join(__dirname, "public", "/photos/" + userData.id + ".png")));
-                                db.read();
-                                var authToken = newAuthToken();
-                                if (db.data.drivers.includes(userData.id)) {
-                                    activeUsers[userData.id] = {
-                                        access_token: loginData.access_token,
-                                        refresh_token: loginData.refresh_token,
-                                        name: userData.displayName,
-                                        email: userData.mail
-                                    }
-                                    driverAuthTokens[authToken] = userData.id;
-                                    if (db.data.admins.includes(userData.id)) {
-                                        adminAuthTokens[authToken] = userData.id;
-                                    }
-                                } else {
-                                    res.redirect('/?error=user');
-                                }
-                                res.cookie('AuthToken', authToken);
-                                res.redirect('/select');
-                            });
-                    });
-            };
-        });
+    async function fetchUserData() {
+        const loginData = await fetch(
+            Queries.requestTokenURL(db.data.organization.id),
+            Queries.requestTokenBody(req.query.code)).then(response => response.json());
+        if (loginData.error != undefined) {
+            res.redirect('/?error=user');
+            return;
+        }
+
+        const userData = await fetch(
+            Queries.getUserDataURL,
+            Queries.getDataBody(loginData.access_token)).then(response => response.json());
+        const photoData = await fetch(
+            Queries.getUserPhotoURL,
+            Queries.getDataBody(loginData.access_token)).then(response => response.body);
+
+        photoData.pipe(fs.createWriteStream(join(__dirname, "public", "/photos/" + userData.id + ".png")));
+        db.read();
+        var authToken = newAuthToken();
+        activeUsers[userData.id] = {
+            access_token: loginData.access_token,
+            refresh_token: loginData.refresh_token,
+            name: userData.displayName,
+            email: userData.mail
+        }
+        driverAuthTokens[authToken] = userData.id;
+        if (db.data.admins.length < 1) {
+            db.data.admins.push(userData.id);
+            db.write();
+        }
+        if (db.data.admins.includes(userData.id)) {
+            adminAuthTokens[authToken] = userData.id;
+        }
+        res.cookie('AuthToken', authToken);
+        res.redirect('/select');
+    }
+    fetchUserData();
 });
 
 // robot selection
@@ -257,7 +261,7 @@ app.get('/select', (req, res) => {
         res.render('select', {
             id: req.driverId,
             name: activeUsers[req.driverId].name,
-            email: activeUsers[req.driverId].email,
+            inst: db.data.organization.displayName,
             admin: req.adminId ? "true" : "false",
             robots: db.data.robots,
             activeRobots: Object.values(activeRobots),
@@ -271,10 +275,11 @@ app.get('/select', (req, res) => {
 // admin landing page
 app.get('/admin-dashboard', (req, res) => {
     if (req.adminId) {
+        db.read();
         res.render('admin-dashboard', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
-            email: activeUsers[req.adminId].email
+            inst: db.data.organization.displayName
         });
     } else {
         res.redirect('/');
@@ -288,7 +293,7 @@ app.get('/manage-drivers', (req, res) => {
         res.render('manage-drivers', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
-            email: activeUsers[req.adminId].email,
+            inst: db.data.organization.displayName,
             activeInvites: db.data.active_invites,
             activeDrivers: db.data.drivers
         });
@@ -319,7 +324,7 @@ app.get('/manage-robots', (req, res) => {
         res.render('manage-robots', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
-            email: activeUsers[req.adminId].email,
+            inst: db.data.organization.displayName,
             activeRobots: db.data.robots
         });
     } else {
@@ -347,6 +352,19 @@ app.post('/add-robot', (req, res) => {
     res.redirect('/manage-robots');
 });
 
+//TEMP
+app.get('/robot-instructions', (req, res) => {
+    if (req.adminId) {
+        res.render('robot-instructions', {
+            id: req.adminId,
+            name: activeUsers[req.adminId].name,
+            inst: db.data.organization.displayName
+        });
+    } else {
+        res.redirect('/');
+    };
+});
+
 // admin manage smart actions
 app.get('/smart-actions', (req, res) => {
     if (req.adminId) {
@@ -354,7 +372,7 @@ app.get('/smart-actions', (req, res) => {
         res.render('smart-actions', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
-            email: activeUsers[req.adminId].email,
+            inst: db.data.organization.displayName,
             smartActions: db.data.smart_actions
         });
     } else {
@@ -377,7 +395,7 @@ app.get('/smart-action', (req, res) => {
         res.render('smart-action', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
-            email: activeUsers[req.adminId].email
+            inst: db.data.organization.displayName
         });
     } else {
         res.redirect('/');

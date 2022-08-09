@@ -15,13 +15,13 @@
 
 <body>
     <div class="container mw-540 p-3">
-        <h3 class="mt-4 mb-5">🤖 Telepresence Robot Portal</h3>
+        <h3 class="mt-4 mb-3">🤖 Telepresence Robot Portal</h3>
 
+        <h6 class="mb-5">🏛️ <%= inst %></h6>
+        
         <% if (error == 'user') { %>
-        <h6 class="text-danger mb-5">❗ Microsoft user authorisation failed.</h6>
+        <h6 class="text-danger mb-3">❗ Microsoft user authorisation failed.</h6>
         <% } %>
-
-        <h6 class="mb-3">Work or school</h6>
 
         <form method="GET" action="/ms-login" class="mb-5">
             <button type="submit" class="btn btn-dark px-4 py-2"><img class="me-2" src="/assets/ms-logo.svg">Sign in
