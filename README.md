@@ -78,6 +78,13 @@ The project only has precedent on a *Ubuntu* server but it is, in principle, mul
 ### *IFTTT* smart actions
 ### *Microsoft Teams* presence cards
 
+## Technical description
+The *Double 3* frontend, [robot.ejs](views/robot.ejs), is served to the robot as a standard webpage via an [*Electron*](https://www.electronjs.org/) browser window. Each *Double 3* is given its identity via its UUID being given in the URL, `.../robot/[UUID]`, which is **private** and only visible serverside and [to admins](#double-3-robots).
+
+> The driver frontend establishes a relationship with a specific *Double 3* via the MD5 hash of a robot's UUID in the URL, `.../[MD5_OF_UUID]`.
+
+
+
 ## Limitations and trade-offs
 ### Battery life
 The *Double 3* can deploy 1 of 4 performance models, ranging from **lowest** to **highest**. To the best of my knowledge, this effects the number of active CPU cores, and the clock speeds of the CPU cores and the GPU. Both the CPU and GPU are in the so-called *head*, and this setting does not effect the *base* in any way.
@@ -88,14 +95,23 @@ With the added functionality and in this project, the processing load is higher 
 
 This measurably reduces battery life. The **average time** taken to drain the battery from **100%** to **90%** across 3 scenarios is listed below. Each scenario was tested 3 times; the *Double 3* was left parked during a call (i.e., not driven) during each test.
 
-(make this a table)
-
-- Stock endpoint, **lowest** performance mode ->
-- ART endpoint, single camera, **high** performance mode -> 13 minutes 32 seconds
-- ART endpoint, dual camera, **highest** performance mode ->
+| Endpoint | Performance mode | 100%-90% drain time |
+| -------- | ---------------- | ------------------- |
+| *Stock*  | *Lowest*         | *Xm Xs*             |
+| ART      | High (1 cam)     | 13m 32s             |
+| ART      | Highest (2 cams) | Xm Xs               |
 
 ### CPU/GPU performance limits
 
 ### Bandwidth minimisation
 
 ### Accessory weight limitations
+The *Double 3* has three mounting screw holes in its head, two on the very top under the rubber guard, and one behind the port cover on the back.
+
+The [mounting bracket]() supplied in this documentation attaches to the two upmost screw holes.
+
+Objects rigidly attached this bracket, seemingly regardless of placement in reference to the centre of gravity, risk making the *Double 3* **dangerously unstable** if they weigh in excess of approximately **0.6kg** (excluding the bracket). This was tested in 0.1kg increments.
+
+The 'point-of-failure' is the stability of the *head* itself, which starts violently vibrating when tolerances are exceeded, seemingly to the point of structural damage were it be allowed to continue.
+
+> A possible solution for greater weights might be to attach accessories to the pole connecting the *head* and *base* via a clamp, whereby the lower they are, the more stable the robot will be. 
