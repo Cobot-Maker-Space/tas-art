@@ -86,12 +86,16 @@ The stock *Double 3* endpoint (i.e., [https://drive.doublerobotics.com/](https:/
 
 With the added functionality and in this project, the processing load is higher than the stock *Double 3* endpoint. As such, **high** performance is enabled for single-camera operation, and the **highest** performance is enabled with the addition of a [rear-view camera]().
 
-This measurably reduces battery life. The **average time** taken to drain the battery from **100%** to **90%** across 3 scenarios is listed below. Each scenario was tested 3 times; the *Double 3* was left idle during a call (i.e., not driven) during each test.
+This measurably reduces battery life. The **average time** taken to drain the battery from **100%** to **90%** across 3 scenarios is listed below. Each scenario was tested 3 times; the *Double 3* was left parked during a call (i.e., not driven) during each test.
 
 (make this a table)
 
 - Stock endpoint, **lowest** performance mode ->
-- ART endpoint, single camera, **high** performance mode ->
+- ART endpoint, single camera, **high** performance mode -> 13 minutes 32 seconds
 - ART endpoint, dual camera, **highest** performance mode ->
 
 ### CPU/GPU performance limits
+
+### Bandwidth minimisation
+
+### Accessory weight limitations

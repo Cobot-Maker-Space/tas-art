@@ -58,7 +58,6 @@ const db = new LowSync(adapter);
 db.read();
 
 // UTILITY FUNCTIONS
-
 function hashedPwd(pwd) {
     const sha256 = crypto.createHash('sha256');
     const hash = sha256.update(pwd).digest('base64');
@@ -336,12 +335,21 @@ app.post('/delete-robot/:uuid', (req, res) => {
     db.write();
     res.redirect('/manage-robots');
 });
-app.post('/add-robot', (req, res) => {
-    const { name, location } = req.body;
-    const fiducial = req.files.fiducial;
 
+app.get('/new-robot-details', (req, res) => {
+    if (req.adminId) {
+        res.render('new-robot-details', {
+            id: req.adminId,
+            name: activeUsers[req.adminId].name,
+            inst: db.data.organization.displayName
+        });
+    } else {
+        res.redirect('/');
+    };
+});
+app.post('/submit-robot-details', (req, res) => {
+    const { name, location } = req.body;
     var uuid = uuidv4();
-    fiducial.mv('public/ar/assets/fiducial/' + uuid + '.patt');
 
     db.data.robots[hashedPwd(uuid)] = {
         "private": uuid,
@@ -349,16 +357,20 @@ app.post('/add-robot', (req, res) => {
         "location": location
     };
     db.write();
-    res.redirect('/manage-robots');
+
+    res.redirect('/new-robot-activate?uuid=' + uuid + '&name=' + name + '&location=' + location);
 });
 
-//TEMP
-app.get('/robot-instructions', (req, res) => {
+app.get('/new-robot-activate', (req, res) => {
     if (req.adminId) {
-        res.render('robot-instructions', {
+        res.render('new-robot-activate', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
-            inst: db.data.organization.displayName
+            inst: db.data.organization.displayName,
+            robotId: req.query.id,
+            robotUuid: req.query.uuid,
+            robotName: req.query.name,
+            robotLocation: req.query.location
         });
     } else {
         res.redirect('/');

@@ -40,7 +40,7 @@
         <% Object.keys(activeRobots).forEach(function(uuid) { %>
         <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded">
             <div class="d-flex me-auto">
-                <h6 class="my-auto"><%= activeRobots[uuid].name %> —
+                <h6 class="my-auto">🤖 <%= activeRobots[uuid].name %> —
                     <%= activeRobots[uuid].location %><br><b><%= activeRobots[uuid].private %></b></h6>
             </div>
             <form method="POST" action="/delete-robot/<%= uuid %>">
@@ -48,23 +48,8 @@
             </form>
         </div>
         <% }) %>
-        <h6 class="mx-3 mt-3">Add new robot</h6>
-        <form method="POST" action="/add-robot">
-            <div class="form-floating w-50 mt-3 m-2">
-                <input name="name" type="text" class="form-control" id="name" placeholder="Robert" required>
-                <label for="name">Robot name</label>
-            </div>
-            <div class="form-floating w-50 m-2">
-                <input name="location" type="text" class="form-control" id="location" placeholder="London, UK" required>
-                <label for="location">Location description</label>
-            </div>
-            <div class="w-50 m-2">
-                <label class="form-label" for="fiducial-patt">Fiducial marker (<a
-                        href="https://jeromeetienne.github.io/AR.js/three.js/examples/marker-training/examples/generator.html"
-                        target="_blank">.patt</a>)</label>
-                <input name="fiducial" type="file" class="form-control mb-3" id="fiducial" required />
-            </div>
-            <button type="submit" class="btn m-2 btn btn-dark">Add new robot</button>
+        <form method="GET" action="/new-robot-details">
+            <button type="submit" class="btn m-2 px-4 btn btn-dark">✨ New robot</button>
         </form>
     </div>
 
