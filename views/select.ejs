@@ -60,7 +60,7 @@
                     </b> — <%= robots[uuid].location %>
                 </h6>
             </div>
-            <form method="GET" action="/<%= uuid %> %>">
+            <form method="GET" action="/<%= encodeURIComponent(uuid) %> %>">
                 <% if (activeRobots.includes(uuid)) { %>
                 <button type="submit" class="btn btn-success">🔌Connect</button>
                 <% } else { %>
@@ -69,6 +69,14 @@
             </form>
         </div>
         <% }) %>
+
+        <% if (Object.keys(robots) < 1) { %>
+            <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded">
+                <div class="d-flex me-auto">
+                    <p class="my-auto text-secondary">💤 No robots yet</p>
+                </div>
+            </div>
+        <% } %>
     </div>
 
 

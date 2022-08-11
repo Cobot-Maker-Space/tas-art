@@ -34,6 +34,8 @@ window.onload = () => {
         DRDoubleSDK.sendCommand('speaker.setVolume', { 'percent': 0.5 });
 
         DRDoubleSDK.sendCommand('base.requestStatus');
+
+        DRDoubleSDK.sendCommand('system.enableRearUSBPorts');
     })();
 };
 
@@ -59,7 +61,7 @@ navigator.mediaDevices.enumerateDevices()
         }
     });
 
-var reverseCamEnabled = false;
+var reverseCamEnabled = true;
 
 // webRTC connection handling
 navigator.mediaDevices.getUserMedia({
@@ -69,6 +71,7 @@ navigator.mediaDevices.getUserMedia({
     },
     audio: true
 }).then(localStream => {
+    var merger;
     if (reverseCamEnabled) {
         navigator.mediaDevices.getUserMedia({
             video: {
@@ -79,7 +82,7 @@ navigator.mediaDevices.getUserMedia({
             audio: false
         }).then(reverseStream => {
 
-            var merger = new VideoStreamMerger({
+            merger = new VideoStreamMerger({
                 width: 1920,
                 height: 1080,
                 fps: 30,
@@ -127,7 +130,9 @@ function makeConnection(localSend, localShow) {
 socket.on('user-disconnected', theirID => {
     localStreamDisplay.srcObject = null;
     foreignStreamDisplay.srcObject = null;
-    merger.destroy();
+    if (merger != undefined) {
+        merger.destroy();
+    }
     driverConnected = false;
 });
 me.on('open', myID => {
@@ -175,7 +180,7 @@ DRDoubleSDK.on('event', (message) => {
             break;
     };
 });
-
+ 
 // responses to control messages, i.e., comms with DRDoubleSDK
 var velocity = 0.0;
 var rotation = 0.0;

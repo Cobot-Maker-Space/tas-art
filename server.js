@@ -367,7 +367,22 @@ app.get('/new-robot-activate', (req, res) => {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
             inst: db.data.organization.displayName,
-            robotId: req.query.id,
+            baseURL: "https://" + req.get('host') + "/",
+            robotUuid: req.query.uuid,
+            robotName: req.query.name,
+            robotLocation: req.query.location
+        });
+    } else {
+        res.redirect('/');
+    };
+});
+
+app.get('/new-robot-optional', (req, res) => {
+    if (req.adminId) {
+        res.render('new-robot-optional', {
+            id: req.adminId,
+            name: activeUsers[req.adminId].name,
+            inst: db.data.organization.displayName,
             robotUuid: req.query.uuid,
             robotName: req.query.name,
             robotLocation: req.query.location
