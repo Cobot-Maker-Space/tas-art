@@ -33,7 +33,7 @@ The easiest way to find this is to login to [*Microsoft Azure*](https://portal.a
 ### Admin accounts
 Admins can access an additional interface from the *Robot Select* screen, via the cog icon, which allows GUI configuration of much of the system.
 
-![Picture of the admin cog](docs/img/admin-cog.png)
+![Picture of the admin cog](img/admin-cog.png)
 
 If there are no admins defined in [db.json](db/db.json)  (the default), the first user who logs in will be automatically set as an admin (as well as a [driver](#driver-accounts)).
 

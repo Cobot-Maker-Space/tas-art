@@ -36,7 +36,7 @@
     </div>
 
     <div class="container mw-540 py-3 px-4">
-        <h6 class="mt-2"><b>Activate new robot – 🤖 <b class="text-primary"><%= robotName %></b></b></h6>
+        <h6 class="mt-2"><b>Optional features – 🤖 <b class="text-primary"><%= robotName %></b></b></h6>
 
         <div class="progress mb-4">
             <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0"
@@ -44,9 +44,20 @@
         </div>
 
         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-            <label class="form-check-label" for="flexSwitchCheckDefault">Configure rear-view camera</label>
+            <input class="form-check-input" type="checkbox" id="rearView">
+            <label class="form-check-label" for="rearView">Configure rear-view camera</label>
         </div>
+        <p class="pt-1 text-secondary">With the addition of a USB webcam, a picture-in-picture view of behind the robot
+            will increase
+            drivers' spatial awareness. However, this feature increases battery drain.</p>
+
+        <div class="form-check form-switch mt-4">
+            <input class="form-check-input" type="checkbox" id="rearView">
+            <label class="form-check-label" for="rearView">Configure physical hand-raising</label>
+        </div>
+        <p class="pt-1 text-secondary">A dedicated 'hand-raising' button in the driver interface can be used to
+            actuate/trigger a device attached to the robot. This can draw attention to the robot more subtly than the
+            driver making noise.</p>
 
     </div>
 

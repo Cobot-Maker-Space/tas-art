@@ -1,7 +1,5 @@
-// GREENLOCK SUBSCRIBER
+// greenlock subscriber
 const greenlockSubscriberEmail = "psyip1@nottingham.ac.uk";
-
-// IMPORTS
 
 // password and uuid utilities
 import crypto from 'crypto';
@@ -30,17 +28,12 @@ import { fileURLToPath } from 'url';
 // microsoft utility
 import * as Queries from './public/ms-queries.js';
 
-// CONSTANTS 
-
-// constant for async delays
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 // absolute path to dir
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // server instantiation
 const app = express();
-const server = createServer(app);
+// const server = createServer(app);
 
 // server configuration
 app.set('view engine', 'ejs');
@@ -57,7 +50,7 @@ const adapter = new JSONFileSync(file);
 const db = new LowSync(adapter);
 db.read();
 
-// UTILITY FUNCTIONS
+// utility functions
 function hashedPwd(pwd) {
     const sha256 = crypto.createHash('sha256');
     const hash = sha256.update(pwd).digest('base64');
@@ -82,8 +75,6 @@ var driverAuthTokens = {};
 var activeUsers = {};
 var connectedUsers = {};
 
-// HTTPS
-
 greenlock.init({
     packageRoot: __dirname,
     configDir: "./greenlock.d",
@@ -95,7 +86,7 @@ function socketWorker(glx) {
     var server = glx.httpsServer();
     const io = new Server(server);
 
-    // SOCKET COMMUNICATION (including webRTC)
+    // socket communication (incl. webRTC)
     io.on('connection', socket => {
         socket.on('robot-alive', robotId => {
             activeRobots[socket.id] = robotId;
@@ -169,8 +160,6 @@ function socketWorker(glx) {
 
     glx.serveApp(app);
 };
-
-// ROUTING
 
 // route precedent to collect cookie(s) from browser for auth
 app.use((req, res, next) => {
@@ -351,12 +340,12 @@ app.post('/submit-robot-details', (req, res) => {
     const { name, location } = req.body;
     var uuid = uuidv4();
 
-    db.data.robots[hashedPwd(uuid)] = {
-        "private": uuid,
-        "name": name,
-        "location": location
-    };
-    db.write();
+    // db.data.robots[hashedPwd(uuid)] = {
+    //     "private": uuid,
+    //     "name": name,
+    //     "location": location
+    // };
+    // db.write();
 
     res.redirect('/new-robot-activate?uuid=' + uuid + '&name=' + name + '&location=' + location);
 });
