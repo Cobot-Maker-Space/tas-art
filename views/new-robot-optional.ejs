@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>
-        Manage robots
+        New robot
     </title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
@@ -27,7 +27,7 @@
                     <h6 class="my-auto text-white"><b><%= name %></b><br>🏛️ <%= inst %></h6>
                 </div>
                 <div class="d-flex py-2">
-                    <form method="GET" action="/admin-dashboard">
+                    <form method="GET" action="/manage-robots">
                         <button type="submit" class="btn btn-light">❌ Cancel</button>
                     </form>
                 </div>
@@ -43,24 +43,63 @@
                 aria-valuemax="100"></div>
         </div>
 
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="rearView">
-            <label class="form-check-label" for="rearView">Configure rear-view camera</label>
+        <div class="bg-dark mx-0 mt-3 mb-3 px-4 pt-3 pb-1 rounded align-items-center">
+            <p class="text-white">⚠️ These features require additional hardware, and custom mounting solutions,
+                depending on the specific
+                hardware you use. They are not appropriate for all deployments.</p>
         </div>
-        <p class="pt-1 text-secondary">With the addition of a USB webcam, a picture-in-picture view of behind the robot
-            will increase
-            drivers' spatial awareness. However, this feature increases battery drain.</p>
+        <form method="POST" action="/new-robot-finish">
 
-        <div class="form-check form-switch mt-4">
-            <input class="form-check-input" type="checkbox" id="rearView">
-            <label class="form-check-label" for="rearView">Configure physical hand-raising</label>
-        </div>
-        <p class="pt-1 text-secondary">A dedicated 'hand-raising' button in the driver interface can be used to
-            actuate/trigger a device attached to the robot. This can draw attention to the robot more subtly than the
-            driver making noise.</p>
+            <div class="bg-light mx-0 mt-3 mb-3 px-4 pt-3 pb-1 rounded align-items-center">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="rearView">
+                    <label id="rearViewLabel" class="form-check-label" for="rearView">Configure rear-view camera</label>
+                </div>
 
+                <p id="rearViewHint" class="pt-1 text-secondary">With the addition of a USB webcam, a picture-in-picture
+                    view of behind the robot will increase drivers' spatial awareness. However, this feature increases
+                    battery drain.</p>
+
+                <div id="rearViewInsts" class="pt-1" style="display: none;">
+                    <p><b>1. </b> Remove the port cover from the <i>Double 3</i>, mount the USB webcam to the robot
+                        facing backwards, then plug it into a rear port.</p>
+                    <p><b>2. </b> Refresh the list of available A/V devices below and select the USB webcam you just
+                        plugged in.</p>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="selectDevice" id="device1" disabled>
+                        <label id="device1Label" class="form-check-label" for="device1">
+                            <i>Nothing detected</i>
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="selectDevice" id="device2" disabled>
+                        <label id="device2Label" class="form-check-label" for="device2">
+                            <i>Nothing detected</i>
+                        </label>
+                    </div>
+                    <button id="refreshDevices" type="button" class="btn btn-sm btn-primary mb-3">↻ Refresh</button>
+                </div>
+            </div>
+
+            <div class="bg-light mx-0 mt-3 mb-3 px-4 pt-3 pb-1 rounded align-items-center">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="rearView">
+                    <label class="form-check-label" for="rearView">Configure physical hand-raising</label>
+                </div>
+                <p class="pt-1 text-secondary">A dedicated 'hand-raising' button in the driver interface can be used to
+                    actuate/trigger a device attached to the robot. This can draw attention to the robot more subtly
+                    than the driver making noise.</p>
+            </div>
+
+            <input type="hidden" name="uuid" value="<%= robotUuid %>" />
+            <input type="hidden" name="name" value="<%= robotName %>" />
+            <input type="hidden" name="location" value="<%= robotLocation %>" />
+            <button type="submit" class="btn btn-success px-4 mb-5">🏁 Finish</button>
+        </form>
     </div>
 
+    <script defer type="module" src="/new-robot-optional.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>

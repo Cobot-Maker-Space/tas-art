@@ -38,24 +38,27 @@
     <div class="container mw-540 p-3">
         <h6 class="mx-3 mt-3">Active robots</h6>
         <% Object.keys(activeRobots).forEach(function(uuid) { %>
-        <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded">
+        <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded align-items-center">
             <div class="d-flex me-auto">
                 <h6 class="my-auto">🤖 <%= activeRobots[uuid].name %> —
-                    <%= activeRobots[uuid].location %><br><b><%= activeRobots[uuid].private %></b></h6>
+                    <%= activeRobots[uuid].location %><br><a href="#"
+                        onclick="navigator.clipboard.writeText('<%= baseURL %>robot/' + '<%= activeRobots[uuid].private %>');">Copy
+                        standby URL
+                        📝</a></h6>
             </div>
             <form method="POST" action="/delete-robot/<%= encodeURIComponent(uuid) %>">
                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
             </form>
         </div>
-        <% }) %>
+        <% }); %>
 
         <% if (Object.keys(activeRobots) < 1) { %>
-            <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded">
-                <div class="d-flex me-auto">
-                    <p class="my-auto text-secondary">💤 No robots yet</p>
-                </div>
+        <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded">
+            <div class="d-flex me-auto">
+                <p class="my-auto text-secondary">💤 No robots yet</p>
             </div>
-        <% } %>
+        </div>
+        <% }; %>
 
         <form method="GET" action="/new-robot-details">
             <button type="submit" class="btn m-2 px-4 btn btn-dark">✨ New robot</button>

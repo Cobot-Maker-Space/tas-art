@@ -150,6 +150,12 @@ function socketWorker(glx) {
         socket.on('chat-msg', (robotId, chat, msg) => {
             fetch(Queries.sendChatURL(chat), Queries.sendChatBody(activeUsers[connectedUsers[robotId]].access_token, msg));
         });
+
+        // // robot set-up
+        // socket.on('get-media-devices', (robotId) => {
+        //     io.emit('get-media-devices', robotId);
+        // });
+
         // disconnect
         socket.on('disconnect', reason => {
             io.emit('robot-disconnected', activeRobots[socket.id]);
@@ -313,7 +319,8 @@ app.get('/manage-robots', (req, res) => {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
             inst: db.data.organization.displayName,
-            activeRobots: db.data.robots
+            activeRobots: db.data.robots,
+            baseURL: "https://" + req.get('host') + "/"
         });
     } else {
         res.redirect('/');
