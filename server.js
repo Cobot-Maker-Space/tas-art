@@ -151,10 +151,19 @@ function socketWorker(glx) {
             fetch(Queries.sendChatURL(chat), Queries.sendChatBody(activeUsers[connectedUsers[robotId]].access_token, msg));
         });
 
-        // // robot set-up
-        // socket.on('get-media-devices', (robotId) => {
-        //     io.emit('get-media-devices', robotId);
-        // });
+        // robot set-up
+        socket.on('get-media-devices', (robotId) => {
+            io.emit('get-media-devices', robotId);
+        });
+        socket.on('media-devices', (devices) => {
+            io.emit('media-devices', devices);
+        });
+
+        socket.on('check-robot-life', (robotId) => {
+            if (activeRobots.values().includes(robotId)) {
+                socket.emit('robot-alive', robotId);
+            };
+        });
 
         // disconnect
         socket.on('disconnect', reason => {
@@ -346,15 +355,17 @@ app.get('/new-robot-details', (req, res) => {
 app.post('/submit-robot-details', (req, res) => {
     const { name, location } = req.body;
     var uuid = uuidv4();
+    var publicid = hashedPwd(uuid);
+    
+    db.data.robots[hashedPwd(uuid)] = {
+        "private": uuid,
+        "name": name,
+        "location": location,
+        "reverseCamLabel": null
+    };
+    db.write();
 
-    // db.data.robots[hashedPwd(uuid)] = {
-    //     "private": uuid,
-    //     "name": name,
-    //     "location": location
-    // };
-    // db.write();
-
-    res.redirect('/new-robot-activate?uuid=' + uuid + '&name=' + name + '&location=' + location);
+    res.redirect('/new-robot-activate?publicid=' + publicid + '&uuid=' + uuid + '&name=' + name + '&location=' + location);
 });
 
 app.get('/new-robot-activate', (req, res) => {
@@ -364,6 +375,7 @@ app.get('/new-robot-activate', (req, res) => {
             name: activeUsers[req.adminId].name,
             inst: db.data.organization.displayName,
             baseURL: "https://" + req.get('host') + "/",
+            robotPublicId: req.query.publicid,
             robotUuid: req.query.uuid,
             robotName: req.query.name,
             robotLocation: req.query.location
@@ -379,6 +391,7 @@ app.get('/new-robot-optional', (req, res) => {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
             inst: db.data.organization.displayName,
+            robotPublicId: req.query.publicid,
             robotUuid: req.query.uuid,
             robotName: req.query.name,
             robotLocation: req.query.location
@@ -451,6 +464,7 @@ app.get('/robot/:uuid', (req, res) => {
     if (db.data.robots[hashedPwd(req.params.uuid)] != null) {
         res.render('robot', {
             robotId: hashedPwd(req.params.uuid),
+            reverseCamLabel: db.data.robots[hashedPwd(req.params.uuid)].reverseCamLabel,
             robotName: db.data.robots[hashedPwd(req.params.uuid)].name
         });
     } else {

@@ -6,13 +6,7 @@
   "admins": [
     "3bc626ec-147f-4ed7-b225-d9a317288f88"
   ],
-  "robots": {
-    "o8f+BfjcXDNLIhK8suZmcllC9E9mJogqvf5CdF04Cuc=": {
-      "private": "fabbf68e-540d-40c9-8fc9-2cd32db0e496",
-      "name": "Fizz",
-      "location": "Cobot Maker Space"
-    }
-  },
+  "robots": {},
   "smart_actions": {
     "1d1f3369-fb62-453f-9380-b6a716967075": {
       "name": "CMS Lightbulb",

@@ -49,19 +49,18 @@ var me = webRTC[1];
 
 var driverConnected = false;
 
-var reverseCamId;
-
+var reverseCamEnabled = false;
+var reverseCamId = null;
 navigator.mediaDevices.enumerateDevices()
     .then(function (devices) {
         for (var i in devices) {
-            if (devices[i].label.includes("HD USB Camera")) {
+            if (devices[i].label.includes(REVERSE_CAM_LABEL)) {
                 reverseCamId = devices[i].deviceId;
+                reverseCamEnabled = true;
                 break;
             }
         }
     });
-
-var reverseCamEnabled = true;
 
 // webRTC connection handling
 navigator.mediaDevices.getUserMedia({
@@ -180,7 +179,16 @@ DRDoubleSDK.on('event', (message) => {
             break;
     };
 });
- 
+
+socket.on('get-media-devices', (robotId) => {
+    if (robotId == ROBOT_ID) {
+        navigator.mediaDevices.enumerateDevices()
+            .then(function (devices) {
+                socket.emit('media-devices', devices);
+            });
+    };
+});
+
 // responses to control messages, i.e., comms with DRDoubleSDK
 var velocity = 0.0;
 var rotation = 0.0;
