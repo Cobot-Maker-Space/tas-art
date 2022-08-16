@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="styles.css">
 
     <script defer src="/socket.io/socket.io.js"></script>
-    
+
     <script>
         const ROBOT_PUBLIC_ID = "<%= robotPublicId %>"
     </script>
@@ -90,14 +90,24 @@
 
             <div class="bg-light mx-0 mt-3 mb-3 px-4 pt-3 pb-1 rounded align-items-center">
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="rearView">
-                    <label class="form-check-label" for="rearView">Configure physical hand-raising</label>
+                    <input class="form-check-input" type="checkbox" id="handRaise">
+                    <label id="handRaiseLabel" class="form-check-label" for="handRaise">Configure physical
+                        hand-raising</label>
                 </div>
-                <p class="pt-1 text-secondary">A dedicated 'hand-raising' button in the driver interface can be used to
-                    actuate/trigger a device attached to the robot. This can draw attention to the robot more subtly
-                    than the driver making noise.</p>
+                <p id="handRaiseHint" class="pt-1 text-secondary">A dedicated 'hand-raising' button in the driver
+                    interface can be used to actuate/trigger a device attached to the robot. This can draw attention to
+                    the robot more subtly than the driver making noise.</p>
+
+                <div id="handRaiseInsts" class="pt-1" style="display: none;">
+                    <p><b>1. </b> Set-up your <i>IFTTT</i>-capable hand-raising hardware and mount it to the <i>Double
+                        3</i>. There are multiple possibilities available, such as <i>SwitchBot</i> products, or LED
+                        lights. If needed, a rear USB port can be used for power.
+                    <p><b>2. </b> Enter the <i>IFTTT</i> Webhook URL corresponding to the device below. For full
+                        instructions, please see the <a href="/smart-actions">smart action workflow</a>.</p>
+                </div>
             </div>
 
+            <input type="hidden" name="publicid" value="<%= encodeURIComponent(robotPublicId) %>" />
             <input type="hidden" name="uuid" value="<%= robotUuid %>" />
             <input type="hidden" name="name" value="<%= robotName %>" />
             <input type="hidden" name="location" value="<%= robotLocation %>" />

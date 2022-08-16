@@ -71,17 +71,17 @@
 
         <p><b>4. </b>Select <b>Reboot Head</b> via the power icon dropdown in the top right.</p>
         <p><b>5. </b>When <b class="text-primary">🤖 <%= robotName %></b> appears on the <i>Double 3</i>'s screen,
-            activation is complete.</p>
-        <!-- <p class="text-danger">❗ Do not continue until the <i>Double 3</i> is activated.</p> --> 
-            
-        <form method="GET" action="/new-robot-optional">
-            <input type="hidden" name="publicid" value="<%= robotPublicId %>" />
+            validate the connection below to continue.</p>
+
+        <form id="success-form" method="GET" action="/new-robot-optional">
+            <input type="hidden" name="publicid" value="<%= encodeURIComponent(robotPublicId) %>" />
             <input type="hidden" name="uuid" value="<%= robotUuid %>" />
             <input type="hidden" name="name" value="<%= robotName %>" />
             <input type="hidden" name="location" value="<%= robotLocation %>" />
-            <button type="submit" class="btn btn-dark px-4 mb-5">➡️ Next</button>
         </form>
 
+        <p class="text-danger" id="failure" style="display: none;">❗ Validation failed. Please repeat the steps above and try again.</p> 
+        <button type="button" class="btn btn-primary px-4 mb-5" id="activate">✅ Validate connection</button>
     </div>
 
     <script defer type="module" src="/new-robot-activate.js"></script>

@@ -54,13 +54,15 @@ var reverseCamId = null;
 navigator.mediaDevices.enumerateDevices()
     .then(function (devices) {
         for (var i in devices) {
-            if (devices[i].label.includes(REVERSE_CAM_LABEL)) {
+            if (devices[i].label.includes("deez")) {//REVERSE_CAM_LABEL)) {
                 reverseCamId = devices[i].deviceId;
                 reverseCamEnabled = true;
                 break;
             }
         }
     });
+
+var merger;
 
 // webRTC connection handling
 navigator.mediaDevices.getUserMedia({
@@ -70,7 +72,6 @@ navigator.mediaDevices.getUserMedia({
     },
     audio: true
 }).then(localStream => {
-    var merger;
     if (reverseCamEnabled) {
         navigator.mediaDevices.getUserMedia({
             video: {
@@ -127,12 +128,12 @@ function makeConnection(localSend, localShow) {
 };
 
 socket.on('user-disconnected', theirID => {
-    localStreamDisplay.srcObject = null;
-    foreignStreamDisplay.srcObject = null;
+    driverConnected = false;
     if (merger != undefined) {
         merger.destroy();
-    }
-    driverConnected = false;
+    };
+    localStreamDisplay.srcObject = null;
+    foreignStreamDisplay.srcObject = null;
 });
 me.on('open', myID => {
     socket.emit('robot-alive', ROBOT_ID);

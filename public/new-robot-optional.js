@@ -31,8 +31,11 @@ document.getElementById('refreshDevices').onclick = function () {
     socket.on("media-devices", devices => {
         for (var id in devices) {
             if (!ignoredDeviceLabels.includes(devices[id].label)) {
+                if (topRadioLabel == devices[id].label || bottomRadioLabel == devices[id].label) {
+                    continue;
+                };
                 if (topRadioLabel == "device1") {
-                    document.getElementById("device1Label").innerHTML = devices[id].label;
+                    document.getElementById("device1Label").innerHTML = "<b>" + devices[id].label + "</b>";
                     document.getElementById(topRadioLabel).id = devices[id].label;
                     topRadioLabel = devices[id].label;
                     document.getElementById(topRadioLabel).disabled = false;
@@ -46,4 +49,15 @@ document.getElementById('refreshDevices').onclick = function () {
             };
         };
     });
+};
+
+var handRaiseVisible = false;
+document.getElementById('handRaise').onclick = function () {
+    handRaiseVisible = !handRaiseVisible;
+    document.getElementById('handRaiseLabel').innerHTML =
+        handRaiseVisible ? "<b>Configure physical hand-raising</b>" : "Configure physical hand-raising";
+    document.getElementById('handRaiseHint').style.display =
+        handRaiseVisible ? "none" : "block";
+    document.getElementById('handRaiseInsts').style.display =
+        handRaiseVisible ? 'block' : 'none';
 };

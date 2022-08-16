@@ -33,7 +33,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // server instantiation
 const app = express();
-// const server = createServer(app);
 
 // server configuration
 app.set('view engine', 'ejs');
@@ -135,13 +134,16 @@ function socketWorker(glx) {
             async function fetchOfficeCard() {
                 const otherUserData = await fetch(
                     Queries.getOtherUserDataURL(msUserId),
-                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token)).then(response => response.json());
+                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token))
+                    .then(response => response.json());
                 const otherUserPhoto = await fetch(
                     Queries.getOtherUserPhotoURL(msUserId),
-                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token)).then(response => response.body);
+                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token))
+                    .then(response => response.body);
                 const otherUserPresence = await fetch(
                     Queries.getUserPresenceURL(msUserId),
-                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token)).then(response => response.json());
+                    Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token))
+                    .then(response => response.json());
                 otherUserPhoto.pipe(fs.createWriteStream(join(__dirname, "public", "/photos/" + msUserId + ".png")));
                 io.emit("office-card", { "robotId": robotId, "name": otherUserData.displayName, "presence": otherUserPresence.availability });
             }
@@ -160,8 +162,12 @@ function socketWorker(glx) {
         });
 
         socket.on('check-robot-life', (robotId) => {
-            if (activeRobots.values().includes(robotId)) {
+            console.log(Object.values(activeRobots));
+            console.log(decodeURIComponent(robotId));
+            if (Object.values(activeRobots).includes(decodeURIComponent(robotId).replace(/ /g, "+"))) {
                 socket.emit('robot-alive', robotId);
+            } else {
+                socket.emit('robot-dead', robotId);
             };
         });
 
@@ -198,7 +204,6 @@ app.get('/', (req, res) => {
         error: req.query.error
     });
 });
-
 
 // ms login and logout handling
 app.get('/ms-login', (req, res) => {
@@ -356,7 +361,7 @@ app.post('/submit-robot-details', (req, res) => {
     const { name, location } = req.body;
     var uuid = uuidv4();
     var publicid = hashedPwd(uuid);
-    
+
     db.data.robots[hashedPwd(uuid)] = {
         "private": uuid,
         "name": name,
@@ -365,7 +370,8 @@ app.post('/submit-robot-details', (req, res) => {
     };
     db.write();
 
-    res.redirect('/new-robot-activate?publicid=' + publicid + '&uuid=' + uuid + '&name=' + name + '&location=' + location);
+    res.redirect('/new-robot-activate?publicid=' +
+        publicid + '&uuid=' + uuid + '&name=' + name + '&location=' + location);
 });
 
 app.get('/new-robot-activate', (req, res) => {
