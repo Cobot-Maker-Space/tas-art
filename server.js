@@ -21,7 +21,7 @@ import greenlock from 'greenlock-express';
 import bodyParser from 'body-parser';
 
 // server utilities
-import { createServer, get } from 'https';
+import { get } from 'https';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
 

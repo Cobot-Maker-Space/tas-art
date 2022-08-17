@@ -54,12 +54,12 @@ var reverseCamId = null;
 navigator.mediaDevices.enumerateDevices()
     .then(function (devices) {
         for (var i in devices) {
-            if (devices[i].label.includes("deez")) {//REVERSE_CAM_LABEL)) {
+            if (devices[i].label.includes("dis")) {//REVERSE_CAM_LABEL)) {
                 reverseCamId = devices[i].deviceId;
                 reverseCamEnabled = true;
                 break;
-            }
-        }
+            };
+        };
     });
 
 var merger;
@@ -127,15 +127,15 @@ function makeConnection(localSend, localShow) {
     });
 };
 
-socket.on('user-disconnected', theirID => {
+socket.on('user-disconnected', (theirID) => {
     driverConnected = false;
+    localStreamDisplay.srcObject = null;
+    foreignStreamDisplay.srcObject = null;
     if (merger != undefined) {
         merger.destroy();
     };
-    localStreamDisplay.srcObject = null;
-    foreignStreamDisplay.srcObject = null;
 });
-me.on('open', myID => {
+me.on('open', (myID) => {
     socket.emit('robot-alive', ROBOT_ID);
     socket.emit('join-robot', ROBOT_ID, myID);
 });

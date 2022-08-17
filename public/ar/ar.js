@@ -1,9 +1,6 @@
 import * as SmartActionsAR from './smart-actions-ar.js';
 import * as OfficeCardsAR from './office-cards-ar.js';
 
-// constant for async delays
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export function initAR(socket, foreignStream, foreignStreamDisplay) {
 
     var renderer = new THREE.WebGLRenderer({

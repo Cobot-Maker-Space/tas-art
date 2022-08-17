@@ -1,3 +1,6 @@
+// constant for async delays
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function initModelling(smartActions, markerRoots, socket) {
 
     var geometry = new THREE.PlaneGeometry(1, 1);

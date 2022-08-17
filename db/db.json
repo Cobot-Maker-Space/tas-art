@@ -17,7 +17,7 @@
   "smart_actions": {
     "1d1f3369-fb62-453f-9380-b6a716967075": {
       "name": "CMS Lightbulb",
-      "webhook": "https://maker.ifttt.com/trigger/light_switch/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
+      "webhook": "https://maker.ifttt.com/trigger/cobot-light/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
     }
   },
   "ms_office_cards": {
@@ -26,4 +26,4 @@
       "chat_id": ""
     }
   }
-}
+} 
