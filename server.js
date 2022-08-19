@@ -155,9 +155,11 @@ function socketWorker(glx) {
 
         // robot set-up
         socket.on('get-media-devices', (robotId) => {
+            console.log("Getting media devices from: " + robotId);
             io.emit('get-media-devices', robotId);
         });
         socket.on('media-devices', (devices) => {
+            console.log("Emitting media devices: " + devices);
             io.emit('media-devices', devices);
         });
 
@@ -366,7 +368,8 @@ app.post('/submit-robot-details', (req, res) => {
         "private": uuid,
         "name": name,
         "location": location,
-        "reverseCamLabel": null
+        "reverseCamLabel": null,
+        "handRaiseWebhook": null
     };
     db.write();
 
@@ -405,6 +408,22 @@ app.get('/new-robot-optional', (req, res) => {
     } else {
         res.redirect('/');
     };
+});
+app.post('/submit-robot-optional', (req, res) => {
+    console.log(req.body);
+    db.read();
+    var publicid = decodeURIComponent(req.body.publicid);
+    console.log(publicid);
+    if (req.body.selectDevice != undefined) {
+        console.log("here");
+        db.data.robots[publicid] = { 'reverseCamLabel': req.body.selectDevice }; 
+    }
+    if (req.body.webhook != undefined) {
+        console.log("here");
+        db.data.robots[publicid] = { 'handRaiseWebhook': req.body.webhook };
+    }
+    db.write();
+    res.redirect('/manage-robots');
 });
 
 // admin manage smart actions

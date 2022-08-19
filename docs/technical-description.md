@@ -3,7 +3,7 @@
 ## The database
 Data is currently stored simply in JSON format, in the [db.json](db/db.json) file. This will be plenty sufficient for all conceivable deployments, as any realistic number of robots, smart actions, etc. will still implicate 100s of entries rather than 100,000s.
 
-Furthermore, user data is only polled from *Microsoft Graph* (stored in volatile memory), so the size of the organization/user-base will not increase the size of [db.json](db/db.json). 
+Furthermore, user data is only polled from *Microsoft Graph* (stored in volatile memory), so the size of the organization/user-base will not increase the size of [db.json](db/db.json) (although, user profile photos are saved indefinitely on the server, right now). 
 
 ## Driver-side interface
 ### Overview

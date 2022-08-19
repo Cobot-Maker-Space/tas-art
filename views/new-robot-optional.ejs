@@ -54,7 +54,7 @@
                 depending on the specific
                 hardware you use. They are not appropriate for all deployments.</p>
         </div>
-        <form method="POST" action="/new-robot-finish">
+        <form method="POST" action="/submit-robot-optional">
 
             <div class="bg-light mx-0 mt-3 mb-3 px-4 pt-3 pb-1 rounded align-items-center">
                 <div class="form-check form-switch">
@@ -73,13 +73,13 @@
                         plugged in.</p>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="selectDevice" id="device1" disabled>
+                        <input class="form-check-input" type="radio" name="selectDevice" value="" id="device1" disabled>
                         <label id="device1Label" class="form-check-label" for="device1">
                             <i>Nothing detected</i>
                         </label>
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="selectDevice" id="device2" disabled>
+                        <input class="form-check-input" type="radio" name="selectDevice" value="" id="device2" disabled>
                         <label id="device2Label" class="form-check-label" for="device2">
                             <i>Nothing detected</i>
                         </label>
@@ -100,10 +100,14 @@
 
                 <div id="handRaiseInsts" class="pt-1" style="display: none;">
                     <p><b>1. </b> Set-up your <i>IFTTT</i>-capable hand-raising hardware and mount it to the <i>Double
-                        3</i>. There are multiple possibilities available, such as <i>SwitchBot</i> products, or LED
+                            3</i>. There are multiple possibilities available, such as <i>SwitchBot</i> products, or LED
                         lights. If needed, a rear USB port can be used for power.
                     <p><b>2. </b> Enter the <i>IFTTT</i> Webhook URL corresponding to the device below. For full
                         instructions, please see the <a href="/smart-actions">smart action workflow</a>.</p>
+                    <div class="form-floating mb-3 mt-3">
+                        <input name="webhook" type="text" class="form-control" id="webhook" placeholder="www.ifttt.com/...">
+                        <label for="webhook">IFTTT Webhook link</label>
+                    </div>
                 </div>
             </div>
 

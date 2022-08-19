@@ -11,8 +11,8 @@ const ignoredDeviceLabels = [
 
 const socket = io('/');
 
-var topRadioLabel = "device1";
-var bottomRadioLabel = "device2";
+var topRadioLabel = "";
+var bottomRadioLabel = "";
 
 var rearViewVisible = false;
 document.getElementById('rearView').onclick = function () {
@@ -34,17 +34,17 @@ document.getElementById('refreshDevices').onclick = function () {
                 if (topRadioLabel == devices[id].label || bottomRadioLabel == devices[id].label) {
                     continue;
                 };
-                if (topRadioLabel == "device1") {
+                if (topRadioLabel == "") {
                     document.getElementById("device1Label").innerHTML = "<b>" + devices[id].label + "</b>";
-                    document.getElementById(topRadioLabel).id = devices[id].label;
+                    document.getElementById("device1").value = devices[id].label;
+                    document.getElementById("device1").disabled = false;
+                    document.getElementById("device1").checked = true;
                     topRadioLabel = devices[id].label;
-                    document.getElementById(topRadioLabel).disabled = false;
-                    document.getElementById(topRadioLabel).checked = true;
                 } else {
                     document.getElementById("device2Label").innerHTML = devices[id].label;
-                    document.getElementById(bottomRadioLabel).id = devices[id].label;
+                    document.getElementById("device2").value = devices[id].label;
+                    document.getElementById("device2").disabled = false;
                     bottomRadioLabel = devices[id].label;
-                    document.getElementById(bottomRadioLabel).disabled = false;
                 };
             };
         };

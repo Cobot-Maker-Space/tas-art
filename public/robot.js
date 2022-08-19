@@ -54,7 +54,7 @@ var reverseCamId = null;
 navigator.mediaDevices.enumerateDevices()
     .then(function (devices) {
         for (var i in devices) {
-            if (devices[i].label.includes("dis")) {//REVERSE_CAM_LABEL)) {
+            if (devices[i].label.includes("fel")) {//REVERSE_CAM_LABEL)) {
                 reverseCamId = devices[i].deviceId;
                 reverseCamEnabled = true;
                 break;
@@ -182,7 +182,9 @@ DRDoubleSDK.on('event', (message) => {
 });
 
 socket.on('get-media-devices', (robotId) => {
-    if (robotId == ROBOT_ID) {
+    console.log(decodeURIComponent(robotId).replace(/ /g, "+"));
+    console.log(ROBOT_ID);
+    if (decodeURIComponent(robotId).replace(/ /g, "+") == ROBOT_ID) {
         navigator.mediaDevices.enumerateDevices()
             .then(function (devices) {
                 socket.emit('media-devices', devices);
@@ -261,7 +263,9 @@ socket.on('control-msg', message => {
 socket.on('click-to-drive', message => {
     if (message.target == ROBOT_ID) {
         DRDoubleSDK.sendCommand('camera.hitTest', {
-            'x': message.xCoord, 'y': message.yCoord, 'highlight': true
+            'x': message.xCoord,
+            'y': message.yCoord,
+            'highlight': true
         });
         if (message.attempt) {
             attemptClickToDrive = true;
