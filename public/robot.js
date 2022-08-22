@@ -54,7 +54,8 @@ var reverseCamId = null;
 navigator.mediaDevices.enumerateDevices()
     .then(function (devices) {
         for (var i in devices) {
-            if (devices[i].label.includes("fel")) {//REVERSE_CAM_LABEL)) {
+            if (devices[i].label == REVERSE_CAM_LABEL) {
+                console.log("entered");
                 reverseCamId = devices[i].deviceId;
                 reverseCamEnabled = true;
                 break;
@@ -73,6 +74,7 @@ navigator.mediaDevices.getUserMedia({
     audio: true
 }).then(localStream => {
     if (reverseCamEnabled) {
+        console.log(REVERSE_CAM_LABEL);
         navigator.mediaDevices.getUserMedia({
             video: {
                 deviceId: { exact: reverseCamId },

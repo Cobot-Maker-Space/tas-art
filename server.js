@@ -343,7 +343,7 @@ app.get('/manage-robots', (req, res) => {
     };
 });
 app.post('/delete-robot/:uuid', (req, res) => {
-    delete db.data.robots[req.params.uuid];
+    delete db.data.robots[decodeURIComponent(req.params.uuid)];
     db.write();
     res.redirect('/manage-robots');
 });
@@ -410,17 +410,13 @@ app.get('/new-robot-optional', (req, res) => {
     };
 });
 app.post('/submit-robot-optional', (req, res) => {
-    console.log(req.body);
     db.read();
-    var publicid = decodeURIComponent(req.body.publicid);
-    console.log(publicid);
+    var publicid = decodeURIComponent(req.body.publicid).replace(/ /g, "+");
     if (req.body.selectDevice != undefined) {
-        console.log("here");
-        db.data.robots[publicid] = { 'reverseCamLabel': req.body.selectDevice }; 
+       db.data.robots[publicid].reverseCamLabel = req.body.selectDevice; 
     }
     if (req.body.webhook != undefined) {
-        console.log("here");
-        db.data.robots[publicid] = { 'handRaiseWebhook': req.body.webhook };
+        db.data.robots[publicid].handRaiseWebhook = req.body.webhook;
     }
     db.write();
     res.redirect('/manage-robots');
@@ -505,6 +501,7 @@ app.get('/:uuid', (req, res) => {
         res.render('driver', {
             robotId: req.params.uuid,
             robotName: db.data.robots[req.params.uuid].name,
+            handRaiseWebhook: db.data.robots[req.params.uuid].handRaiseWebhook,
             robotLocation: db.data.robots[req.params.uuid].location,
             smartActionsData: JSON.stringify(db.data.smart_actions),
             officeCardsData: JSON.stringify(db.data.ms_office_cards)

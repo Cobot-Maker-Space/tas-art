@@ -22,6 +22,8 @@
     <script>
         const ROBOT_ID = "<%= robotId %>";
         const ROBOT_NAME = "<%= robotName %>";
+        const HAND_RAISE_WEBHOOK = "<%= handRaiseWebhook %>";
+
         const smartActions = JSON.parse('<%- smartActionsData %>');
         const officeCards = JSON.parse('<%- officeCardsData %>');
     </script>
@@ -40,7 +42,8 @@
                 <h6 class="my-auto">🤖<b class="text-primary">
                         <%= robotName %>
                     </b> — <%= robotLocation %><br>
-                        <b id="charging">⌛</b>Battery — <b id="battery" class="text-secondary">⌛</b></h6>
+                    <b id="charging">⌛</b>Battery — <b id="battery" class="text-secondary">⌛</b>
+                </h6>
             </div>
 
             <div class="d-flex justify-content-end me-3">
@@ -70,14 +73,17 @@
             <div class="d-flex justify-content-end me-4">
                 <h6 class="my-auto">|</h6>
             </div>
+
+            <% if (handRaiseWebhook != null && handRaiseWebhook != "") { %>
             <input type="checkbox" class="btn-check" id="hand" autocomplete="off">
             <label class="btn btn-outline-primary me-4" for="hand">✋</label><br>
-            
+            <% }; %>
+
             <input type="checkbox" class="btn-check" id="muted" autocomplete="off">
             <label class="btn btn-outline-danger" for="muted">🔇Mute</label><br>
 
 
-            
+
         </div>
     </div>
 

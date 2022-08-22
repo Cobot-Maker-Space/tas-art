@@ -44,7 +44,15 @@
                     <%= activeRobots[uuid].location %><br><a href="#"
                         onclick="navigator.clipboard.writeText('<%= baseURL %>robot/' + '<%= activeRobots[uuid].private %>');">Copy
                         standby URL
-                        📝</a></h6>
+                        📝</a>
+                    <br>
+                    <% if (activeRobots[uuid].reverseCamLabel != null && activeRobots[uuid].reverseCamLabel != "") { %>
+                    <span class="badge bg-dark mt-2">📷 Rear-view camera</span>
+                    <% }; %>
+                    <% if (activeRobots[uuid].handRaiseWebhook != null && activeRobots[uuid].handRaiseWebhook != "") { %>
+                    <span class="badge bg-dark mt-2">✋ Physical hand-raising</span>
+                    <% }; %>
+                </h6>
             </div>
             <form method="POST" action="/delete-robot/<%= encodeURIComponent(uuid) %>">
                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>

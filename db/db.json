@@ -7,15 +7,12 @@
     "3bc626ec-147f-4ed7-b225-d9a317288f88"
   ],
   "robots": {
-    "SoXhB3fhSYhe45t0QQ9IF33TfFRLlIFBjidMgsen2r8=": {
-      "private": "dc660146-02e8-4ca7-8dc4-9af55c6f2953",
+    "Yqn0OdAwFN/GK9A4jNZIcTElMe10/YRopy7lqSnWDhQ=": {
+      "private": "fe1f3ad6-d278-4b41-b3f1-7505a27b62e3",
       "name": "Fizz",
       "location": "Cobot Maker Space",
-      "reverseCamLabel": null,
-      "handRaiseWebhook": null
-    },
-    "SoXhB3fhSYhe45t0QQ9IF33TfFRLlIFBjidMgsen2r8%3D": {
-      "handRaiseWebhook": ""
+      "reverseCamLabel": "",
+      "handRaiseWebhook": "https://maker.ifttt.com/trigger/doorbell/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
     }
   },
   "smart_actions": {

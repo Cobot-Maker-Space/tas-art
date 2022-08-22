@@ -53,11 +53,17 @@
         <h6 class="mx-3">Connect to a robot</h6>
 
         <% Object.keys(robots).forEach(function(uuid) { %>
-        <div class="d-flex bg-light text-black mx-2 mt-3 mb-2 px-4 py-3 rounded">
+        <div class="d-flex bg-light text-black mx-2 mt-3 mb-2 px-4 py-3 rounded align-items-center">
             <div class="d-flex me-auto">
                 <h6 class="my-auto">🤖<b class="text-primary">
                         <%= robots[uuid].name %>
-                    </b> — <%= robots[uuid].location %>
+                    </b> — <%= robots[uuid].location %> <br>
+                    <% if (robots[uuid].reverseCamLabel != null && robots[uuid].reverseCamLabel != "") { %>
+                        <span class="badge bg-primary mt-2">📷 Rear-view camera</span>
+                    <% }; %> 
+                    <% if (robots[uuid].handRaiseWebhook != null && robots[uuid].handRaiseWebhook != "") { %>
+                        <span class="badge bg-primary mt-2">✋ Physical hand-raising</span> 
+                    <% }; %>
                 </h6>
             </div>
             <form method="GET" action="/<%= encodeURIComponent(uuid) %> %>">

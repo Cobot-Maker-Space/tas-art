@@ -134,7 +134,7 @@ function initControls() {
     };
     document.getElementById('hand').onclick = function () {
         if (document.getElementById('hand').disabled == false) {
-            socket.emit('ifttt-event', "https://maker.ifttt.com/trigger/doorbell/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X");
+            socket.emit('ifttt-event', HAND_RAISE_WEBHOOK);
             document.getElementById('hand').disabled = true;
             resetHand();
         }
