@@ -5,3 +5,4 @@
 * [System configuration](docs/system-configuration.md)
 * [Technical description](docs/technical-description.md)
 * [Limitations and trade-offs](docs/limitations-and-trade-offs.md)
+* [*Double 3* flaws and bugs](docs/double3-flaws-and-bugs.md)

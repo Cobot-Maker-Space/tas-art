@@ -27,9 +27,16 @@ window.onload = () => {
         DRDoubleSDK.sendCommand('tilt.minLimit.disable');
         DRDoubleSDK.sendCommand('tilt.maxLimit.disable');
 
-        DRDoubleSDK.sendCommand('system.setPerformanceModel', {
-            'name': 'highest'
-        });
+        if (REVERSE_CAM_LABEL != null && REVERSE_CAM_LABEL != "") {
+            DRDoubleSDK.sendCommand('system.setPerformanceModel', {
+                'name': 'highest'
+            });
+        } else {
+            DRDoubleSDK.sendCommand('system.setPerformanceModel', {
+                'name': 'high'
+            });
+        }
+
         DRDoubleSDK.sendCommand('speaker.enable');
         DRDoubleSDK.sendCommand('speaker.setVolume', { 'percent': 0.5 });
 
@@ -112,6 +119,12 @@ navigator.mediaDevices.getUserMedia({
     } else {
         makeConnection(localStream, localStream);
     };
+}).catch(err => {
+    async function reload() {
+        await delay(2000);
+        location.reload();
+    }
+    reload();
 });
 function makeConnection(localSend, localShow) {
     socket.on('user-connected', theirID => {

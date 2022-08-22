@@ -1,4 +1,6 @@
 # Limitations and trade-offs
+> This documents the limitations and trade-offs of the project, either as a result of the implementation itself or the limitations of the *Double 3* hardware and software. This may inform any decision(s) regarding continued development, and where expansion might be best.
+
 ## Battery life
 The *Double 3* can deploy 1 of 4 performance models, ranging from **lowest** to **highest**. To the best of my knowledge, this effects the number of active CPU cores, and the clock speeds of the CPU cores and the GPU. Both the CPU and GPU are in the so-called *head*, and this setting does not effect the *base* in any way.
 
