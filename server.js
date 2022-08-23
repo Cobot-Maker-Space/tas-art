@@ -447,9 +447,9 @@ app.post('/delete-smart-action/:uuid', (req, res) => {
 
     res.redirect('/smart-actions');
 });
-app.get('/smart-action', (req, res) => {
+app.get('/smart-action-upload', (req, res) => {
     if (req.adminId) {
-        res.render('smart-action', {
+        res.render('smart-action-upload', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
             inst: db.data.organization.displayName

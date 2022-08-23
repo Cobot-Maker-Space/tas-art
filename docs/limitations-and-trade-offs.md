@@ -1,12 +1,12 @@
 # Limitations and trade-offs
-> This documents the limitations and trade-offs of the project, either as a result of the implementation itself or the limitations of the *Double 3* hardware and software. This may inform any decision(s) regarding continued development, and where expansion might be best.
+This documents the limitations and trade-offs of the project, either as a result of the implementation itself or the limitations of the *Double 3* hardware and software. This may inform any decision(s) regarding continued development, and where expansion might be best.
 
 ## Battery life
 The *Double 3* can deploy 1 of 4 performance models, ranging from **lowest** to **highest**. To the best of my knowledge, this effects the number of active CPU cores, and the clock speeds of the CPU cores and the GPU. Both the CPU and GPU are in the so-called *head*, and this setting does not effect the *base* in any way.
 
 The [stock *Double 3* endpoint](https://drive.doublerobotics.com/) is optimised to work with the **lowest** performance model.
 
-With the added functionality and in thi s project, the processing load is higher than the stock *Double 3* endpoint. As such, **high** performance is enabled for single-camera operation, and the **highest** performance is enabled with the addition of a [rear-view camera]().
+With the added functionality in this project, the processing load is higher than the stock *Double 3* endpoint. As such, **high** performance is enabled for single-camera operation, and the **highest** performance is enabled with the addition of a [rear-view camera]().
 
 This measurably reduces battery life. The **average time** taken to drain the battery from **100%** to **90%** across 3 scenarios is listed below. Each scenario was tested 3 times; the *Double 3* was left parked during a call (i.e., not driven) during each test.
 

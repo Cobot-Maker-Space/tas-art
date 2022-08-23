@@ -1,4 +1,5 @@
 # Deploying the project
+This is intended for first-time technical users unaffiliated with the *University of Nottingham*. Dominic Price maintains the local *Cobot Maker Space* deployment and *Microsoft Azure* app.
 
 ## 1. Domain and HTTPS configuration
 > The system must be deployed using HTTPS, as modern browsers do not allow access to the [`MediaDevices`](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices) interface over unencrypted HTTP.

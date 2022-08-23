@@ -1,5 +1,4 @@
 # *Double 3* flaws and bugs
-## Rationale
 External development using the *Double 3* relies entirely on the company's [developer documentation and tools](), as the platform is simply too niche for a wider community to form. 
 
 I am unaware of any third-party software for the robot **at all**, nevermind anything being used regularly. This page therefore documents the problems with *Double 3* development which couldn't be straightforwardly overcome, and were usually worked around, or stopped a feature in its tracks entirely. 
@@ -39,6 +38,15 @@ The *Double 3* has 6 microphones in its head: 3 front facing, 2 back facing, and
 The 6 microphones appear as 3 separate stereo devices in Linux when attempting to spawn a `MediaStream`, grouped into front, back, and sides. It is therefore absolutely possible to process these 3 input devices into binaural directional sound with the right algorithm, *Double robotics* just didn't do it.
 
 > The only reasons I can rationalise why they didn't is either a development time constraint, or the *Double 3* [simply isn't powerful enough]() to process the streams into one and despatch them with low enough latency for the driver.
+
+## 'Highest' performance instability
+As explained in the [battery life trade-off](), the *Double 3* has 4 available performance models. The *highest* of these allows all the CPU cores to hit maximum utilisation, amongst other adjustments.
+
+In this mode, **the *Double 3* will sometimes crash entirely**; that is, the head will stop reporting a heartbeat to the developer interface. Sometimes it recovers from this after a short while (respawning multiple hardware and software elements), and other times a complete reboot will be needed.
+
+The only way this can reasonably be mitigated is to make sure additional features don't (arbitrarily) demand 'too much' of the onboard processing. In the case of the [rear-view camera]() feature, this involved reducing the resolution of the streams.
+
+> CPU thermals can reach the low 70s°C when the room is approx. 21°C, and whilst the *NVIDIA Jetson* claims an operating temperature of up to 80°C, it may be programmed to throttle/bail entirely below that temperature. Alternatively, power draw from the USB port for the rear-view camera might be reducing the available power for the CPU. Or, it might be something else; *Double Robotics* self-proclaim that they don't really test these developer-only modes.
 
 ## Sensor calibration and spawning
 Sometimes when the *Double 3* boots it repeatedly attempts and fails to respawn sensors, seemingly indefinitely. This is usually the front depth (*RealSense*) sensor, but can be the others, too. This is either a soft lock for features (e.g., click-to-drive) or a hard lock because the robot refuses to drive (due to insufficient data for collision avoidance). The *Double 3* needs to be rebooted until it eventually works.
