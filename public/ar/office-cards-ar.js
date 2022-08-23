@@ -108,7 +108,8 @@ export function initModelling(officeCards, markerRoots, socket) {
                 });
 
                 markerRoots[uuid].callback = function () {
-                    socket.emit("chat-msg", ROBOT_ID, officeCards[uuid].chat_id, "Hi, I'm outside your office using a telepresence robot. Could we have a chat?");
+                    socket.emit("chat-msg", ROBOT_ID, officeCards[uuid].chat_id,
+                        "Hi, I'm outside your office using a telepresence robot. Could we have a chat?");
                 };
             }
         });

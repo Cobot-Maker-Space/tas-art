@@ -28,6 +28,15 @@
                 <span class="visually-hidden">Waiting...</span>
             </div>
             <h4 id="battery" class="text-secondary mt-5 p-5">🔋 ⌛</h4>
+
+            <p class="text-secondary""><br><br><br>Technical issues?<br>Refresh the connection.</p>
+
+            <button type=" button" class="btn btn-sm btn-secondary" onclick="refresh()">Refresh</button>
+            <script>
+                function refresh() {
+                    window.location.reload();
+                }
+            </script>
         </div>
     </div>
 
@@ -36,7 +45,7 @@
         <progress id="volume" max="100" value="50"></progress>
     </div>
 
-    <video id="foreign-view" playsinline autoplay></video>
+    <video id="foreign-view" style="pointer-events: none;" playsinline autoplay></video>
     <video id="local-view" playsinline autoplay muted></video>
 
     <script defer type="module" src="/robot.js"></script>

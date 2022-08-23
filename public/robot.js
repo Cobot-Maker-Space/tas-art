@@ -60,6 +60,7 @@ var reverseCamEnabled = false;
 var reverseCamId = null;
 navigator.mediaDevices.enumerateDevices()
     .then(function (devices) {
+        console.log(devices);
         for (var i in devices) {
             if (devices[i].label == REVERSE_CAM_LABEL) {
                 console.log("entered");

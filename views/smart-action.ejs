@@ -31,42 +31,55 @@
                 </div>
                 <div class="d-flex py-2">
                     <form method="GET" action="/admin-dashboard">
-                        <button type="submit" class="btn btn-light">⬅️ Back</button>
+                        <button type="submit" class="btn btn-light">❌ Cancel</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container mw-540 p-3">
-        <h6 class="mx-3">New/edit smart action</h6>
+    <div class="container mw-540 py-3 px-4">
+        <h6 class="mt-2">New smart action</h6>
+
+        <div class="progress mb-4">
+            <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0"
+                aria-valuemax="100"></div>
+        </div>
 
         <form method="POST" action="/new-smart-action" encType="multipart/form-data">
 
-            <div class="form-floating mb-3 mt-3">
+            <div class="form-floating mb-2 mt-3">
                 <input name="name" type="text" class="form-control" id="name" placeholder="Default smart action"
                     required>
-                <label for="name">Smart action name</label>
+                <label for="name">Name/description</label>
             </div>
+            <p class="text text-secondary mb-3"><i>Hint: Something to identify the action on the admin dashboard.
+                    You'll set up the IFTTT interaction itself in the next step.</i></p>
 
-            <label class="form-label" for="fiducial-patt">Fiducial marker (<a
-                    href="https://jeromeetienne.github.io/AR.js/three.js/examples/marker-training/examples/generator.html"
-                    target="_blank">.patt</a>)</label>
-            <input name="fiducial" type="file" class="form-control mb-3" id="fiducial" required />
-
-            <label class="form-label" for="arIcon">AR interactive icon (.png)</label>
-            <input name="arIcon" type="file" class="form-control mb-3" id="ar-icon" required />
-
-            <label class="form-label" for="arIconConfirm">AR confirmation icon (.png)</label>
-            <input name="arIconConfirm" type="file" class="form-control mb-4" id="ar-icon-confirm" required />
-
-            <div class="form-floating mb-3">
+            <!-- <div class="form-floating mt-3 mb-3">
                 <input name="webhook" type="text" class="form-control" id="ifttt-webhook"
                     placeholder="https://example.com" required>
                 <label for="ifttt-webhook">IFTTT webhook link</label>
-            </div>
+            </div> -->
 
-            <button type="submit" class="btn btn-dark px-4">🎬 Save smart action</button>
+            <label class="form-label" for="fiducial-patt">Fiducial marker icon (.jpg)</label>
+            <input name="fiducial" type="file" class="form-control mb-2" id="fiducial" required />
+            <p class="text text-secondary mb-3"><i>Hint: The image shown on the icon you will print out and attach to
+                    walls.
+                    It should be as simple and high-contrast as possible (e.g., black and white).
+                </i></p>
+
+            <label class="form-label" for="arIcon">AR interactive icon (.png)</label>
+            <input name="arIcon" type="file" class="form-control mb-2" id="ar-icon" required />
+            <p class="text text-secondary mb-3"><i>Hint: The image visible to the driver in AR when the marker is
+                    detected and the smart action is available.</i></p>
+
+            <label class="form-label" for="arIconConfirm">AR confirmation icon (.png)</label>
+            <input name="arIconConfirm" type="file" class="form-control mb-2" id="ar-icon-confirm" required />
+            <p class="text text-secondary mb-3"><i>Hint: The image shown for a short time when the driver interacts in
+                    AR, to confirm a successful trigger.</i></p>
+
+            <button type="submit" class="btn btn-dark px-4 mt-2 mb-5">➡️ Next</button>
         </form>
     </div>
 
