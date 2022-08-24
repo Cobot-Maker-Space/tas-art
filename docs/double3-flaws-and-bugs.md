@@ -44,7 +44,7 @@ As explained in the [battery life trade-off](), the *Double 3* has 4 available p
 
 In this mode, **the *Double 3* will sometimes crash entirely**; that is, the head will stop reporting a heartbeat to the developer interface. Sometimes it recovers from this after a short while (respawning multiple hardware and software elements), and other times a complete reboot will be needed.
 
-The only way this can reasonably be mitigated is to make sure additional features don't (arbitrarily) demand 'too much' of the onboard processing. In the case of the [rear-view camera]() feature, this involved reducing the resolution of the streams.
+The only way this can reasonably be mitigated is to make sure additional features don't (arbitrarily) demand 'too much' of the onboard processing. In the case of the [rear-view camera]() feature, this involved reducing the resolution of the streams. Or, optimally, unfortunately, just don't use the *highest* performance mode.
 
 > CPU thermals can reach the low 70s°C when the room is approx. 21°C, and whilst the *NVIDIA Jetson* claims an operating temperature of up to 80°C, it may be programmed to throttle/bail entirely below that temperature. Alternatively, power draw from the USB port for the rear-view camera might be reducing the available power for the CPU. Or, it might be something else; *Double Robotics* self-proclaim that they don't really test these developer-only modes.
 
