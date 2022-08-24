@@ -297,37 +297,6 @@ app.get('/admin-dashboard', (req, res) => {
     };
 });
 
-// admin manage drivers
-app.get('/manage-drivers', (req, res) => {
-    if (req.adminId) {
-        db.read();
-        res.render('manage-drivers', {
-            id: req.adminId,
-            name: activeUsers[req.adminId].name,
-            inst: db.data.organization.displayName,
-            activeInvites: db.data.active_invites,
-            activeDrivers: db.data.drivers
-        });
-    } else {
-        res.redirect('/');
-    };
-});
-app.post('/generate-invite', (req, res) => {
-    db.data.active_invites.push(uuidv4());
-    db.write();
-    res.redirect('/manage-drivers');
-});
-app.post('/delete-invite/:invite', (req, res) => {
-    db.data.active_invites = deleteElement(db.data.active_invites, req.params.invite);
-    db.write();
-    res.redirect('/manage-drivers');
-});
-app.post('/delete-driver/:email', (req, res) => {
-    delete db.data.drivers[req.params.email];
-    db.write();
-    res.redirect('/manage-drivers');
-});
-
 // admin manage robots
 app.get('/manage-robots', (req, res) => {
     if (req.adminId) {
@@ -414,7 +383,7 @@ app.post('/submit-robot-optional', (req, res) => {
     db.read();
     var publicid = decodeURIComponent(req.body.publicid).replace(/ /g, "+");
     if (req.body.selectDevice != undefined) {
-       db.data.robots[publicid].reverseCamLabel = req.body.selectDevice; 
+        db.data.robots[publicid].reverseCamLabel = req.body.selectDevice;
     }
     if (req.body.webhook != undefined) {
         db.data.robots[publicid].handRaiseWebhook = req.body.webhook;
@@ -480,7 +449,7 @@ app.post('/smart-action-upload', (req, res) => {
     };
     db.write();
 
-    res.redirect('/smart-action-ifttt');
+    res.redirect('/smart-action-ifttt?uuid=' + uuid + '&name=' + name);
 });
 
 app.get('/smart-action-ifttt', (req, res) => {
@@ -488,7 +457,9 @@ app.get('/smart-action-ifttt', (req, res) => {
         res.render('smart-action-ifttt', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
-            inst: db.data.organization.displayName
+            inst: db.data.organization.displayName,
+            actionUuid: req.query.uuid,
+            actionName: req.query.name
         });
     } else {
         res.redirect('/');
