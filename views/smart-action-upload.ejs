@@ -13,7 +13,9 @@
     <link rel="stylesheet" href="styles.css">
 
     <script defer src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-    <script defer src="/socket.io/socket.io.js"></script>
+    
+    <script defer src='threex-arpatternfile.js'></script>
+    <script defer src='smart-action-upload.js'></script>
 
     <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.5/build/pdfmake.min.js"></script>
 </head>
@@ -55,16 +57,10 @@
         <p class="text text-secondary mb-3"><i>Hint: Something to identify the action on the admin dashboard.
                 You'll set up the IFTTT interaction itself in the next step.</i></p>
 
-        <!-- <div class="form-floating mt-3 mb-3">
-                <input name="webhook" type="text" class="form-control" id="ifttt-webhook"
-                    placeholder="https://example.com" required>
-                <label for="ifttt-webhook">IFTTT webhook link</label>
-            </div> -->
-
         <label class="form-label" for="fiducial-patt">Fiducial marker icon <b>(.jpg)</b></label>
         <input name="fiducial" type="file" class="form-control mb-2" id="fiducial" required />
         <p class="text text-secondary mb-3"><i>Hint: The image shown on the icon you will print out and attach to
-                walls. It should be as simple and high-contrast as possible (e.g., black and white).
+                walls. It should be as simple, unique, and high-contrast as possible (e.g., black and white).
             </i></p>
 
         <label class="form-label" for="arIcon">AR interactive icon <b>(.png)</b></label>
@@ -77,65 +73,9 @@
         <p class="text text-secondary mb-3"><i>Hint: The image shown for a short time when the driver interacts in
                 AR, to confirm a successful trigger.</i></p>
 
-        <button type="button" class="btn btn-dark px-4 mt-2 mb-5" onclick="generateFiducial();">➡️ Next</button>
-
-        <script>
-            function generateFiducial() {
-                if (document.getElementById("fiducial").files.length == 0) {
-                    return;
-                }
-
-                var fiducialInner = document.getElementById("fiducial").files[0];
-                var fiducialInnerURL = window.URL.createObjectURL(fiducialInner);
-                THREEx.ArPatternFile.buildFullMarker(
-                    window.URL.createObjectURL(fiducialInner), 0.5, 512, "black",
-                    function onComplete(markerURL) {
-                        THREEx.ArPatternFile.encodeImageURL(fiducialInnerURL,
-                            async function onComplete(patternString) {
-                                var patternURL = window.URL.createObjectURL(new Blob([patternString], { type: 'text/plain' }));
-                                var patternFile = await fetch(patternURL)
-                                    .then(r => r.blob())
-                                    .then(blobFile => new File([blobFile], "pattern.patt", { type: "text/plain" }));
-
-                                var printDesc = {
-                                    content: [
-                                        {
-                                            image: markerURL,
-                                            width: 300,
-                                            alignment: 'center',
-                                        },
-                                        {
-                                            image: markerURL,
-                                            width: 300,
-                                            alignment: 'center',
-                                        },
-                                    ]
-                                }
-                                pdfMake.createPdf(printDesc).getDataUrl(async function (fileURL) {
-                                    var printFile = await fetch(fileURL)
-                                        .then(r => r.blob())
-                                        .then(blobFile => new File([blobFile], "print.pdf", { type: "application/pdf" }));
-
-                                    const formData = new FormData();
-                                    formData.append("name", document.getElementById("name").value);
-                                    formData.append("patternFile", patternFile);
-                                    formData.append("markerPrint", printFile);
-                                    formData.append("arIcon", document.getElementById("ar-icon").files[0]);
-                                    formData.append("arIconConfirm", document.getElementById("ar-icon-confirm").files[0]);
-
-                                    fetch('/smart-action-upload', {
-                                        method: 'POST',
-                                        body: formData
-                                    });
-                                });
-                            });
-                    });
-            };
-        </script>
+        <button id="generate" type="button" class="btn btn-dark mt-2 mb-5 me-2"">✨ Generate marker</button>
+        <button id="submit" type="button" class="btn btn-dark mt-2 mb-5" disabled>➡️ Next</button>
     </div>
-
-    <script defer src='threex-arpatternfile.js'></script>
-
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>

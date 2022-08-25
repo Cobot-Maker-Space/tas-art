@@ -13,13 +13,6 @@
       "location": "Cobot Maker Space",
       "reverseCamLabel": null,
       "handRaiseWebhook": "https://maker.ifttt.com/trigger/doorbell/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
-    },
-    "5WguU9e4RFOygHugPLi8M1eIt8P0MgGTIDjgQL87ejk=": {
-      "private": "51c82969-8cdf-4073-be7e-9c9aaf9c8f77",
-      "name": "Test",
-      "location": "No",
-      "reverseCamLabel": null,
-      "handRaiseWebhook": null
     }
   },
   "smart_actions": {
