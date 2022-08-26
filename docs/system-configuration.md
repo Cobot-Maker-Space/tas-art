@@ -61,12 +61,26 @@ On the optional features page in the [new robot workflow](), refresh the device 
 
 ## Physical hand-raising
 ### 1. Prepare the actuation device
+There are multiple hardware paths you can take here, but the method of triggering the actuation must be the same: it must be the 'then' (action) of an *IFTTT* applet. Therefore, the configuration workflow is similar to [smart actions]().
+
+There are multiple off-the-shelf *IoT* solutions with *IFTTT* integration which would 'do the job' of physically attracting attention to the robot. A versatile option is a [*SwitchBot* and hub](), or similar, as this allows you to attach something to the actuator which will move when triggered. Alternatively, you might consider an *IoT* light controller with your chosen low-power LEDs.
+
+> Remember, even with a rear-view camera, there is a powered USB port on the back of the robot you could use for this feature.
+
+If you want a truly custom solution, you could use a *Raspberry Pi* - powered by the *Double 3*! - and attach whatever you like for actuation to the GPIO connectors. A *Raspberry Pi* can receive *IFTTT* actions in a few ways, with *Webhook*s being the most popular. There are endless tutorials on this. 
+
+Below is an image of an off-the-shelf *SwitchBot* solution with a basic hand, for inspiration.
+
+![Placeholder image](img/placeholder.jpg)
+
 ### 2. Prepare the mounting solution
-The same advice applies as for [mounting the rear-view camera](), although you'll inevitably need to make some changes for this feature. A mounting method for the aforementioned *SwitchBot* is show below.
+The same advice applies as for [mounting the rear-view camera](), although you'll inevitably need to make some changes for this feature. A mounting method for the aforementioned *SwitchBot* is show below, but your methodology will be unique if you use different hardware.
 
 ![Placeholder image](img/placeholder.jpg)
 
 ### 3. Configure the action in *IFTTT*
+Follow the instructions for [smart actions]() to create an *IFTTT* account and configure an applet. The trigger will be a *Webhook*, as explained in the article, and the action will by whatever actuates your hand-raising hardware.
+
 ### 4. Configure the robot
 
 ## *IFTTT* smart actions
