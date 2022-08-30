@@ -1,7 +1,8 @@
 {
   "organization": {
     "id": "67bda7ee-fd80-41ef-ac91-358418290a1e",
-    "displayName": "The University of Nottingham"
+    "displayName": "The University of Nottingham",
+    "webhookKey": null
   },
   "admins": [
     "3bc626ec-147f-4ed7-b225-d9a317288f88"

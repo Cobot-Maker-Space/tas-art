@@ -460,7 +460,39 @@ app.get('/smart-action-ifttt', (req, res) => {
             name: activeUsers[req.adminId].name,
             inst: db.data.organization.displayName,
             actionUuid: Object.keys(db.data.smart_actions).at(-1),
-            actionName: db.data.smart_actions[Object.keys(db.data.smart_actions).at(-1)].name
+            actionName: db.data.smart_actions[Object.keys(db.data.smart_actions).at(-1)].name,
+            instKey: db.data.organization.webhookKey
+        });
+    } else {
+        res.redirect('/');
+    };
+});
+app.post('/smart-action-ifttt', (req, res) => {
+    const actionUuid = req.body.actionUuid;
+    const actionName = req.body.actionName;
+    const webhookKey = req.body.key;
+    const eventName = req.body.eventName;
+
+    db.read();
+    if (req.body.remember != undefined) {
+        db.data.organization.webhookKey = webhookKey;
+    };
+    console.log(actionUuid);
+    db.data.smart_actions[actionUuid].webhook = "https://maker.ifttt.com/trigger/" + eventName + "/with/key/" + webhookKey;
+
+    db.write();
+
+    res.redirect('/smart-action-print?uuid=' + actionUuid + '&name=' + actionName);
+});
+
+app.get('/smart-action-print', (req, res) => {
+    if (req.adminId) {
+        res.render('smart-action-print', {
+            id: req.adminId,
+            name: activeUsers[req.adminId].name,
+            inst: db.data.organization.displayName,
+            actionUuid: req.query.uuid,
+            actionName: req.query.name
         });
     } else {
         res.redirect('/');

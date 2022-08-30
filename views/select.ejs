@@ -24,19 +24,23 @@
             <div class=" d-flex align-items-center">
                 <img src="/photos/<%= id %>.png" class="rounded-circle me-2" alt="" width="42" height="42">
                 <div class="d-flex py-2 me-auto">
-                    <h6 class="my-auto text-white"><b><%= name %></b><br>🏛️ <%= inst %></h6>
+                    <h6 class="my-auto text-white"><b>
+                            <%= name %>
+                        </b><br>🏛️ <%= inst %>
+                    </h6>
                 </div>
                 <div class="d-flex py-2">
-                    <% if (admin == "true") { %>
-                    <form method="GET" action="/admin-dashboard">
-                        <button type="submit" class="btn btn-light me-2 my-auto">⚙️</button>
-                    </form>
-                    <% } %>
+                    <% if (admin=="true" ) { %>
+                        <form method="GET" action="/admin-dashboard">
+                            <button type="submit" class="btn btn-light me-2 my-auto">⚙️</button>
+                        </form>
+                        <% } %>
 
-                    <form method="GET" action="/ms-logout">
-                        <button type="submit" class="btn btn-light my-auto"><img class="me-2" src="/assets/ms-logo.svg"> Sign
-                            out</button>
-                    </form>
+                            <form method="GET" action="/ms-logout">
+                                <button type="submit" class="btn btn-light my-auto"><img class="me-2"
+                                        src="/assets/ms-logo.svg"> Sign
+                                    out</button>
+                            </form>
                 </div>
             </div>
         </div>
@@ -44,45 +48,47 @@
 
     <div class="container mw-540 p-3">
 
-        <% if (error == "disconnect" ) { %>
-        <div class="alert alert-danger" role="alert">
-            Robot disconnected from server. Please try another!
-        </div>
-        <% } %>
-
-        <h6 class="mx-3">Connect to a robot</h6>
-
-        <% Object.keys(robots).forEach(function(uuid) { %>
-        <div class="d-flex bg-light text-black mx-2 mt-3 mb-2 px-4 py-3 rounded align-items-center">
-            <div class="d-flex me-auto">
-                <h6 class="my-auto">🤖<b class="text-primary">
-                        <%= robots[uuid].name %>
-                    </b> — <%= robots[uuid].location %> <br>
-                    <% if (robots[uuid].reverseCamLabel != null && robots[uuid].reverseCamLabel != "") { %>
-                        <span class="badge bg-primary mt-2">📷 Rear-view camera</span>
-                    <% }; %> 
-                    <% if (robots[uuid].handRaiseWebhook != null && robots[uuid].handRaiseWebhook != "") { %>
-                        <span class="badge bg-primary mt-2">✋ Physical hand-raising</span> 
-                    <% }; %>
-                </h6>
+        <% if (error=="disconnect" ) { %>
+            <div class="alert alert-danger" role="alert">
+                Robot disconnected from server. Please try another!
             </div>
-            <form method="GET" action="/<%= encodeURIComponent(uuid) %> %>">
-                <% if (activeRobots.includes(uuid)) { %>
-                <button type="submit" class="btn btn-success">🔌Connect</button>
-                <% } else { %>
-                <button type="submit" class="btn btn-danger" disabled>❌Offline</button>
-                <% } %>
-            </form>
-        </div>
-        <% }) %>
+            <% } %>
 
-        <% if (Object.keys(robots) < 1) { %>
-            <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded">
-                <div class="d-flex me-auto">
-                    <p class="my-auto text-secondary">💤 No robots yet</p>
-                </div>
-            </div>
-        <% } %>
+                <h6 class="mx-3">Connect to a robot</h6>
+
+                <% Object.keys(robots).forEach(function(uuid) { %>
+                    <div class="d-flex bg-light text-black mx-2 mt-3 mb-2 px-4 py-3 rounded align-items-center">
+                        <div class="d-flex me-auto">
+                            <h6 class="my-auto">🤖<b class="text-primary">
+                                    <%= robots[uuid].name %>
+                                </b> — <%= robots[uuid].location %> <br>
+                                    <% if (robots[uuid].reverseCamLabel !=null && robots[uuid].reverseCamLabel !="" ) {
+                                        %>
+                                        <span class="badge bg-primary mt-2">📷 Rear-view camera</span>
+                                        <% }; %>
+                                            <% if (robots[uuid].handRaiseWebhook !=null && robots[uuid].handRaiseWebhook
+                                                !="" ) { %>
+                                                <span class="badge bg-primary mt-2">✋ Physical hand-raising</span>
+                                                <% }; %>
+                            </h6>
+                        </div>
+                        <form method="GET" action="/<%= encodeURIComponent(uuid) %> %>">
+                            <% if (activeRobots.includes(uuid)) { %>
+                                <button type="submit" class="btn btn-success">🔌Connect</button>
+                                <% } else { %>
+                                    <button type="submit" class="btn btn-danger" disabled>❌Offline</button>
+                                    <% } %>
+                        </form>
+                    </div>
+                    <% }) %>
+
+                        <% if (Object.keys(robots) < 1) { %>
+                            <div class="d-flex bg-light text-black mx-2 mt-3 mb-3 px-4 py-3 rounded">
+                                <div class="d-flex me-auto">
+                                    <p class="my-auto text-secondary">💤 No robots yet</p>
+                                </div>
+                            </div>
+                            <% } %>
     </div>
 
 

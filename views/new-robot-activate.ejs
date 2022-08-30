@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="styles.css">
 
     <script defer src="/socket.io/socket.io.js"></script>
-    
+
     <script>
         const ROBOT_PUBLIC_ID = "<%= robotPublicId %>"
     </script>
@@ -30,7 +30,10 @@
             <div class=" d-flex align-items-center">
                 <img src="/photos/<%= id %>.png" class="rounded-circle me-2" alt="" width="42" height="42">
                 <div class="d-flex py-2 me-auto">
-                    <h6 class="my-auto text-white"><b><%= name %></b><br>🏛️ <%= inst %></h6>
+                    <h6 class="my-auto text-white"><b>
+                            <%= name %>
+                        </b><br>🏛️ <%= inst %>
+                    </h6>
                 </div>
                 <div class="d-flex py-2">
                     <form method="POST" action="/delete-robot/<%= encodeURIComponent(robotPublicId) %>">
@@ -42,7 +45,9 @@
     </div>
 
     <div class="container mw-540 py-3 px-4">
-        <h6 class="mt-2"><b>Activate new robot – 🤖 <b class="text-primary"><%= robotName %></b></b></h6>
+        <h6 class="mt-2"><b>Activate new robot – 🤖 <b class="text-primary">
+                    <%= robotName %>
+                </b></b></h6>
 
         <div class="progress mb-4">
             <div class="progress-bar" role="progressbar" style="width: 33%" aria-valuenow="33" aria-valuemin="0"
@@ -65,8 +70,10 @@
         <div id="code-snippet" class="ms-3 me-4">
             {<br>
             "key": "STANDBY_URL",<br>
-            "value": "<%= baseURL %>robot/<b class="text-primary"><%= robotUuid %></b>"<br>
-            }
+            "value": "<%= baseURL %>robot/<b class="text-primary">
+                    <%= robotUuid %>
+                </b>"<br>
+                }
         </div>
 
         <p><b>4. </b>Select <b>Reboot Head</b> via the power icon dropdown in the top right.</p>
@@ -80,7 +87,8 @@
             <input type="hidden" name="location" value="<%= robotLocation %>" />
         </form>
 
-        <p class="text-danger" id="failure" style="display: none;">❗ Validation failed. Please repeat the steps above and try again.</p> 
+        <p class="text-danger" id="failure" style="display: none;">❗ Validation failed. Please repeat the steps above
+            and try again.</p>
         <button type="button" class="btn btn-primary px-4 mb-5" id="activate">✅ Validate connection</button>
     </div>
 

@@ -27,7 +27,7 @@ Once registered, the constant at [ms-queries.js#L1](#ms-queries.js#L1) must be s
 ### Organization assignment
 Currently, each deployment of the system will only work with one *Microsoft* Organization at a time (and its instantiated robots, smart actions, etc.).
 
-If an Organization is not defined in [db.json](db/db.json) (the default), you must enter the *Microsoft* **Tenant ID** of the intended Organization into the relevant object in [db.json](db/db.json) before deployment.
+If an Organization is not defined in [db.json](db/db.json) (the default), you must enter the *Microsoft* **Tenant ID** and your chosen display name of the intended Organization into the relevant object in [db.json](db/db.json) before deployment.
 
 The easiest way to find this is to login to [*Microsoft Azure*](https://portal.azure.com/), and navigate to *Azure Active Directory* via the sidebar. The **Tenant ID** of the Organization associated with your account is listed here.
 

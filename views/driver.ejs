@@ -42,7 +42,7 @@
                 <h6 class="my-auto">🤖<b class="text-primary">
                         <%= robotName %>
                     </b> — <%= robotLocation %><br>
-                    <b id="charging">⌛</b>Battery — <b id="battery" class="text-secondary">⌛</b>
+                        <b id="charging">⌛</b>Battery — <b id="battery" class="text-secondary">⌛</b>
                 </h6>
             </div>
 
@@ -74,13 +74,13 @@
                 <h6 class="my-auto">|</h6>
             </div>
 
-            <% if (handRaiseWebhook != null && handRaiseWebhook != "") { %>
-            <input type="checkbox" class="btn-check" id="hand" autocomplete="off">
-            <label class="btn btn-outline-primary me-4" for="hand">✋</label><br>
-            <% }; %>
+            <% if (handRaiseWebhook !=null && handRaiseWebhook !="" ) { %>
+                <input type="checkbox" class="btn-check" id="hand" autocomplete="off">
+                <label class="btn btn-outline-primary me-4" for="hand">✋</label><br>
+                <% }; %>
 
-            <input type="checkbox" class="btn-check" id="muted" autocomplete="off">
-            <label class="btn btn-outline-danger" for="muted">🔇Mute</label><br>
+                    <input type="checkbox" class="btn-check" id="muted" autocomplete="off">
+                    <label class="btn btn-outline-danger" for="muted">🔇Mute</label><br>
 
 
 
