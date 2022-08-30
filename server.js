@@ -449,17 +449,18 @@ app.post('/smart-action-upload', (req, res) => {
     };
     db.write();
 
-    res.redirect('/smart-action-ifttt?uuid=' + uuid + '&name=' + name);
+    res.end();
 });
 
 app.get('/smart-action-ifttt', (req, res) => {
     if (req.adminId) {
+        db.read();
         res.render('smart-action-ifttt', {
             id: req.adminId,
             name: activeUsers[req.adminId].name,
             inst: db.data.organization.displayName,
-            actionUuid: req.query.uuid,
-            actionName: req.query.name
+            actionUuid: Object.keys(db.data.smart_actions).at(-1),
+            actionName: db.data.smart_actions[Object.keys(db.data.smart_actions).at(-1)].name
         });
     } else {
         res.redirect('/');
