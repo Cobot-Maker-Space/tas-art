@@ -1,6 +1,6 @@
-// UTILITY FILE SOURCED FROM ->
-// https://github.com/jeromeetienne/AR.js/blob/master/three.js/examples/marker-training/threex-arpatternfile.js
-// DID NOT WRITE THIS FILE
+// ! UTILITY FILE SOURCED FROM ->
+// ! https://github.com/jeromeetienne/AR.js/blob/master/three.js/examples/marker-training/threex-arpatternfile.js
+// ! I DID NOT WRITE THIS FILE
 
 var THREEx = THREEx || {}
 

@@ -1,8 +1,14 @@
+/**
+ * * Generates the fiducial marker data needed for AR, delivers to server
+ * TODO: Validate incoming data and offer failure state (e.g., if marker image isn't a .jpg)
+ * ! Will fail uncleanly if a query box is empty on the site, and inputs not sanitised
+ */
 document.getElementById('generate').addEventListener('click', function (e) {
   document.getElementById('generate').disabled = true
   document.getElementById('generate').className =
     'btn btn-warning mt-2 mb-5 me-2'
   document.getElementById('generate').innerHTML = '🔄 Generating ...'
+
 
   if (document.getElementById('fiducial').files.length == 0) {
     return

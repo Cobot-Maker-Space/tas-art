@@ -560,7 +560,7 @@ app.get('/robot/:uuid', (req, res) => {
     res.redirect('/')
   }
 })
-  
+
 app.get('/:uuid', (req, res) => {
   if (req.driverId) {
     db.read()

@@ -1,3 +1,9 @@
+/**
+ * * Unified location for Microsoft Graph queries to be pulled
+ * ! The client ID and secret will need to be changed if a different Azure app is used
+ * TODO: Increase security with a volatile State (e.g., in login payload), which is checked by the server
+ */
+
 const clientId = '5cb0b9bf-c370-48dc-adae-06fa18143ed3'
 const clientSecret = 'Vwm8Q~BQylr9~apjFDMVFhhsv0Za0ZYdePB7dabY'
 

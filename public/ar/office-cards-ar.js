@@ -1,5 +1,14 @@
+/**
+ * initModelling
+ * * Initialises the modelling and interaction of the presence card AR content
+ * @param smartActions An object containing the presence cards from the database
+ * @param markerRoots An object containing the THREE groups for each presence card
+ * @param socket The communication socket with the server
+ */
 export function initModelling (officeCards, markerRoots, socket) {
+  // For each presence card on in the database
   Object.keys(officeCards).forEach(function (uuid) {
+    // Create a new 3D UI element
     const msPanel = new ThreeMeshUI.Block({
       width: 2.5,
       height: 1.5,
@@ -13,11 +22,12 @@ export function initModelling (officeCards, markerRoots, socket) {
       justifyContent: 'center',
       textAlign: 'left'
     })
-
     msPanel.rotateX(-1.5708)
 
+    // Ask the server for presence data, update the graphics accordingly
+    // ! The time complexity of this is O(n)...
+    // TODO: Update presence data periodically whilst the user is driving
     socket.emit('get-office-card', ROBOT_ID, officeCards[uuid].ms_id)
-
     socket.on('office-card', info => {
       if (info.robotId == ROBOT_ID) {
         var text
@@ -57,8 +67,8 @@ export function initModelling (officeCards, markerRoots, socket) {
             break
         }
 
+        // Build the UI model to display the correct data
         var photo = '/photos/' + officeCards[uuid].ms_id + '.png'
-
         const loader = new THREE.TextureLoader()
         loader.load(photo, photoTexture => {
           loader.load(icon, iconTexture => {
@@ -104,6 +114,7 @@ export function initModelling (officeCards, markerRoots, socket) {
           })
         })
 
+        // Interaction callback; asks the server to send a message to the user
         markerRoots[uuid].callback = function () {
           socket.emit(
             'chat-msg',
