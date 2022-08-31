@@ -2,56 +2,56 @@
 <html>
 
 <head>
-    <title>Robot View</title>
-    <meta charset="UTF-8" />
+  <title>Robot View</title>
+  <meta charset="UTF-8" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/styles.css">
 
-    <script defer src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/video-stream-merger@4.0.1/dist/video-stream-merger.min.js"></script>
-    <script defer src="/socket.io/socket.io.js"></script>
-    <script>
-        const ROBOT_ID = "<%= robotId %>";
-        const REVERSE_CAM_LABEL = "<%= reverseCamLabel %>";
-    </script>
+  <script defer src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/video-stream-merger@4.0.1/dist/video-stream-merger.min.js"></script>
+  <script defer src="/socket.io/socket.io.js"></script>
+  <script>
+    const ROBOT_ID = "<%= robotId %>";
+    const REVERSE_CAM_LABEL = "<%= reverseCamLabel %>";
+  </script>
 </head>
 
 <body class="bg-black">
 
-    <div id="reassurance">
-        <div class="text-center">
-            <h1 class="display-1 text-white mb-5">🤖 <%= robotName %>
-            </h1>
-            <h3 class="text-white">Ready to receive calls<br></h3>
-            <div class="spinner-grow text-white mt-4" role="status">
-                <span class="visually-hidden">Waiting...</span>
-            </div>
-            <h4 id="battery" class="text-secondary mt-5 p-5">🔋 ⌛</h4>
+  <div id="reassurance">
+    <div class="text-center">
+      <h1 class="display-1 text-white mb-5">🤖 <%= robotName %>
+      </h1>
+      <h3 class="text-white">Ready to receive calls<br></h3>
+      <div class="spinner-grow text-white mt-4" role="status">
+        <span class="visually-hidden">Waiting...</span>
+      </div>
+      <h4 id="battery" class="text-secondary mt-5 p-5">🔋 ⌛</h4>
 
-            <p class="text-secondary""><br><br><br>Technical issues?<br>Refresh the connection.</p>
+      <p class="text-secondary""><br><br><br>Technical issues?<br>Refresh the connection.</p>
 
             <button type=" button" class="btn btn-sm btn-secondary" onclick="refresh()">Refresh</button>
-                <script>
-                    function refresh() {
-                        window.location.reload();
-                    }
-                </script>
-        </div>
+        <script>
+          function refresh() {
+            window.location.reload();
+          }
+        </script>
     </div>
+  </div>
 
-    <div id="volume-parent">
-        <h5 class="text-center text-white mt-4">🔊 Volume</h5>
-        <progress id="volume" max="100" value="50"></progress>
-    </div>
+  <div id="volume-parent">
+    <h5 class="text-center text-white mt-4">🔊 Volume</h5>
+    <progress id="volume" max="100" value="50"></progress>
+  </div>
 
-    <video id="foreign-view" style="pointer-events: none;" playsinline autoplay></video>
-    <video id="local-view" playsinline autoplay muted></video>
+  <video id="foreign-view" style="pointer-events: none;" playsinline autoplay></video>
+  <video id="local-view" playsinline autoplay muted></video>
 
-    <script defer type="module" src="/robot.js"></script>
+  <script defer type="module" src="/robot.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

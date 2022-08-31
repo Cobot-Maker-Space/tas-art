@@ -2,117 +2,117 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>
-        New smart action
-    </title>
+  <title>
+    New smart action
+  </title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="styles.css">
 
-    <script defer src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-    <script defer src="/socket.io/socket.io.js"></script>
+  <script defer src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+  <script defer src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
-    <div class="container mw-540 p-3">
-        <h3 class="mt-4">🤖 Telepresence Robot Portal</h3>
-        <h5 class="py-2">Admin dashboard</h5>
-    </div>
+  <div class="container mw-540 p-3">
+    <h3 class="mt-4">🤖 Telepresence Robot Portal</h3>
+    <h5 class="py-2">Admin dashboard</h5>
+  </div>
 
-    <div class="container-fluid bg-dark">
-        <div class="container mw-540 px-3 py-2">
-            <div class=" d-flex align-items-center">
-                <img src="/photos/<%= id %>.png" class="rounded-circle me-2" alt="" width="42" height="42">
-                <div class="d-flex py-2 me-auto">
-                    <h6 class="my-auto text-white"><b>
-                            <%= name %>
-                        </b><br>🏛️ <%= inst %>
-                    </h6>
-                </div>
-                <div class="d-flex py-2">
-                    <form method="POST" action="/delete-smart-action/<%= actionUuid %>">
-                        <button type="submit" class="btn btn-light">❌ Cancel</button>
-                    </form>
-                </div>
-            </div>
+  <div class="container-fluid bg-dark">
+    <div class="container mw-540 px-3 py-2">
+      <div class=" d-flex align-items-center">
+        <img src="/photos/<%= id %>.png" class="rounded-circle me-2" alt="" width="42" height="42">
+        <div class="d-flex py-2 me-auto">
+          <h6 class="my-auto text-white"><b>
+              <%= name %>
+            </b><br>🏛️ <%= inst %>
+          </h6>
         </div>
-    </div>
-
-    <div class="container mw-540 py-3 px-4">
-        <h6 class="mt-2">Set-up IFTTT action – 🎬 <b class="text-primary">
-                <%= actionName %>
-            </b></h6>
-
-        <div class="progress mb-4">
-            <div class="progress-bar" role="progressbar" style="width: 33%" aria-valuenow="33" aria-valuemin="0"
-                aria-valuemax="100"></div>
+        <div class="d-flex py-2">
+          <form method="POST" action="/delete-smart-action/<%= actionUuid %>">
+            <button type="submit" class="btn btn-light">❌ Cancel</button>
+          </form>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <form method="POST" action="/smart-action-ifttt">
+  <div class="container mw-540 py-3 px-4">
+    <h6 class="mt-2">Set-up IFTTT action – 🎬 <b class="text-primary">
+        <%= actionName %>
+      </b></h6>
 
-            <p class="text-secondary"><i><b>1.</b> Log in, or create an account, on <a href="https://ifttt.com/explore"
-                        target="_blank">https://ifttt.com</a>.</i></p>
-            <p><b>2. </b> <a href="https://ifttt.com/maker_webhooks" target="_blank">Navigate to Webhook settings</a>
-                and click <b>Documentation</b>. Enter <b>Your key</b> below.</p>
-            <div class="form-floating mb-2 mt-3">
-                <input name="key" type="text" class="form-control" id="key" placeholder="12345678"
-                    value="<%= instKey %>" required>
-                <label for="key">Webhook key</label>
-            </div>
-            <div class="form-check ms-2 mb-3">
-                <input class="form-check-input" type="checkbox" value="remember" id="remember">
-                <label class="form-check-label" for="remember">
-                    Remember for organization
-                </label>
-            </div>
-
-            <p><b>3. </b> Create a Webhook applet using your intended IoT service(s), and enter the <b>Event name</b> of
-                the Webhook trigger below.</p>
-
-            <div class="accordion-flush mb-3 ms-3 me-3" id="IFTTTaccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                            ℹ️ IFTTT Webhook applet instructions
-                        </button>
-                    </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-                        data-bs-parent="#IFTTTaccordion">
-                        <div class="accordion-body">
-                            <p><b>1. </b> On the IFTTT homepage, click <b>Create</b> in the toolbar, then <b>If This
-                                    (Add)</b>.</p>
-                            <p><b>2. </b> Search "<i>Webhooks</i>", click the icon, then click <b>Receive a web
-                                    request</b>.</p>
-                            <p><b>3. </b> Enter the <b>Event name</b> of your applet. Ideally, this should be similar to
-                                the smart action name you just chose, for your convenience. Click <b>Create trigger</b>.
-                            </p>
-                            <p><b>4. </b> Click <b>Then that (Add)</b> then set-up the service you want to trigger with
-                                this smart action.</p>
-                            <p class="text-sm text-secondary ms-3 me-5"><i>Hint: Explore the available IoT services you
-                                    can use as events! Some are digital, some require physical hardware.</i></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-floating mb-3 mt-3">
-                <input name="eventName" type="text" class="form-control" id="eventName" placeholder="smart-event">
-                <label for="eventName">Event name</label>
-            </div>
-
-            <input type="hidden" name="actionUuid" value="<%= actionUuid %>" />
-            <input type="hidden" name="actionName" value="<%= actionName %>" />
-            <button type="submit" class="btn btn-dark px-4 mt-3">➡️ Next</button>
-        </form>
-
+    <div class="progress mb-4">
+      <div class="progress-bar" role="progressbar" style="width: 33%" aria-valuenow="33" aria-valuemin="0"
+        aria-valuemax="100"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    <form method="POST" action="/smart-action-ifttt">
+
+      <p class="text-secondary"><i><b>1.</b> Log in, or create an account, on <a href="https://ifttt.com/explore"
+            target="_blank">https://ifttt.com</a>.</i></p>
+      <p><b>2. </b> <a href="https://ifttt.com/maker_webhooks" target="_blank">Navigate to Webhook settings</a>
+        and click <b>Documentation</b>. Enter <b>Your key</b> below.</p>
+      <div class="form-floating mb-2 mt-3">
+        <input name="key" type="text" class="form-control" id="key" placeholder="12345678" value="<%= instKey %>"
+          required>
+        <label for="key">Webhook key</label>
+      </div>
+      <div class="form-check ms-2 mb-3">
+        <input class="form-check-input" type="checkbox" value="remember" id="remember" name="remember">
+        <label class="form-check-label" for="remember">
+          Remember for organization
+        </label>
+      </div>
+
+      <p><b>3. </b> Create a Webhook applet using your intended IoT service(s), and enter the <b>Event name</b> of
+        the Webhook trigger below.</p>
+
+      <div class="accordion-flush mb-3 ms-3 me-3" id="IFTTTaccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+              ℹ️ IFTTT Webhook applet instructions
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+            data-bs-parent="#IFTTTaccordion">
+            <div class="accordion-body">
+              <p><b>1. </b> On the IFTTT homepage, click <b>Create</b> in the toolbar, then <b>If This
+                  (Add)</b>.</p>
+              <p><b>2. </b> Search "<i>Webhooks</i>", click the icon, then click <b>Receive a web
+                  request</b>.</p>
+              <p><b>3. </b> Enter the <b>Event name</b> of your applet. Ideally, this should be similar to
+                the smart action name you just chose, for your convenience. Click <b>Create trigger</b>.
+              </p>
+              <p><b>4. </b> Click <b>Then that (Add)</b> then set-up the service you want to trigger with
+                this smart action.</p>
+              <p class="text-sm text-secondary ms-3 me-5"><i>Hint: Explore the available IoT services you
+                  can use as events! Some are digital, some require physical hardware.</i></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-floating mb-3 mt-3">
+        <input name="eventName" type="text" class="form-control" id="eventName" placeholder="smart-event">
+        <label for="eventName">Event name</label>
+      </div>
+
+      <input type="hidden" name="actionUuid" value="<%= actionUuid %>" />
+      <input type="hidden" name="actionName" value="<%= actionName %>" />
+      <button type="submit" class="btn btn-dark px-4 mt-3">➡️ Next</button>
+    </form>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

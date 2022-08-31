@@ -2,67 +2,83 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>
-        New smart action
-    </title>
+  <title>
+    New smart action
+  </title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="styles.css" />
 
-    <script defer src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-    <script defer src="/socket.io/socket.io.js"></script>
+  <script defer src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+  <script defer src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
-    <div class="container mw-540 p-3">
-        <h3 class="mt-4">🤖 Telepresence Robot Portal</h3>
-        <h5 class="py-2">Admin dashboard</h5>
-    </div>
+  <div class="container mw-540 p-3">
+    <h3 class="mt-4">🤖 Telepresence Robot Portal</h3>
+    <h5 class="py-2">Admin dashboard</h5>
+  </div>
 
-    <div class="container-fluid bg-dark">
-        <div class="container mw-540 px-3 py-2">
-            <div class=" d-flex align-items-center">
-                <img src="/photos/<%= id %>.png" class="rounded-circle me-2" alt="" width="42" height="42">
-                <div class="d-flex py-2 me-auto">
-                    <h6 class="my-auto text-white"><b>
-                            <%= name %>
-                        </b><br>🏛️ <%= inst %>
-                    </h6>
-                </div>
-                <div class="d-flex py-2">
-                    <form method="POST" action="/delete-smart-action/<%= actionUuid %>">
-                        <button type="submit" class="btn btn-light">❌ Cancel</button>
-                    </form>
-                </div>
-            </div>
+  <div class="container-fluid bg-dark">
+    <div class="container mw-540 px-3 py-2">
+      <div class=" d-flex align-items-center">
+        <img src="/photos/<%= id %>.png" class="rounded-circle me-2" alt="" width="42" height="42" />
+        <div class="d-flex py-2 me-auto">
+          <h6 class="my-auto text-white">
+            <b>
+              <%= name %>
+            </b><br />🏛️ <%= inst %>
+          </h6>
         </div>
-    </div>
-
-    <div class="container mw-540 py-3 px-4">
-        <h6 class="mt-2">Print fiducial marker – 🎬 <b class="text-primary">
-                <%= actionName %>
-            </b></h6>
-
-        <div class="progress mb-4">
-            <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0"
-                aria-valuemax="100"></div>
+        <div class="d-flex py-2">
+          <form method="POST" action="/delete-smart-action/<%= actionUuid %>">
+            <button type="submit" class="btn btn-light">❌ Cancel</button>
+          </form>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <p><b>1. </b> Download the generated fiducial marker and print with the same in-document sizing. The easiest way to do this is to print on A4 paper. You can re-download this later, if needed.</p>
+  <div class="container mw-540 py-3 px-4">
+    <h6 class="mt-2">
+      Print fiducial marker – 🎬
+      <b class="text-primary">
+        <%= actionName %>
+      </b>
+    </h6>
 
-        <a type="button" class="btn btn-primary px-3 mb-3" href="ar/assets/marker/<%= actionUuid %>.pdf" download="<%= actionName %> Marker">✨ Download fiducial marker</a>
-
-        <p><b>2. </b> Attached the fiducial marker flat on a wall, at an appropriate height for the <i>Double 3</i>. If the wall is not white, leave a white border around the fiducial marker when you cut it out. You can attach as many as you like; they'll all work!</p>
-        <form method="GET" action="/smart-actions">
-            <button type="submit" class="btn btn-success px-4 mb-5">🏁 Finish</button>
-        </form>
+    <div class="progress mb-4">
+      <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0"
+        aria-valuemax="100"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    <p>
+      <b>1. </b> Download the generated fiducial marker and print with the
+      same in-document sizing. The easiest way to do this is to print on A4
+      paper. You can re-download this later, if needed.
+    </p>
+
+    <a type="button" class="btn btn-primary px-3 mb-3" href="ar/assets/marker/<%= actionUuid %>.pdf"
+      download="<%= actionName %> Marker">✨ Download fiducial marker</a>
+
+    <p>
+      <b>2. </b> Attached the fiducial marker flat on a wall, at an
+      appropriate height for the <i>Double 3</i>. If the wall is not white,
+      leave a white border around the fiducial marker when you cut it out. You
+      can attach as many as you like; they'll all work!
+    </p>
+    <form method="GET" action="/smart-actions">
+      <button type="submit" class="btn btn-success px-4 mb-5">
+        🏁 Finish
+      </button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

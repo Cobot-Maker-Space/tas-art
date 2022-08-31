@@ -2,7 +2,7 @@
   "organization": {
     "id": "67bda7ee-fd80-41ef-ac91-358418290a1e",
     "displayName": "The University of Nottingham",
-    "webhookKey": null
+    "webhookKey": "dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
   },
   "admins": [
     "3bc626ec-147f-4ed7-b225-d9a317288f88"
@@ -17,7 +17,7 @@
     }
   },
   "smart_actions": {
-    "1d1f3369-fb62-453f-9380-b6a716967075": {
+    "1714b376-c049-4153-ab4d-911708ae8fd2": {
       "name": "CMS Lightbulb",
       "webhook": "https://maker.ifttt.com/trigger/cobot-light/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
     }
