@@ -1,3 +1,4 @@
+// The in-built Double 3 media devices
 const ignoredDeviceLabels = [
   'Default',
   'Mic Rear Center',
@@ -14,6 +15,7 @@ const socket = io('/')
 var topRadioLabel = ''
 var bottomRadioLabel = ''
 
+// Basic aesthetic switch for the user enabling/disabling the optional feature
 var rearViewVisible = false
 document.getElementById('rearView').onclick = function () {
   rearViewVisible = !rearViewVisible
@@ -28,10 +30,29 @@ document.getElementById('rearView').onclick = function () {
     : 'none'
 }
 
+// Basic aesthetic switch for the user enabling/disabling the optional feature
+var handRaiseVisible = false
+document.getElementById('handRaise').onclick = function () {
+  handRaiseVisible = !handRaiseVisible
+  document.getElementById('handRaiseLabel').innerHTML = handRaiseVisible
+    ? '<b>Configure physical hand-raising</b>'
+    : 'Configure physical hand-raising'
+  document.getElementById('handRaiseHint').style.display = handRaiseVisible
+    ? 'none'
+    : 'block'
+  document.getElementById('handRaiseInsts').style.display = handRaiseVisible
+    ? 'block'
+    : 'none'
+}
+
+/**
+ * * Retrieve the media devices plugged into the Double 3 by requesting via the server
+ */
 document.getElementById('refreshDevices').onclick = function () {
   socket.emit('get-media-devices', ROBOT_PUBLIC_ID)
 
   socket.on('media-devices', devices => {
+    // On retrieval, update the HTML elements to reflect the labels for selection
     for (var id in devices) {
       if (!ignoredDeviceLabels.includes(devices[id].label)) {
         if (
@@ -56,18 +77,4 @@ document.getElementById('refreshDevices').onclick = function () {
       }
     }
   })
-}
-
-var handRaiseVisible = false
-document.getElementById('handRaise').onclick = function () {
-  handRaiseVisible = !handRaiseVisible
-  document.getElementById('handRaiseLabel').innerHTML = handRaiseVisible
-    ? '<b>Configure physical hand-raising</b>'
-    : 'Configure physical hand-raising'
-  document.getElementById('handRaiseHint').style.display = handRaiseVisible
-    ? 'none'
-    : 'block'
-  document.getElementById('handRaiseInsts').style.display = handRaiseVisible
-    ? 'block'
-    : 'none'
 }

@@ -1,11 +1,27 @@
+/**
+ * * Frontend code running the robot WebRTC connection and DRDOubleSDK communication
+ * Broadly, responds to and despatches Socket messages with the server, and thus the driver
+ * These events are either triggered by the driver (e.g., click-to-drive) or DRDoubleSDK (e.g., battery life)
+ * ! DRDoubleSDK commands must always be sanitised or hard-coded robot-side for security reasons
+ */
+
 import { configWebRTC } from './webrtc_config.js'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
+/**
+ * ? The DRDoubleSDK has an internal method for checking if the standby screen is 'alive', which
+ * ? involves polling it with a watchdog command every X milliseconds. If it doesn't receive a poll
+ * ? it will default the standby screen to the WiFi window. In practice this is really annoying
+ * ? and I don't think it actually helps anything, so this command disables it.
+ */
 DRDoubleSDK.sendCommand('gui.watchdog.disallow')
 
+// Initial DRDoubleSDK set-up commands for enabling camera etc. when the page loads
+// TODO: Try and solve the problem that sometimes the DRDoubleSDK doesn't respond to these commands
 window.onload = () => {
   ;(async () => {
+    // Attempt to decrease the frequency of the aforementioned bug
     await delay(2000)
 
     DRDoubleSDK.sendCommand('events.subscribe', {
@@ -23,6 +39,7 @@ window.onload = () => {
     DRDoubleSDK.sendCommand('tilt.minLimit.disable')
     DRDoubleSDK.sendCommand('tilt.maxLimit.disable')
 
+    // Only enable 'highest' performance if reverse cam enabled
     if (REVERSE_CAM_LABEL != null && REVERSE_CAM_LABEL != '') {
       DRDoubleSDK.sendCommand('system.setPerformanceModel', {
         name: 'highest'
@@ -39,10 +56,12 @@ window.onload = () => {
     DRDoubleSDK.sendCommand('base.requestStatus')
 
     DRDoubleSDK.sendCommand('system.enableRearUSBPorts')
+
+    DRDoubleSDK.sendCommand('base.requestStatus')
   })()
 }
 
-// containers for video streams
+// Containers for video streams
 const localStreamDisplay = document.getElementById('local-view')
 const foreignStreamDisplay = document.getElementById('foreign-view')
 
@@ -52,6 +71,7 @@ var me = webRTC[1]
 
 var driverConnected = false
 
+// Fetch the rear webcam device if it is enabled and exists
 var reverseCamEnabled = false
 var reverseCamId = null
 navigator.mediaDevices.enumerateDevices().then(function (devices) {
@@ -68,7 +88,8 @@ navigator.mediaDevices.enumerateDevices().then(function (devices) {
 
 var merger
 
-// webRTC connection handling
+// * WebRTC connection establishment and handling
+// Get front-facing camera stream
 navigator.mediaDevices
   .getUserMedia({
     video: {
@@ -78,8 +99,8 @@ navigator.mediaDevices
     audio: true
   })
   .then(localStream => {
+    // If enabled, get rear-view camera stream
     if (reverseCamEnabled) {
-      console.log(REVERSE_CAM_LABEL)
       navigator.mediaDevices
         .getUserMedia({
           video: {
@@ -90,6 +111,7 @@ navigator.mediaDevices
           audio: false
         })
         .then(reverseStream => {
+          // If enabled, use a merger to combine the two streams into one MediaStream
           merger = new VideoStreamMerger({
             width: 1920,
             height: 1080,
@@ -104,6 +126,7 @@ navigator.mediaDevices
             mute: false
           })
 
+          // Picture-in-picture style; rear-view bottom left
           var sizeDivisor = 4
           merger.addStream(reverseStream, {
             x: 30,
@@ -115,10 +138,19 @@ navigator.mediaDevices
           merger.start()
           makeConnection(merger.result, localStream)
         })
+        // ! This is a workaround for the camera spawning bug
+        .catch(err => {
+          async function reload () {
+            await delay(2000)
+            location.reload()
+          }
+          reload()
+        })
     } else {
       makeConnection(localStream, localStream)
     }
   })
+  // ! This is a workaround for the camera spawning bug
   .catch(err => {
     async function reload () {
       await delay(2000)
@@ -126,12 +158,20 @@ navigator.mediaDevices
     }
     reload()
   })
+/**
+ * makeConnection
+ * * Actually establish the WebRTC connection with the driver
+ * @param localSend The MediaStream to send to the driver
+ * @param localShow the MediaStream to show on the robot display
+ * ? These parameters differ in the case of the rear-view for performance reasons
+ */
 function makeConnection (localSend, localShow) {
   socket.on('user-connected', theirID => {
     const call = me.call(theirID, localSend)
     call.on('stream', foreignStream => {
       addVideoStream(localStreamDisplay, localShow)
       addVideoStream(foreignStreamDisplay, foreignStream)
+      // Set initial robot state, particularly the camera tilt
       DRDoubleSDK.sendCommand('screensaver.nudge')
       DRDoubleSDK.sendCommand('base.requestStatus')
       DRDoubleSDK.sendCommand('tilt.target', {
@@ -141,21 +181,11 @@ function makeConnection (localSend, localShow) {
     })
   })
 }
-
-socket.on('user-disconnected', theirID => {
-  driverConnected = false
-  localStreamDisplay.srcObject = null
-  foreignStreamDisplay.srcObject = null
-  if (merger != undefined) {
-    merger.destroy()
-  }
-})
 me.on('open', myID => {
   socket.emit('robot-alive', ROBOT_ID)
   socket.emit('join-robot', ROBOT_ID, myID)
 })
-
-// utility function for displaying video/audio
+// Utility function for displaying video/audio on-page async
 function addVideoStream (display, stream) {
   display.srcObject = stream
   display.addEventListener('loadedmetadata', () => {
@@ -163,17 +193,29 @@ function addVideoStream (display, stream) {
   })
 }
 
+// Reload the page if the driver disconnects
+// ! Honestly this is a dirty way of making sure everything is reset for the next call
+// ? Technically increases server load but also, not really
+socket.on('user-disconnected', theirID => {
+  driverConnected = false
+  location.reload()
+})
+
 var attemptClickToDrive = false
 
-// health broadcasting
+// * This is triggered when a DRDoubleSDK event which has been subscribed to occurs
+// It's responded to usually by broadcoasting to the driver, via the server, some information 
+// Also changes info on the standby screen (not in call)
+// Also, as a special case, will call the click-to-drive functionality when it receives the validity
 DRDoubleSDK.on('event', message => {
   switch (message.class + '.' + message.key) {
     case 'DRBase.status':
+      // Emit info to driver
       socket.emit('health-msg', 'battery', message.data.battery, ROBOT_ID)
       socket.emit('health-msg', 'charging', message.data.charging, ROBOT_ID)
       socket.emit('health-msg', 'kickstand', message.data.kickstand, ROBOT_ID)
       socket.emit('health-msg', 'pole', message.data.pole, ROBOT_ID)
-
+      // Update standby screen
       document.getElementById('battery').textContent =
         '🔋 ' + message.data.battery + '%'
       if (message.data.battery > 60) {
@@ -184,6 +226,7 @@ DRDoubleSDK.on('event', message => {
         document.getElementById('battery').className = 'mt-5 p-5 text-danger'
       }
       break
+    // If click-to-drive attempt is drivable, then drive
     case 'DRCamera.hitResult':
       socket.emit('health-msg', 'highlight-cursor', message.data.hit, ROBOT_ID)
       if (attemptClickToDrive) {
@@ -197,9 +240,8 @@ DRDoubleSDK.on('event', message => {
   }
 })
 
+// Respond to driver with media devices for the admin robot workflow
 socket.on('get-media-devices', robotId => {
-  console.log(decodeURIComponent(robotId).replace(/ /g, '+'))
-  console.log(ROBOT_ID)
   if (decodeURIComponent(robotId).replace(/ /g, '+') == ROBOT_ID) {
     navigator.mediaDevices.enumerateDevices().then(function (devices) {
       socket.emit('media-devices', devices)
@@ -207,11 +249,13 @@ socket.on('get-media-devices', robotId => {
   }
 })
 
-// responses to control messages, i.e., comms with DRDoubleSDK
 var velocity = 0.0
 var rotation = 0.0
 var move = false
-
+/**
+ * * 'Translates' incoming messages from the driver into DRDoubleSDK commands
+ * This is where all of the user interaction with the robot is translated into actual actuation
+ */
 socket.on('control-msg', message => {
   if (message.target == ROBOT_ID) {
     switch (message.content) {
@@ -266,6 +310,9 @@ socket.on('control-msg', message => {
         break
     }
 
+    // Aggregate of all movement commands into one message
+    // ! Movement messages are emitted periodically (e.g., every 200ms) as the DRDoubleSDK requires this
+    // ? The robot will stop moving when movement messages stop, but it will stop faster if a message to stop is sent
     if (move) {
       DRDoubleSDK.sendCommand('navigate.drive', {
         throttle: velocity,
@@ -277,6 +324,7 @@ socket.on('control-msg', message => {
   }
 })
 
+// If the driver attempts click-to-drive, emit a hit test to the DRDoubleSDK which is then parsed above
 socket.on('click-to-drive', message => {
   if (message.target == ROBOT_ID) {
     DRDoubleSDK.sendCommand('camera.hitTest', {
@@ -290,7 +338,8 @@ socket.on('click-to-drive', message => {
   }
 })
 
-// on-screen volume control
+// * On-screen volume control
+// A disappearing slider which appears when someone touches the screen in-call
 var relativeX = 0
 var touchActive = false
 

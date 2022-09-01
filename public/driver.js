@@ -1,10 +1,9 @@
 import { initAR } from './ar/ar.js'
 import { configWebRTC } from './webrtc_config.js'
 
-// constant for async delays
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-// containers for video streams
+// Containers for the various video streams
 const localStreamDisplay = document.getElementById('local-view')
 const foreignStreamDisplay = document.getElementById('foreign-view')
 const foreignAudioPlayer = document.getElementById('foreign-audio')
@@ -14,17 +13,17 @@ var webRTC = configWebRTC()
 var socket = webRTC[0]
 var me = webRTC[1]
 
-// webRTC connection handling
 var answered = false
 
+// * Actual WebRTC handling for the call to the robot
 navigator.mediaDevices
   .getUserMedia({
     video: true,
     audio: true
   })
   .then(localStream => {
+    // ? Technically speaking, the robot calls the  driver
     addVideoStream(localStreamDisplay, localStream)
-
     socket.emit('join-robot', ROBOT_ID, me.id)
     statusDisplay.textContent = '📞 Connecting to ' + ROBOT_NAME
     me.on('call', call => {
@@ -32,6 +31,7 @@ navigator.mediaDevices
       statusDisplay.textContent = '✨ Loading augmented reality'
       call.on('stream', foreignStream => {
         if (!answered) {
+          // If first time connection for this session, initialise everything
           addVideoStream(foreignAudioPlayer, foreignStream)
           initAR(socket, foreignStream, foreignStreamDisplay)
           initControls()
@@ -41,11 +41,12 @@ navigator.mediaDevices
     })
   })
 
+// If the connection fails, kick back to the select screen
 socket.on('robot-disconnected', robotId => {
   location.href = '/select?error=disconnect'
 })
 
-// utility function for displaying video/audio
+// Utility function for displaying video/audio
 function addVideoStream (display, stream) {
   display.srcObject = stream
   display.addEventListener('loadedmetadata', () => {
@@ -53,7 +54,6 @@ function addVideoStream (display, stream) {
   })
 }
 
-// vars for robot state and input handling
 var muted = false
 var parked = false
 
@@ -63,7 +63,7 @@ var left = false
 var right = false
 var hardStop = false
 
-// health responses, triggered when the robot state changes in some monitored way
+// * Responds to health messages by updating visual features of the UI
 socket.on('health-msg', message => {
   if (message.target == ROBOT_ID) {
     switch (message.type) {
@@ -119,7 +119,10 @@ socket.on('health-msg', message => {
   }
 })
 
-// input handling for buttons and arrow keys
+/**
+ * initControls
+ * * Handles all of the keyboard and element inputs to emit the correct messages to the robot
+ */
 function initControls () {
   async function resetHand () {
     await delay(10000)
@@ -205,7 +208,7 @@ function initControls () {
     }
   })
 
-  // these controls need to be persistently deployed for the robot to respond
+  // ! Emits certain messages every 200ms so there is a smooth and consistent movement
   setInterval(function () {
     if (forward) {
       socket.emit('control-msg', 'forward', ROBOT_ID)
