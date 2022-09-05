@@ -1,5 +1,7 @@
 # System configuration
 ## *Double 3* robots
+### Description
+Instructions for integration of actual *Double 3* robots into the system, such that users who log in can select from a list of robots to take control of and drive.
 ### 1. Developer mode
 All *Double 3* robots must have developer mode enabled to be configured for this project. This requires you to contact *Double Robotics*.
 
@@ -23,6 +25,9 @@ The basic information necessary to complete configuration is explained in the mu
 *Configuration of the optional features ([rear-view](), [hand-raising]()) is explained below.*
 
 ## Rear-view cameras
+### Description
+With additional camera hardware, a rear-view can be given to drivers, which increases their spatial awareness and makes the driving experience a little smoother.
+
 ### 1. Do you really want to?
 Whilst included and technically functional, **this feature is currently unstable** for multiple reasons (some outside of a third-party developer's control) as explained [here]() and [here](). It should probably only be used in its current state for monitored use cases, such as trial deployments or studies.
 
@@ -36,7 +41,7 @@ It is highly recommended that you test the camera is, in fact, plug and play on 
 > A camera with a fisheye lens is recommended to get the widest field-of-view behind the robot, but by no means the only option!
 
 ### 3. Prepare the mounting solution
-There are 3 pre-existing mounting points on the *Double 3*; 2 on top of the head under the rubber bumper, and 1 behind the port cover on the back of the head. These support **❗INSERT SCREW HERE❗** screws.
+There are 3 pre-existing mounting points on the *Double 3*; 2 on top of the head under the rubber bumper, and 1 behind the port cover on the back of the head.
 
 Your exact mounting solution will depend on the camera you use, but a 3D printable, multi-purpose bracket for the top of the *Double 3* is [**✨available here✨**](). This attaches to the 2 top-most mounting points, and should allow most devices to be attached top, front, or back facing with additional parts/brackets/screws suitable for the hardware. 
 
@@ -60,6 +65,9 @@ On the optional features page in the [new robot workflow](), refresh the device 
 - If both USB ports are occupied and you're unsure which is the camera due to unclear labels, either unplug the other device temporarily and refresh the list, or refer to the device documentation to find the name of the camera.
 
 ## Physical hand-raising
+### Description
+A 'hand raise' button can be used in the driver interface to trigger an *IFTTT* event, intended to actuate something physical attached to the robot which will draw attention to the remote user in meetings, busy spaces, etcetera. 
+
 ### 1. Prepare the actuation device
 There are multiple hardware paths you can take here, but the method of triggering the actuation must be the same: it must be the 'then' (action) of an *IFTTT* applet. Therefore, the configuration workflow is similar to [smart actions]().
 
@@ -84,4 +92,37 @@ Follow the instructions for [smart actions]() to create an *IFTTT* account and c
 ### 4. Configure the robot
 
 ## *IFTTT* smart actions
+### Description
 ## *Microsoft Teams* presence cards
+### Description
+### Custom configuration
+> ❗ UI-only presence card configuration has not been implemented in the admin interface yet, though it is [wholly possible](#advice-for-admin-interface-implementation). These are the steps to configure presence cards manually.
+
+**UUIDv4**: Generate a fiducial marker to the `.patt` requirements of *AR.js*, which can be easily done on [this website](), and place it on the server at `ar -> assets -> fiducial` with [a Version 4 UUID](https://www.uuidgenerator.net/) as the filename. Print out the associated fiducial marker and use as normal.
+
+**msID**: The *Microsoft Teams* ID of the user associated with the new presence card. The easiest way to find this manually is to log in to the [*Microsoft Graph* Explorer]() and query the `/users` endpoint with the [$filter]() modifier to select by `displayName`.
+
+**chatID**: The *Microsoft Teams* [chat ID]() which the message should be sent to, presumably the `oneOnOne` chat the user has with the user defined above, but it could be a group channel too. The easiest way to find this is also the [*Microsoft Graph* Explorer](), but via the `/chats` endpoint, and using `$expand=members` so you can `$filter` effectively. ❗ **Note!** The messages sent via the AR interface will come from whichever account is used to search *Microsoft Graph*.
+
+Add a new entry to `ms_office_cards` in [db.js]() with the following structure.
+```json
+"[UUIDv4]": {
+      "ms_id": "[msID]",
+      "chat_id": "[chatID]"
+    }
+```
+
+### Advice for admin interface implementation
+This is mostly complexified by the way *Microsoft Graph* works; particularly, you cannot simply message a user in the organization by their ID, but rather you must message an actual [chat]() by *its* ID.
+
+As the chat ID is unique for each user/user combo, there is no such thing as a 'global' chat ID, in the way that the aforementioned section implies. As such, there are two directions you could take.
+
+- *Make* the chat ID 'unique' de facto, by sending all AR messages from one account; either a specific account set-up for this which people will recognise, or the *Azure* app itself.
+- For each user who logs in and attempts to send a message to a user via a presence card, query their `oneOnOne` chat data to attempt to find their chat with the user, or create a new one if it doesn't exist. This would negate the need for the field in the database and require more development.
+
+Despite this complexity, the name, picture, and presence status within this feature is associated with an actual in-organization user. As such, this needs to be defined in the admin workflow. I suggest the following (approximate) approach.
+
+1. Ask the admin to search for a user by name or email, then select the correct user from the list.
+2. *Handle definition of the chat ID per your chosen approach; if you're going the 'global' route, it can be automatically found at this stage, or it will be founnd during runtime later for the 'local' route.*
+3. Automatically generate a fiducial marker for the presence card, and allow the admin to print it out.
+4. Provide a list of all 'active' presence cards, for the admin to delete, and edit, per their requirements.
