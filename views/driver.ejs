@@ -30,6 +30,26 @@
 </head>
 
 <body>
+  <div class="modal fade" id="message" tabindex="-1" aria-labelledby="messageLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="messageLabel"><img class="me-2" src="/assets/ms-logo.svg">Send a <i>Teams</i>
+            message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input id="messageBox" type="text" class="form-control" id="messageBox"
+            placeholder="👋 Hi! I'm outside your office using a telepresence robot.">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">❌</button>
+          <button id="submit" type="button" class="btn btn-primary">📨 Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="toolbar" class="container-fluid shadow-sm bg-white p-3">
     <div class="d-flex px-2">
       <div class="me-4">
@@ -43,8 +63,8 @@
             <%= robotName %>
           </b>
           — <%= robotLocation %><br />
-            <b id="charging">⌛</b>Battery —
-            <b id="battery" class="text-secondary">⌛</b>
+          <b id="charging">⌛</b>Battery —
+          <b id="battery" class="text-secondary">⌛</b>
         </h6>
       </div>
 
@@ -77,12 +97,12 @@
       </div>
 
       <% if (handRaiseWebhook !=null && handRaiseWebhook !="" ) { %>
-        <input type="checkbox" class="btn-check" id="hand" autocomplete="off" />
-        <label class="btn btn-outline-primary me-4" for="hand">✋</label><br />
-        <% }; %>
+      <input type="checkbox" class="btn-check" id="hand" autocomplete="off" />
+      <label class="btn btn-outline-primary me-4" for="hand">✋</label><br />
+      <% }; %>
 
-          <input type="checkbox" class="btn-check" id="muted" autocomplete="off" />
-          <label class="btn btn-outline-danger" for="muted">🔇Mute</label><br />
+      <input type="checkbox" class="btn-check" id="muted" autocomplete="off" />
+      <label class="btn btn-outline-danger" for="muted">🔇Mute</label><br />
     </div>
   </div>
 
@@ -106,6 +126,7 @@
   <audio id="foreign-audio" playsinline autoplay></audio>
   <div id="foreign-view"></div>
   <video id="local-view" playsinline autoplay muted></video>
+
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.2/aframe-ar.js"></script>

@@ -3,19 +3,19 @@
  * TODO: Validate incoming data and offer failure state (e.g., if marker image isn't a .jpg)
  * ! Will fail uncleanly if a query box is empty on the site, and inputs not sanitised
  */
-document.getElementById('generate').addEventListener('click', function (e) {
-  document.getElementById('generate').disabled = true
-  document.getElementById('generate').className =
-    'btn btn-warning mt-2 mb-5 me-2'
-  document.getElementById('generate').innerHTML = '🔄 Generating ...'
+document.getElementById("generate").addEventListener("click", function (e) {
+  document.getElementById("generate").disabled = true;
+  document.getElementById("generate").className =
+    "btn btn-warning mt-2 mb-5 me-2";
+  document.getElementById("generate").innerHTML = "🔄 Generating ...";
 
   // Break if there isn't a fiducial file uploaded
-  if (document.getElementById('fiducial').files.length == 0) {
-    return
+  if (document.getElementById("fiducial").files.length == 0) {
+    return;
   }
 
-  var fiducialInner = document.getElementById('fiducial').files[0]
-  var fiducialInnerURL = window.URL.createObjectURL(fiducialInner)
+  var fiducialInner = document.getElementById("fiducial").files[0];
+  var fiducialInnerURL = window.URL.createObjectURL(fiducialInner);
 
   /**
    * ? This is all sequentially async because everything needs to be generated before it can be sent to the server
@@ -35,20 +35,20 @@ document.getElementById('generate').addEventListener('click', function (e) {
    * @param markerURL Object URL of the actual .jpg marker image
    * ? This is the actual marker image which will be printed and attached to walls
    */
-  function markerCallback (markerURL) {
+  function markerCallback(markerURL) {
     /**
      * patternCallback
      * * Handles the pattern string to convert it to a .pat file
      * @param patternString A series of integers representing the pattern
      * ? This is the internal representation of the marker for detection usage in AR
      */
-    async function patternCallback (patternString) {
-      await processFiles(markerURL, patternString)
-      document.getElementById('generate').className =
-        'btn btn-success mt-2 mb-5 me-2'
-      document.getElementById('generate').innerHTML = '✅ Success!'
+    async function patternCallback(patternString) {
+      await processFiles(markerURL, patternString);
+      document.getElementById("generate").className =
+        "btn btn-success mt-2 mb-5 me-2";
+      document.getElementById("generate").innerHTML = "✅ Success!";
     }
-    THREEx.ArPatternFile.encodeImageURL(fiducialInnerURL, patternCallback)
+    THREEx.ArPatternFile.encodeImageURL(fiducialInnerURL, patternCallback);
   }
 
   /**
@@ -57,16 +57,17 @@ document.getElementById('generate').addEventListener('click', function (e) {
    * @param markerURL Object URL of the actual .jpg marker image
    * @param patternString A series of integers representing the pattern
    */
-  async function processFiles (markerURL, patternString) {
+  async function processFiles(markerURL, patternString) {
     // Convert pattern URL to object, then file
     var patternURL = window.URL.createObjectURL(
-      new Blob([patternString], { type: 'text/plain' })
-    )
+      new Blob([patternString], { type: "text/plain" })
+    );
     var patternFile = await fetch(patternURL)
-      .then(r => r.blob())
+      .then((r) => r.blob())
       .then(
-        blobFile => new File([blobFile], 'pattern.patt', { type: 'text/plain' })
-      )
+        (blobFile) =>
+          new File([blobFile], "pattern.patt", { type: "text/plain" })
+      );
 
     // Create a .pdf with the marker image in it (twice)
     var printDesc = {
@@ -74,51 +75,51 @@ document.getElementById('generate').addEventListener('click', function (e) {
         {
           image: markerURL,
           width: 300,
-          alignment: 'center'
+          alignment: "center",
         },
         {
           image: markerURL,
           width: 300,
-          alignment: 'center'
-        }
-      ]
-    }
+          alignment: "center",
+        },
+      ],
+    };
     pdfMake.createPdf(printDesc).getDataUrl(async function (fileURL) {
       var printFile = await fetch(fileURL)
-        .then(r => r.blob())
+        .then((r) => r.blob())
         .then(
-          blobFile =>
-            new File([blobFile], 'print.pdf', { type: 'application/pdf' })
-        )
+          (blobFile) =>
+            new File([blobFile], "print.pdf", { type: "application/pdf" })
+        );
 
       // Populate form data
-      const formData = new FormData()
+      const formData = new FormData();
 
-      formData.append('name', document.getElementById('name').value)
-      formData.append('patternFile', patternFile)
-      formData.append('markerPrint', printFile)
-      formData.append('arIcon', document.getElementById('ar-icon').files[0])
+      formData.append("name", document.getElementById("name").value);
+      formData.append("patternFile", patternFile);
+      formData.append("markerPrint", printFile);
+      formData.append("arIcon", document.getElementById("ar-icon").files[0]);
       formData.append(
-        'arIconConfirm',
-        document.getElementById('ar-icon-confirm').files[0]
-      )
+        "arIconConfirm",
+        document.getElementById("ar-icon-confirm").files[0]
+      );
 
       // POST to server to save to db.js and /public
-      await fetch('/smart-action-upload', {
-        method: 'POST',
-        body: formData
-      })
+      await fetch("/smart-action-upload", {
+        method: "POST",
+        body: formData,
+      });
 
       // Submit form to GET next step
-      document.getElementById('moveon').submit()
-    })
+      document.getElementById("moveon").submit();
+    });
   }
 
   THREEx.ArPatternFile.buildFullMarker(
     fiducialInnerURL,
     0.5,
     512,
-    'black',
+    "black",
     markerCallback
-  )
-})
+  );
+});
