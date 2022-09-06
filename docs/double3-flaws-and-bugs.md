@@ -26,7 +26,7 @@ This is obviously integral to the functionality of the project, but there is no 
 });
 ```
 
-Whilst this 'works', there are other initial settings despatched when the robot view is first loaded, and I'm concerned that the camera feed issue isn't isolated. More ocassionally **I've noticed the performance mode doesn't change** (despite the attempt to make it *high* in code), which doesn't break the system per se, but slows it down.
+Whilst this 'works', there are other initial settings despatched when the robot view is first loaded, and I'm concerned that the camera feed issue isn't isolated. More occasionally **I've noticed the performance mode doesn't change** (despite the attempt to make it *high* in code), which doesn't break the system per se, but slows it down.
 
 As a result, there is also a refresh button on the standby screen of the robot interface, such that local users can manually refresh the page to try and fix any issues which arise. This is all obviously non-optimal.
 
@@ -37,7 +37,7 @@ The *Double 3* has 6 microphones in its head: 3 front facing, 2 back facing, and
 
 The 6 microphones appear as 3 separate stereo devices in Linux when attempting to spawn a `MediaStream`, grouped into front, back, and sides. It is therefore absolutely possible to process these 3 input devices into binaural directional sound with the right algorithm, *Double robotics* just didn't do it.
 
-> The only reasons I can rationalise why they didn't is either a development time constraint, or the *Double 3* [simply isn't powerful enough](limitations-and-trade-offs#double-3-performance-and-network-bandwith) to process the streams into one and despatch them with low enough latency for the driver.
+> The only reasons I can rationalise why they didn't is either a development time constraint, or the *Double 3* [simply isn't powerful enough](limitations-and-trade-offs#double-3-performance-and-network-bandwidth) to process the streams into one and despatch them with low enough latency for the driver.
 
 ## 'Highest' performance instability
 As explained in the [battery life trade-off](limitations-and-trade-offs#battery-life), the *Double 3* has 4 available performance models. The *highest* of these allows all the CPU cores to hit maximum utilisation, amongst other adjustments.

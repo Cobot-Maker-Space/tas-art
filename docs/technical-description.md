@@ -11,7 +11,7 @@ Furthermore, user data is only polled from *Microsoft Graph* (stored in volatile
 
 ## Driver-side interface
 ### Overview
-The driver frontend is where the majority of the project's novel functionality is either implemented or triggered by contacting [the server](#the-server). This is primarily due to [performance and bandwidth considerations](limitations-and-trade-offs.md#double-3-performance-and-network-bandwith) in the context of the *Double 3* hardware.
+The driver frontend is where the majority of the project's novel functionality is either implemented or triggered by contacting [the server](#the-server). This is primarily due to [performance and bandwidth considerations](limitations-and-trade-offs.md#double-3-performance-and-network-bandwidth) in the context of the *Double 3* hardware.
 
 ### Augmented reality
 The novel augmented reality is implemented using [*AR.js*](https://ar-js-org.github.io/AR.js-Docs/) for fiducial marker recognition and tracking, and [*THREE.js*](https://threejs.org/) for 3D rendering on a [HTML5 canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API). [*THREEx.artoolkit*](https://jeromeetienne.github.io/AR.js/three.js/) is used as a middleman between the two libraries to translate the tracking data from *AR.js* into rendering data (e.g., matrices) for *THREE.js*. Finally, [THREEMeshUI](https://github.com/felixmariotto/three-mesh-ui) is used for the [presence cards](system-configuration.md#microsoft-teams-presence-cards) feature to massively simplify rendering dynamic text.
@@ -40,7 +40,7 @@ Each *Double 3* is given its identity via the UUID given in the URL, `.../robot/
 
 > The driver frontend establishes a relationship with a specific *Double 3* via the MD5 hash of a robot's UUID in the URL, `.../[MD5_OF_UUID]`.
 
-The robot-side interface is **intentionally 'primitive'** due to [hardware limitations](limitations-and-trade-offs.md#double-3-performance-and-network-bandwith), and meaningfully only does two things: handles its side of the *WebRTC* call, and interfaces with the *D3 API*. Most additive functionality, such as *Microsoft Graph* communication and the associated augmented reality, are implemented server-side and driver-side respectively.
+The robot-side interface is **intentionally 'primitive'** due to [hardware limitations](limitations-and-trade-offs.md#double-3-performance-and-network-bandwidth), and meaningfully only does two things: handles its side of the *WebRTC* call, and interfaces with the *D3 API*. Most additive functionality, such as *Microsoft Graph* communication and the associated augmented reality, are implemented server-side and driver-side respectively.
 
 ### The *D3 API*
 All access to *Double 3* hardware - for driving, the camera, microphone, retrieving battery percentage, etc. - is managed through the `DRDoubleSDK` library. This is served to the *Electron* browser window, and hence accessible through the *Double 3* frontend.

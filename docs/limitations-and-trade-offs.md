@@ -16,7 +16,7 @@ This measurably reduces battery life. The **average time** taken to drain the ba
 | ART      | High (1 cam)     | 14m 32s             |
 | ART      | Highest (2 cams) | 13m 45s             |
 
-## *Double 3* performance and network bandwith
+## *Double 3* performance and network bandwidth
 It's worth explicating that the reason the *Double 3*'s CPU and GPU performance becomes a problem is that normal internet connections can only reasonably be expected to maintain one stable, full HD (1920x1080), two-way *WebRTC* connection at a time. 
 
 For example, the [rear-view feature](system-configuration.md#rear-view-cameras) combines the two webcam views into one `MediaStream` onboard the robot, as the alternative would be increasing the bandwidth requirements (i.e., two `MediaStream`s) for both the drivers and collaborative spaces using the system. But, as aforementioned, this brings the CPU usage to a point where further feature expansion would be challenging.

@@ -29,7 +29,7 @@ The basic information necessary to complete configuration is explained in the mu
 With additional camera hardware, a rear-view can be given to drivers, which increases their spatial awareness and makes the driving experience a little smoother.
 
 ### 1. Do you really want to?
-Whilst included and technically functional, **this feature is currently unstable** for multiple reasons (some outside of a third-party developer's control) as explained [here](limitations-and-trade-offs.md#double-3-performance-and-network-bandwith) and [here](double3-flaws-and-bugs.md#highest-performance-instability). It should probably only be used in its current state for monitored use cases, such as trial deployments or studies.
+Whilst included and technically functional, **this feature is currently unstable** for multiple reasons (some outside of a third-party developer's control) as explained [here](limitations-and-trade-offs.md#double-3-performance-and-network-bandwidth) and [here](double3-flaws-and-bugs.md#highest-performance-instability). It should probably only be used in its current state for monitored use cases, such as trial deployments or studies.
 
 ### 2. Prepare the camera
 The camera you use must be **plug-and-play via USB** in *Ubuntu* Linux. That is, it must not require manual driver or software installation in order to function.
