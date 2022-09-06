@@ -33,7 +33,7 @@
           </h6>
         </div>
         <div class="d-flex py-2">
-          <form method="POST" action="/delete-smart-action/<%= actionUuid %>">
+          <form method="POST" action="/delete-smart-action/<%=actionUuid%>">
             <button type="submit" class="btn btn-light">❌ Cancel</button>
           </form>
         </div>
@@ -63,7 +63,7 @@
         <label for="key">Webhook key</label>
       </div>
       <div class="form-check ms-2 mb-3">
-        <input class="form-check-input" type="checkbox" value="remember" id="remember" name="remember">
+        <input class="form-check-input" type="checkbox" value="remember" id="remember" name="remember" <% if (instKey != null && instKey != "") { %> checked <% } %>>
         <label class="form-check-label" for="remember">
           Remember for organization
         </label>
