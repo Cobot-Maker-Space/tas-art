@@ -2,25 +2,13 @@
   "organization": {
     "id": "67bda7ee-fd80-41ef-ac91-358418290a1e",
     "displayName": "The University of Nottingham",
-    "webhookKey": "dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
+    "webhookKey": null
   },
   "admins": [
-    "3bc626ec-147f-4ed7-b225-d9a317288f88"
   ],
   "robots": {
-    "1yMmyNbPWWS+IikIT49Zin8EGjlIjOpFoTt1iFbx0yY=": {
-      "private": "e084972f-419c-496f-962f-acabac359739",
-      "name": "Fizz",
-      "location": "Cobot Maker Space",
-      "reverseCamLabel": null,
-      "handRaiseWebhook": "https://maker.ifttt.com/trigger/doorbell/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
-    }
   },
   "smart_actions": {
-    "1714b376-c049-4153-ab4d-911708ae8fd2": {
-      "name": "CMS Lightbulb",
-      "webhook": "https://maker.ifttt.com/trigger/cobot-light/with/key/dYCXTSvVVAgvb-I3h-YYVG7MxBigGQZ7UYyYH45zl8X"
-    }
   },
   "ms_office_cards": {
     "ce03d2c4-e85f-430b-a16c-dc5b189a5b4c": {
