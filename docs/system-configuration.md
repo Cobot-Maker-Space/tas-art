@@ -53,8 +53,6 @@ Remove the plastic cover on the back of the *Double 3* to find the USB ports, mo
 
 The mounting solution for a fisheye USB camera module, using the aforementioned multi-purpose bracket, is shown for inspiration below.
 
-![Placeholder image](img/placeholder.jpg)
-
 ### 4. Configure the robot
 On the optional features page in the [new robot workflow](#double-3-robots), refresh the device list and select the name of the plugged in camera. 
 
