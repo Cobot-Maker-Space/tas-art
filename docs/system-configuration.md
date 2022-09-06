@@ -51,8 +51,6 @@ However, you might want to use the rear mount point if possible, as this will al
 
 Remove the plastic cover on the back of the *Double 3* to find the USB ports, mount the camera facing backwards, and plug it in.
 
-The mounting solution for a fisheye USB camera module, using the aforementioned multi-purpose bracket, is shown for inspiration below.
-
 ### 4. Configure the robot
 On the optional features page in the [new robot workflow](#double-3-robots), refresh the device list and select the name of the plugged in camera. 
 
