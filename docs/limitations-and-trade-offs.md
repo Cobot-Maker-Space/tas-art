@@ -6,7 +6,7 @@ The *Double 3* can deploy 1 of 4 performance models, ranging from **lowest** to 
 
 The [stock *Double 3* endpoint](https://drive.doublerobotics.com/) is optimised to work with the **lowest** performance model.
 
-With the added functionality in this project, the processing load is higher than the stock *Double 3* endpoint. As such, **high** performance is enabled for single-camera operation, and the **highest** performance is enabled with the addition of a [rear-view camera]().
+With the added functionality in this project, the processing load is higher than the stock *Double 3* endpoint. As such, **high** performance is enabled for single-camera operation, and the **highest** performance is enabled with the addition of a [rear-view camera](system-configuration.md#rear-view-cameras).
 
 This measurably reduces battery life. The **average time** taken to drain the battery from **100%** to **90%** across 3 scenarios is listed below. Each scenario was tested 3 times; the *Double 3* was left parked during a call (i.e., not driven) during each test.
 
@@ -19,12 +19,12 @@ This measurably reduces battery life. The **average time** taken to drain the ba
 ## *Double 3* performance and network bandwith
 It's worth explicating that the reason the *Double 3*'s CPU and GPU performance becomes a problem is that normal internet connections can only reasonably be expected to maintain one stable, full HD (1920x1080), two-way *WebRTC* connection at a time. 
 
-For example, the [rear-view feature]() combines the two webcam views into one `MediaStream` onboard the robot, as the alternative would be increasing the bandwidth requirements (i.e., two `MediaStream`s) for both the drivers and collaborative spaces using the system. But, as aforementioned, this brings the CPU usage to a point where further feature expansion would be challenging.
+For example, the [rear-view feature](system-configuration.md#rear-view-cameras) combines the two webcam views into one `MediaStream` onboard the robot, as the alternative would be increasing the bandwidth requirements (i.e., two `MediaStream`s) for both the drivers and collaborative spaces using the system. But, as aforementioned, this brings the CPU usage to a point where further feature expansion would be challenging.
 
 ## Accessory weight limitations
 The *Double 3* has three mounting screw holes in its *head*, two on the very top under the rubber guard, and one behind the port cover on the back.
 
-The [mounting bracket]() supplied in this documentation attaches to the two upmost screw holes.
+The [mounting bracket](assets) supplied in this documentation attaches to the two upmost screw holes.
 
 Objects rigidly attached this bracket, seemingly regardless of placement in reference to the centre of gravity, risk making the *Double 3* **dangerously unstable** if they weigh in excess of approximately **0.6kg** (excluding the bracket). This was tested in 0.1kg increments.
 
