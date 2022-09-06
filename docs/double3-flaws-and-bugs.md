@@ -66,3 +66,5 @@ This is obviously something going wrong algorithmically in stock software, which
 The [*Double 3* developer documentation](https://github.com/doublerobotics/d3-sdk) lists a number of ways to deploy custom functionality, one of them being a native application. This is possible as the head is simply a *Ubuntu Linux* machine running on a *NVIDIA Jetson* system-on-module; you can even boot into the desktop GUI.
 
 ***However***, there is no inbuilt functionality to factory reset the *Double 3* software, nor the underlying operating system; the only 'supported' way is to send the head back to California. Therefore, developing anything native is very much playing with fire, unless you find a way to back-up the stock software and OS. 
+
+This is unfortunate because native development would also be most powerful, with direct hardware access to the *Intel RealSense* cameras, etcetera. 
