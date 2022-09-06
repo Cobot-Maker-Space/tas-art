@@ -77,14 +77,8 @@ There are multiple off-the-shelf *IoT* solutions with *IFTTT* integration which 
 
 If you want a truly custom solution, you could use a *Raspberry Pi* - powered by the *Double 3*! - and attach whatever you like for actuation to the GPIO connectors. A *Raspberry Pi* can receive *IFTTT* actions in a few ways, with *Webhook*s being the most popular. There are endless tutorials on this. 
 
-Below is an image of an off-the-shelf *SwitchBot* solution with a basic hand, for inspiration.
-
-![Placeholder image](img/placeholder.jpg)
-
 ### 2. Prepare the mounting solution
 The same advice applies as for [mounting the rear-view camera](#rear-view-cameras), although you'll inevitably need to make some changes for this feature. A mounting method for the aforementioned *SwitchBot* is show below, but your methodology will be unique if you use different hardware.
-
-![Placeholder image](img/placeholder.jpg)
 
 ### 3. Configure the action in *IFTTT*
 Follow the instructions for [smart actions](#ifttt-smart-actions) to create an *IFTTT* account and configure an applet. The trigger will be a *Webhook*, as explained in the article, and the action will by whatever actuates your hand-raising hardware.
@@ -111,8 +105,6 @@ Log in to the website using an [admin account](deploying-the-project.md#admin-ac
 Name the smart action something meaningful; this will never be driver-facing, but allows you to organise your smart actions in the admin interface properly.
 
 Prepare and upload the driver-facing graphics. The **fiducial marker center** should ideally be related to the action (e.g., a light bulb for a light switch), but is not a requirement by any means. The inner image **must be as high contrast and unique as possible**, ideally black and white, and *simple*; we're talking about an abstract icon of a light bulb, not an actual picture of a real light bulb. 
-
-![Placeholder image](img/placeholder.jpg)
 
 The **interactive icon and confirmation icon** can utilise transparency, and should clearly convey the functionality of the interaction to the driver; they should be as intuitive as possible. The confirmation icon may be as simple as a colour change, or could be more tightly integrated with the action, such as a transition from a static bell to a 'ringing' bell.  
 
