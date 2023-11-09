@@ -1,0 +1,12 @@
+{
+  "tls": {
+    "provider": "greenlock",
+    "greenlock": {
+      "subscriber_email": ""
+    }
+  },
+  "azure": {
+    "client_id": "",
+    "client_secret": ""
+  }
+}
