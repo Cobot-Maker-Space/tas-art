@@ -108,3 +108,6 @@ dist
 
 # Site DB file
 db/db.json
+
+# Site configuration files
+config/*.json

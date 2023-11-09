@@ -1,5 +1,4 @@
-// greenlock subscriber
-const greenlockSubscriberEmail = "psyip1@nottingham.ac.uk";
+import config from "config";
 
 // password and uuid utilities
 import crypto from "crypto";
@@ -78,7 +77,7 @@ greenlock
   .init({
     packageRoot: __dirname,
     configDir: "./greenlock.d",
-    maintainerEmail: greenlockSubscriberEmail,
+    maintainerEmail: config.get("tls.greenlock.subscriber_email"),
     cluster: false,
   })
   .ready(socketWorker);

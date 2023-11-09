@@ -19,6 +19,7 @@
     "@azure/identity": "^2.1.0",
     "@microsoft/microsoft-graph-client": "^3.0.2",
     "body-parser": "^1.20.0",
+    "config": "^3.3.9",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "ejs": "^3.1.6",

@@ -4,8 +4,10 @@
  * TODO: Increase security with a volatile State (e.g., in login payload), which is checked by the server
  */
 
-const clientId = "5cb0b9bf-c370-48dc-adae-06fa18143ed3";
-const clientSecret = "Vwm8Q~BQylr9~apjFDMVFhhsv0Za0ZYdePB7dabY";
+import config from "config";
+
+const clientId = config.get("azure.client_id");
+const clientSecret = config.get("azure.client_secret");
 
 const permissions =
   "&scope=user.readbasic.all%20presence.read.all%20chat.read%20chat.readbasic%20chat.readwrite%20chatmessage.send";
@@ -41,7 +43,8 @@ export function requestTokenBody(code) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body:
-      "client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3" +
+      "client_id=" +
+      clientId +
       permissions +
       "&code=" +
       code +
@@ -59,7 +62,8 @@ export function refreshTokenBody(refresh_token) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body:
-      "client_id=5cb0b9bf-c370-48dc-adae-06fa18143ed3" +
+      "client_id=" +
+      clientId +
       permissions +
       "&refresh_token=" +
       refresh_token +
