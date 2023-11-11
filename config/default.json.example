@@ -5,8 +5,13 @@
       "subscriber_email": ""
     }
   },
-  "azure": {
+  "ms-graph-api": {
     "client_id": "",
     "client_secret": ""
-  }
+  },
+  "organization": {
+    "id": "",
+    "display_name": "",
+  },
+  "peer": {}
 }

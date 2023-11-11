@@ -1,5 +1,5 @@
 import config from "config";
-
+import util from "util";
 // password and uuid utilities
 import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
@@ -13,6 +13,8 @@ import fs from "fs";
 
 // routing and data abstractions
 import express from "express";
+import http from "http";
+import https from "https";
 import fetch from "node-fetch";
 import favicon from "serve-favicon";
 import expressFileupload from "express-fileupload";
@@ -44,6 +46,9 @@ app.use(cors({ origin: "*" }));
 
 // database configuration
 const file = join(__dirname, "db/db.json");
+if (!fs.existsSync(file)) {
+  fs.appendFileSync(file, JSON.stringify({}));
+}
 const adapter = new JSONFileSync(file);
 const db = new LowSync(adapter);
 db.read();
@@ -57,10 +62,8 @@ function hashedPwd(pwd) {
 function newAuthToken() {
   return crypto.randomBytes(36).toString("hex");
 }
-function deleteElement(array, value) {
-  return array.filter(function (x) {
-    return x != value;
-  });
+function getBaseUrl(req) {
+  return util.format("%s://%s", req.protocol, req.hostname);
 }
 
 var activeRobots = {};
@@ -73,17 +76,7 @@ var driverAuthTokens = {};
 var activeUsers = {};
 var connectedUsers = {};
 
-greenlock
-  .init({
-    packageRoot: __dirname,
-    configDir: "./greenlock.d",
-    maintainerEmail: config.get("tls.greenlock.subscriber_email"),
-    cluster: false,
-  })
-  .ready(socketWorker);
-
-function socketWorker(glx) {
-  var server = glx.httpsServer();
+function socketWorker(server, listen_callback) {
   const io = new Server(server);
 
   // socket communication (incl. webRTC)
@@ -200,8 +193,23 @@ function socketWorker(glx) {
     });
   });
 
-  glx.serveApp(app);
+  listen_callback(server);
 }
+
+/*greenlock
+  .init({
+    packageRoot: __dirname,
+    configDir: "./greenlock.d",
+    maintainerEmail: config.get("tls.greenlock.subscriber_email"),
+    cluster: false,
+  })
+  .ready((glx) => {
+    socketWorker(glx.httpsServer(), () => { glx.serveApp(app); })
+  });*/
+var httpServer = http.createServer(app);
+socketWorker(httpServer, (server) => {
+  server.listen(80);
+});
 
 // route precedent to collect cookie(s) from browser for auth
 app.use((req, res, next) => {
@@ -219,35 +227,29 @@ app.get("/", (req, res) => {
   if (req.driverId) {
     res.redirect("/select");
   }
-  db.read();
   res.render("login", {
-    inst: db.data.organization.displayName,
+    inst: config.get("organization.display_name"),
     error: req.query.error,
   });
 });
 
 // ms login and logout handling
 app.get("/ms-login", (req, res) => {
-  db.read();
-  res.redirect(Queries.login(db.data.organization.id));
+  res.redirect(Queries.login(getBaseUrl(req)));
 });
 
 app.get("/ms-logout", (req, res) => {
-  db.read();
-
   delete adminAuthTokens[req.cookies["AuthToken"]];
   delete driverAuthTokens[req.cookies["AuthToken"]];
   delete activeUsers[req.driverId];
-
-  res.redirect(Queries.logout(db.data.organization.id));
+  res.redirect(Queries.logout(getBaseUrl(req)));
 });
 
 app.get("/ms-socket", (req, res) => {
-  db.read();
   async function fetchUserData() {
     const loginData = await fetch(
-      Queries.requestTokenURL(db.data.organization.id),
-      Queries.requestTokenBody(req.query.code)
+      Queries.requestTokenURL(),
+      Queries.requestTokenBody(req.query.code, getBaseUrl(req))
     ).then((response) => response.json());
     if (loginData.error != undefined) {
       res.redirect("/?error=user");
@@ -255,11 +257,11 @@ app.get("/ms-socket", (req, res) => {
     }
 
     const userData = await fetch(
-      Queries.getUserDataURL,
+      Queries.getUserDataURL(),
       Queries.getDataBody(loginData.access_token)
     ).then((response) => response.json());
     const photoData = await fetch(
-      Queries.getUserPhotoURL,
+      Queries.getUserPhotoURL(),
       Queries.getDataBody(loginData.access_token)
     ).then((response) => response.body);
 
@@ -297,7 +299,7 @@ app.get("/select", (req, res) => {
     res.render("select", {
       id: req.driverId,
       name: activeUsers[req.driverId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
       admin: req.adminId ? "true" : "false",
       robots: db.data.robots,
       activeRobots: Object.values(activeRobots),
@@ -315,7 +317,7 @@ app.get("/admin-dashboard", (req, res) => {
     res.render("admin-dashboard", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
     });
   } else {
     res.redirect("/");
@@ -329,7 +331,7 @@ app.get("/manage-robots", (req, res) => {
     res.render("manage-robots", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
       activeRobots: db.data.robots,
       baseURL: "https://" + req.get("host") + "/",
     });
@@ -348,7 +350,7 @@ app.get("/new-robot-details", (req, res) => {
     res.render("new-robot-details", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
     });
   } else {
     res.redirect("/");
@@ -385,7 +387,7 @@ app.get("/new-robot-activate", (req, res) => {
     res.render("new-robot-activate", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
       baseURL: "https://" + req.get("host") + "/",
       robotPublicId: req.query.publicid,
       robotUuid: req.query.uuid,
@@ -402,7 +404,7 @@ app.get("/new-robot-optional", (req, res) => {
     res.render("new-robot-optional", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
       robotPublicId: req.query.publicid,
       robotUuid: req.query.uuid,
       robotName: req.query.name,
@@ -432,7 +434,7 @@ app.get("/smart-actions", (req, res) => {
     res.render("smart-actions", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
       smartActions: db.data.smart_actions,
     });
   } else {
@@ -456,7 +458,7 @@ app.get("/smart-action-upload", (req, res) => {
     res.render("smart-action-upload", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
     });
   } else {
     res.redirect("/");
@@ -491,7 +493,7 @@ app.get("/smart-action-ifttt", (req, res) => {
     res.render("smart-action-ifttt", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
       actionUuid: Object.keys(db.data.smart_actions).at(-1),
       actionName:
         db.data.smart_actions[Object.keys(db.data.smart_actions).at(-1)].name,
@@ -527,7 +529,7 @@ app.get("/smart-action-print", (req, res) => {
     res.render("smart-action-print", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
       actionUuid: req.query.uuid,
       actionName: req.query.name,
     });
@@ -541,7 +543,7 @@ app.get("/presence-cards", (req, res) => {
     res.render("presence-cards", {
       id: req.adminId,
       name: activeUsers[req.adminId].name,
-      inst: db.data.organization.displayName,
+      inst: config.get("organization.display_name"),
     });
   } else {
     res.redirect("/");
@@ -556,6 +558,7 @@ app.get("/robot/:uuid", (req, res) => {
       reverseCamLabel:
         db.data.robots[hashedPwd(req.params.uuid)].reverseCamLabel,
       robotName: db.data.robots[hashedPwd(req.params.uuid)].name,
+      config: config,
     });
   } else {
     res.redirect("/");
@@ -573,6 +576,7 @@ app.get("/:uuid", (req, res) => {
       robotLocation: db.data.robots[req.params.uuid].location,
       smartActionsData: JSON.stringify(db.data.smart_actions),
       officeCardsData: JSON.stringify(db.data.ms_office_cards),
+      config: config,
     });
   } else {
     res.redirect("/");
