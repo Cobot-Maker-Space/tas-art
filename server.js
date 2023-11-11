@@ -38,11 +38,24 @@ const app = express();
 // server configuration
 app.set("view engine", "ejs");
 app.use(express.static("public"));
+app.use(express.static("static"));
 app.use(favicon(join(__dirname, "public", "/assets/favicon.ico")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressFileupload());
 app.use(cookieParser());
 app.use(cors({ origin: "*" }));
+
+// ensure folder structure is correct
+const required_folders = [
+  "static/ar/assets/ar-icon",
+  "static/ar/assets/ar-icon-confirm",
+  "static/ar/assets/fiducial",
+  "static/ar/assets/marker",
+  "static/photos",
+];
+required_folders.forEach((f) => {
+  fs.mkdirSync(join(__dirname, f), { recursive: true });
+});
 
 // database configuration
 const file = join(__dirname, "db/db.json");
@@ -145,13 +158,9 @@ function socketWorker(server, listen_callback) {
           Queries.getUserPresenceURL(msUserId),
           Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token)
         ).then((response) => response.json());
-        var photoDir = join(__dirname, "public", "photos");
-        if (!fs.existsSync(photoDir)) {
-          fs.mkdirSync(photoDir);
-        }
         otherUserPhoto.pipe(
           fs.createWriteStream(
-            join(__dirname, "public", "/photos/" + msUserId + ".png")
+            join(__dirname, util.format("static/photos/%s.png", msUserId))
           )
         );
         io.emit("office-card", {
@@ -290,13 +299,9 @@ app.get("/ms-socket", (req, res) => {
       Queries.getUserPhotoURL(),
       Queries.getDataBody(loginData.access_token)
     ).then((response) => response.body);
-    var photoDir = join(__dirname, "public", "photos");
-    if (!fs.existsSync(photoDir)) {
-      fs.mkdirSync(photoDir);
-    }
     photoData.pipe(
       fs.createWriteStream(
-        join(__dirname, "public", "/photos/" + userData.id + ".png")
+        join(__dirname, util.format("static/photos/%s.png", userData.id))
       )
     );
     db.read();

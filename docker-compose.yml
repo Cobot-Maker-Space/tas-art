@@ -6,8 +6,9 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - greenlock:/app/greenlock.d
+      - ./config:/app/config
+      - ./db:/app/db
+      - ./static:/app/static
     working_dir: /app
 
-volumes:
-  greenlock:
+

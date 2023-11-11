@@ -1,9 +1,6 @@
 {
   "tls": {
-    "provider": "greenlock",
-    "greenlock": {
-      "subscriber_email": ""
-    }
+    "provider": ""
   },
   "ms-graph-api": {
     "client_id": "",
@@ -13,5 +10,7 @@
     "id": "",
     "display_name": "",
   },
-  "peer": {}
+  "peer": {
+    "config": {}
+  }
 }

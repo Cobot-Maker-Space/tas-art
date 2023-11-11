@@ -109,11 +109,12 @@ dist
 # Site database
 db
 
-# User photos
-public/photos
+# User generated content
+static
 
 # Site configuration files
 config/*
 !config/default.json.example
 
+# Docker override file
 docker-compose.override.yml
