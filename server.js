@@ -14,7 +14,6 @@ import fs from "fs";
 
 // routing and data abstractions
 import express from "express";
-import http from "http";
 import https from "https";
 import fetch from "node-fetch";
 import favicon from "serve-favicon";
@@ -48,11 +47,14 @@ app.use(cors({ origin: "*" }));
 // database configuration
 const file = join(__dirname, "db/db.json");
 if (!fs.existsSync(file)) {
-  fs.appendFileSync(file, JSON.stringify({
-    admins: [],
-    robots: [],
-    smart_actions: [],
-  }));
+  fs.appendFileSync(
+    file,
+    JSON.stringify({
+      admins: [],
+      robots: [],
+      smart_actions: [],
+    })
+  );
 }
 const adapter = new JSONFileSync(file);
 const db = new LowSync(adapter);
@@ -143,6 +145,10 @@ function socketWorker(server, listen_callback) {
           Queries.getUserPresenceURL(msUserId),
           Queries.getDataBody(activeUsers[connectedUsers[robotId]].access_token)
         ).then((response) => response.json());
+        var photoDir = join(__dirname, "public", "photos");
+        if (!fs.existsSync(photoDir)) {
+          fs.mkdirSync(photoDir);
+        }
         otherUserPhoto.pipe(
           fs.createWriteStream(
             join(__dirname, "public", "/photos/" + msUserId + ".png")
@@ -201,20 +207,35 @@ function socketWorker(server, listen_callback) {
   listen_callback(server);
 }
 
-/*greenlock
-  .init({
-    packageRoot: __dirname,
-    configDir: "./greenlock.d",
-    maintainerEmail: config.get("tls.greenlock.subscriber_email"),
-    cluster: false,
-  })
-  .ready((glx) => {
-    socketWorker(glx.httpsServer(), () => { glx.serveApp(app); })
-  });*/
-var httpServer = http.createServer(app);
-socketWorker(httpServer, (server) => {
-  server.listen(80);
-});
+if (config.get("tls.provider") == "greenlock") {
+  greenlock
+    .init({
+      packageRoot: __dirname,
+      configDir: "./greenlock.d",
+      maintainerEmail: config.get("tls.greenlock.subscriber_email"),
+      cluster: false,
+    })
+    .ready((glx) => {
+      socketWorker(glx.httpsServer(), () => {
+        glx.serveApp(app);
+      });
+    });
+} else if (config.get("tls.provider") == "file") {
+  var httpServer = https.createServer(
+    {
+      key: fs.readFileSync(config.get("tls.key_file"), "utf8"),
+      cert: fs.readFileSync(config.get("tls.certificate_file"), "utf8"),
+    },
+    app
+  );
+  socketWorker(httpServer, (server) => {
+    server.listen(443);
+  });
+} else {
+  throw new Error(
+    util.format("Unknown tls provider type: %s", config.get("tls.provider"))
+  );
+}
 
 // route precedent to collect cookie(s) from browser for auth
 app.use((req, res, next) => {
@@ -269,7 +290,10 @@ app.get("/ms-socket", (req, res) => {
       Queries.getUserPhotoURL(),
       Queries.getDataBody(loginData.access_token)
     ).then((response) => response.body);
-
+    var photoDir = join(__dirname, "public", "photos");
+    if (!fs.existsSync(photoDir)) {
+      fs.mkdirSync(photoDir);
+    }
     photoData.pipe(
       fs.createWriteStream(
         join(__dirname, "public", "/photos/" + userData.id + ".png")

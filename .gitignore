@@ -113,4 +113,5 @@ db
 public/photos
 
 # Site configuration files
-config/*.json
+config/*
+!config/default.json.example
