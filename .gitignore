@@ -106,8 +106,8 @@ dist
 # TernJS port file
 .tern-port
 
-# Site DB file
-db/db.json
+# Site database
+db
 
 # Site configuration files
 config/*.json
