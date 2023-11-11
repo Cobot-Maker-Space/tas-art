@@ -476,10 +476,10 @@ app.get("/smart-actions", (req, res) => {
   }
 });
 app.post("/delete-smart-action/:uuid", (req, res) => {
-  fs.unlinkSync("public/ar/assets/fiducial/" + req.params.uuid + ".patt");
-  fs.unlinkSync("public/ar/assets/ar-icon/" + req.params.uuid + ".png");
-  fs.unlinkSync("public/ar/assets/ar-icon-confirm/" + req.params.uuid + ".png");
-  fs.unlinkSync("public/ar/assets/marker/" + req.params.uuid + ".pdf");
+  fs.unlinkSync("static/ar/assets/fiducial/" + req.params.uuid + ".patt");
+  fs.unlinkSync("static/ar/assets/ar-icon/" + req.params.uuid + ".png");
+  fs.unlinkSync("static/ar/assets/ar-icon-confirm/" + req.params.uuid + ".png");
+  fs.unlinkSync("static/ar/assets/marker/" + req.params.uuid + ".pdf");
 
   db.read();
   delete db.data.smart_actions[req.params.uuid];
@@ -506,10 +506,10 @@ app.post("/smart-action-upload", (req, res) => {
   const arIconC = req.files.arIconConfirm;
 
   const uuid = uuidv4();
-  pattern.mv("public/ar/assets/fiducial/" + uuid + ".patt");
-  print.mv("public/ar/assets/marker/" + uuid + ".pdf");
-  arIcon.mv("public/ar/assets/ar-icon/" + uuid + ".png");
-  arIconC.mv("public/ar/assets/ar-icon-confirm/" + uuid + ".png");
+  pattern.mv("static/ar/assets/fiducial/" + uuid + ".patt");
+  print.mv("static/ar/assets/marker/" + uuid + ".pdf");
+  arIcon.mv("static/ar/assets/ar-icon/" + uuid + ".png");
+  arIconC.mv("static/ar/assets/ar-icon-confirm/" + uuid + ".png");
 
   db.read();
   db.data.smart_actions[uuid] = {
