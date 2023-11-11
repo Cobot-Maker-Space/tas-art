@@ -1,0 +1,13 @@
+version: "3"
+services:
+  art:
+    build: .
+    command: "npm start"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - greenlock:/app/greenlock.d
+    working_dir: /app
+
+volumes:
+  greenlock:

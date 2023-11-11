@@ -1,0 +1,8 @@
+docs
+public/photos
+.gitignore
+docker-compose.yml
+docker-compose.override.yml
+Dockerfile
+README.md
+

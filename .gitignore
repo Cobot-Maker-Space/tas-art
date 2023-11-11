@@ -115,3 +115,5 @@ public/photos
 # Site configuration files
 config/*
 !config/default.json.example
+
+docker-compose.override.yml
