@@ -1,5 +1,6 @@
 import config from "config";
 import util from "util";
+
 // password and uuid utilities
 import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
@@ -47,7 +48,11 @@ app.use(cors({ origin: "*" }));
 // database configuration
 const file = join(__dirname, "db/db.json");
 if (!fs.existsSync(file)) {
-  fs.appendFileSync(file, JSON.stringify({}));
+  fs.appendFileSync(file, JSON.stringify({
+    admins: [],
+    robots: [],
+    smart_actions: [],
+  }));
 }
 const adapter = new JSONFileSync(file);
 const db = new LowSync(adapter);

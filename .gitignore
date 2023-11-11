@@ -109,5 +109,8 @@ dist
 # Site database
 db
 
+# User photos
+public/photos
+
 # Site configuration files
 config/*.json
