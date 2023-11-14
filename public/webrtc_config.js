@@ -1,5 +1,3 @@
-import config from "config";
-
 /**
  * configWebRTC
  * * STUN/TURN server config for the WebRTC connection
@@ -8,6 +6,6 @@ import config from "config";
  */
 export function configWebRTC() {
   const socket = io("/");
-  const me = new Peer(config.get("peer"));
+  const me = new Peer(peer_config);
   return [socket, me];
 }

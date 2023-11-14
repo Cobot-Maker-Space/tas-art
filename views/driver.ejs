@@ -24,6 +24,8 @@
     const ROBOT_NAME = '<%= robotName %>'
     const HAND_RAISE_WEBHOOK = '<%= handRaiseWebhook %>'
 
+    const peer_config = <%- JSON.stringify(peer_config) %>;
+
     const smartActions = JSON.parse('<%- smartActionsData %>')
     const officeCards = JSON.parse('<%- officeCardsData %>')
   </script>
@@ -99,7 +101,9 @@
       <% if (handRaiseWebhook !=null && handRaiseWebhook !="" ) { %>
       <input type="checkbox" class="btn-check" id="hand" autocomplete="off" />
       <label class="btn btn-outline-primary me-4" for="hand">✋</label><br />
-      <% }; %>
+      <% } else { %>
+      <input type="hidden" class="btn-check" id="hand" autocomplete="off" />
+      <% } %>
 
       <input type="checkbox" class="btn-check" id="muted" autocomplete="off" />
       <label class="btn btn-outline-danger" for="muted">🔇Mute</label><br />

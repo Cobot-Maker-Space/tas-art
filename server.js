@@ -64,8 +64,9 @@ if (!fs.existsSync(file)) {
     file,
     JSON.stringify({
       admins: [],
-      robots: [],
-      smart_actions: [],
+      robots: {},
+      smart_actions: {},
+      ms_office_cards: {},
     })
   );
 }
@@ -234,6 +235,7 @@ if (config.get("tls.provider") == "greenlock") {
     {
       key: fs.readFileSync(config.get("tls.key_file"), "utf8"),
       cert: fs.readFileSync(config.get("tls.certificate_file"), "utf8"),
+      ca: fs.readFileSync(config.get("tls.ca_file"), "utf8"),
     },
     app
   );
@@ -592,7 +594,7 @@ app.get("/robot/:uuid", (req, res) => {
       reverseCamLabel:
         db.data.robots[hashedPwd(req.params.uuid)].reverseCamLabel,
       robotName: db.data.robots[hashedPwd(req.params.uuid)].name,
-      config: config,
+      peer_config: config.get("peer"),
     });
   } else {
     res.redirect("/");
@@ -610,7 +612,7 @@ app.get("/:uuid", (req, res) => {
       robotLocation: db.data.robots[req.params.uuid].location,
       smartActionsData: JSON.stringify(db.data.smart_actions),
       officeCardsData: JSON.stringify(db.data.ms_office_cards),
-      config: config,
+      peer_config: config.get("peer"),
     });
   } else {
     res.redirect("/");
