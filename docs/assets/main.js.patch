@@ -1,0 +1,27 @@
+--- main.js.bak	2023-11-14 02:50:21.613139451 -0800
++++ main.js	2023-11-14 03:53:15.528381456 -0800
+@@ -95,6 +95,24 @@
+ 		logEvent("page-title-updated", { title: title });
+ 	});
+
++	mainWindow.webContents.session.setCertificateVerifyProc((request, callback) => {
++		if (request.certificate.issuerName == "cobotmakerspace.org") {
++			try {
++                        	const fingerprint = "sha256/COlEtiQSKVfgGovk1XgUKedVi2I+0xGfi9pIm6pl8pk=";
++                        	const fp = request.certificate.issuerCert.fingerprint
++				if (fingerprint == fp) {
++					callback(0);
++				} else {
++					callback(-3);
++				}
++                	} catch (exc) {
++                        	callback(-3);
++                	}
++		} else {
++			callback(-3);
++		}
++        });
++
+ 	// and load the index.html of the app.
+ 	// mainWindow.loadURL("http://www.doublerobotics.com")
+ 	if (isValidURL(process.argv[2])) {

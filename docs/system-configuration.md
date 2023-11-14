@@ -7,6 +7,9 @@ All *Double 3* robots must have developer mode enabled to be configured for this
 
 > *"To enter developer mode, you must first link the D3 with your Double account, then email your head serial number to devteam@doublerobotics.com with a request to enable developer mode. After a security authorization, our team will enable developer mode and you will have complete root access."* ([source](https://github.com/doublerobotics/d3-sdk/blob/master/docs/Developer%20Mode.md))
 
+### 1.5. Self-Signed Certificates (Optional)
+If you wish to use a self signed TLS certificate to deploy the server-side software, then you will need to modify the on-board application. SSH into the robot and copy over the [main.js.patch file](assets/main.js.patch) to */usr/local/d3/gui* and then run patch: *patch -u -b main.js -i main.js.patch*.
+
 ### 2. Navigate to the settings
 Log in to the website using an [admin account](deploying-the-project.md#admin-accounts) then navigate through:
 ```
